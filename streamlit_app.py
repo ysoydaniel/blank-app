@@ -465,7 +465,7 @@ else:
     st.warning("💡 El beneficio existe, pero el impacto es más moderado.")
     st.divider()
 
-        c4, c5 = st.columns([1.3, 1])
+    c4, c5 = st.columns([1.3, 1])
 
         with c4:
             st.markdown("### Desglose del cálculo")
