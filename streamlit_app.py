@@ -82,6 +82,7 @@ with col1:
     
     salario_mensual = money_input(
     "¿Cuál es tu salario mensual?",
+    help_text="Ingresa tu salario mensual antes de deducciones.",
     value=25000000,
     key="salario"
 )
@@ -101,12 +102,10 @@ with col1:
 
     valor_auxilios_mensual = money_input(
         "¿Cuál es el valor mensual de tus auxilios?",
-        min_value=0.0,
         value=2000000.0 if recibe_auxilios == "Sí" else 0.0,
-        step=100000.0,
         disabled=(recibe_auxilios == "No"),
-        help_text="Monto mensual de auxilios no salariales. No debería superar el 50% del salario.",
-        key="auxilio"
+        help_text="El valor mensual de auxilios no debería superar el 50% del salario.",
+        key="valor_auxilios"
     )
     
     recibe_variable = st.radio(
@@ -119,13 +118,12 @@ with col1:
 with col2:
     st.markdown("### 📈 Variables")
 
-    valor_variable_anual = st.number_input(
+    valor_variable_anual = money_input(
         "¿Cuál es el valor anual de tu variable o comisiones?",
-        min_value=0.0,
         value=24000000.0 if recibe_variable == "Sí" else 0.0,
-        step=100000.0,
         disabled=(recibe_variable == "No"),
-        help="Total de ingresos variables recibidos durante el año."
+        help_text="Total anual de ingresos variables.",
+        key="variable_anual"
     )
 
     tiene_bonificaciones = st.radio(
@@ -135,13 +133,12 @@ with col2:
         help="Bonos adicionales otorgados por la empresa."
     )
 
-    valor_bonificaciones = st.number_input(
+    valor_bonificaciones = money_input(
         "¿Cuál es el valor de tus bonificaciones?",
-        min_value=0.0,
         value=40000000.0 if tiene_bonificaciones == "Sí" else 0.0,
-        step=100000.0,
         disabled=(tiene_bonificaciones == "No"),
-        help="Monto total anual de bonificaciones recibidas."
+        help_text="Monto total anual de bonificaciones.",
+        key="bonificaciones"
     )
 
     bono_salarial = st.radio(
@@ -183,12 +180,11 @@ with sep:
 with col3:
     st.markdown("### 🧾 Beneficios")
 
-    aporte_voluntario_obligatorio_anual = st.number_input(
-        "¿Cuánto aportas anualmente de manera voluntaria a tu fondo obligatorio?",
-        min_value=0.0,
+    aporte_voluntario_obligatorio_anual = money_input(
+        "¿Cuánto aportas voluntariamente a tu fondo obligatorio?",
         value=15000000.0,
-        step=100000.0,
-        help="Aportes voluntarios adicionales al fondo de pensiones obligatorio."
+        help_text="Aportes voluntarios adicionales al fondo de pensiones.",
+        key="aporte_voluntario"
     )
 
     numero_dependientes = st.number_input(
@@ -200,39 +196,35 @@ with col3:
         help="Personas que dependen económicamente de ti. Máximo permitido: 4."
     )
 
-    intereses_vivienda_anual = st.number_input(
-        "¿Cuánto pagas anualmente de intereses de vivienda?",
-        min_value=0.0,
+    intereses_vivienda_anual = money_input(
+        "¿Cuánto pagas de intereses de vivienda al año?",
         value=4500000.0,
-        step=100000.0,
-        help="Intereses pagados por crédito hipotecario durante el año."
+        help_text="Intereses pagados por crédito hipotecario.",
+        key="intereses_vivienda"
     )
 
 with col4:
     st.markdown("### 🏥 Deducciones")
 
-    pagos_salud_anual = st.number_input(
-        "¿Cuánto pagas anualmente en planes de salud?",
-        min_value=0.0,
+    pagos_salud_anual = money_input(
+        "¿Cuánto pagas en planes de salud al año?",
         value=6700000.0,
-        step=100000.0,
-        help="Pagos anuales por medicina prepagada o seguros de salud."
+        help_text="Pagos por medicina prepagada o seguros de salud.",
+        key="pagos_salud"
     )
 
-    aportes_pension_afc_anual = st.number_input(
-        "¿Cuánto aportas anualmente en pensión voluntaria o AFC?",
-        min_value=0.0,
+    aportes_pension_afc_anual = money_input(
+        "¿Cuánto aportas en pensión voluntaria o AFC?",
         value=1500000.0,
-        step=100000.0,
-        help="Aportes voluntarios que pueden generar beneficios tributarios."
+        help_text="Aportes voluntarios que generan beneficios tributarios.",
+        key="afc"
     )
 
-    compras_factura_electronica = st.number_input(
-        "¿Cuál crees que va a ser el valor de tus compras con factura electrónica?",
-        min_value=0.0,
+    compras_factura_electronica = money_input(
+        "¿Cuánto estimas comprar con factura electrónica?",
         value=45000000.0,
-        step=100000.0,
-        help="Compras realizadas con factura electrónica durante el año. Actualmente no impacta el cálculo."
+        help_text="Compras con factura electrónica durante el año.",
+        key="factura_electronica"
     )
 st.divider()
 
