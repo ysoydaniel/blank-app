@@ -33,30 +33,50 @@ with st.sidebar:
 # =========================
 
 
-col1, col2, sep, col3, col4 = st.columns([1,1,0.05,1,1])
+st.markdown("""
+<div style="
+    padding: 22px 24px;
+    border-radius: 22px;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.08);
+    margin-bottom: 18px;
+">
+    <div style="font-size: 13px; color: #93C5FD; font-weight: 700; letter-spacing: .08em;">
+        FORMULARIO
+    </div>
+    <div style="font-size: 26px; color: white; font-weight: 800; margin-top: 6px;">
+        Información del cliente
+    </div>
+    <div style="font-size: 15px; color: #CBD5E1; margin-top: 8px;">
+        Completa los datos de ingresos y beneficios tributarios para estimar el impuesto y el ahorro potencial.
+    </div>
+</div>
+""", unsafe_allow_html=True)
+
+col1, col2, sep, col3, col4 = st.columns([1, 1, 0.06, 1, 1])
 
 with col1:
-    st.markdown("## Datos de ingreso del cliente")
+    st.markdown("### 💼 Ingresos")
+    
     salario_mensual = st.number_input(
         "¿Cuál es tu salario mensual?",
         min_value=0.0,
         value=25000000.0,
         step=100000.0,
-        help="Si es salario ordinario se multiplica por 12; si es salario integral se usa la lógica actual del simulador."
+        help="Ingresa tu salario mensual antes de deducciones."
     )
 
     tipo_salario = st.selectbox(
         "¿Qué tipo de salario tienes?",
         ["Integral", "Ordinario"],
-        help="Salario ordinario es el que tiene primas y cesantias, salario integral no tiene primas ni cesantias y no puede ser menor a 13 SMLV"
+        help="El salario integral ya incluye prestaciones sociales. El ordinario sí genera prestaciones."
     )
 
     recibe_auxilios = st.radio(
-        "¿Recibes auxilios? Tipo conectividad o transporte",
+        "¿Recibes auxilios?",
         ["Sí", "No"],
         horizontal=True,
-        help="Valida si recibes algún tipo de auxilio que es ingreso tributario pero no es parte de tu salario"
-
+        help="Auxilios no salariales como conectividad, transporte u otros beneficios."
     )
 
     valor_auxilios_mensual = st.number_input(
@@ -65,18 +85,18 @@ with col1:
         value=2000000.0 if recibe_auxilios == "Sí" else 0.0,
         step=100000.0,
         disabled=(recibe_auxilios == "No"),
-        help="El valor mensual de auxilios no debería ser mayor al 50% del salario mensual."
+        help="Monto mensual de auxilios no salariales. No debería superar el 50% del salario."
     )
+
+with col2:
+    st.markdown("### 📈 Variables")
 
     recibe_variable = st.radio(
         "¿Recibes comisiones o salario variable?",
         ["Sí", "No"],
         horizontal=True,
-        help="Valida si recibes algún valor adicional a tu salario y que este sea prestacional (pagues seguridad social por el)"
-
+        help="Ingresos variables como comisiones, bonos comerciales o incentivos."
     )
-    
-with col2:
 
     valor_variable_anual = st.number_input(
         "¿Cuál es el valor anual de tu variable o comisiones?",
@@ -84,14 +104,14 @@ with col2:
         value=24000000.0 if recibe_variable == "Sí" else 0.0,
         step=100000.0,
         disabled=(recibe_variable == "No"),
-        help="Ingresa el promedio de los ingresos que percibe por comisiones o variable y que tienen carga prestacional"
+        help="Total de ingresos variables recibidos durante el año."
     )
-    
+
     tiene_bonificaciones = st.radio(
         "¿Tienes bonificaciones?",
         ["Sí", "No"],
         horizontal=True,
-        help="Pagos ocasionales extralegales que la empresa te entregue" 
+        help="Bonos adicionales otorgados por la empresa."
     )
 
     valor_bonificaciones = st.number_input(
@@ -99,40 +119,53 @@ with col2:
         min_value=0.0,
         value=40000000.0 if tiene_bonificaciones == "Sí" else 0.0,
         step=100000.0,
-        disabled=(tiene_bonificaciones == "No")
+        disabled=(tiene_bonificaciones == "No"),
+        help="Monto total anual de bonificaciones recibidas."
     )
 
     bono_salarial = st.radio(
         "¿Tu bono es salarial?",
         ["Sí", "No"],
         horizontal=True,
-        help="Si marcas Sí, el bono tiene aporte a seguridad social; si marcas No, no tiene aporte."
+        help="Si el bono es salarial se incluyen aportes a seguridad social."
     )
 
 with sep:
     st.markdown(
         """
         <div style="
-            border-left:1px solid rgba(200,200,200,0.4);
-            height:420px;
-            margin:auto;
-        "></div>
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100%;
+            min-height: 520px;
+        ">
+            <div style="
+                width: 1px;
+                height: 100%;
+                min-height: 520px;
+                background: linear-gradient(
+                    to bottom,
+                    rgba(255,255,255,0.02),
+                    rgba(96,165,250,0.45),
+                    rgba(255,255,255,0.02)
+                );
+            "></div>
+        </div>
         """,
         unsafe_allow_html=True
     )
 
-
-
-
-
 with col3:
-    st.markdown("## Beneficios y deducciones")
+    st.markdown("### 🧾 Beneficios")
+
     aporte_voluntario_obligatorio_anual = st.number_input(
         "¿Cuánto aportas anualmente de manera voluntaria a tu fondo obligatorio?",
         min_value=0.0,
         value=15000000.0,
         step=100000.0,
-        help="Si aportas voluntariamente al obligatorio tienes beneficio tributario hasta del 25% de tu ingreso año sin pasar de 2500 UVT"
+        help="Aportes voluntarios adicionales al fondo de pensiones obligatorio."
     )
 
     numero_dependientes = st.number_input(
@@ -141,7 +174,7 @@ with col3:
         max_value=4,
         value=2,
         step=1,
-        help="Máximo 4 dependientes."
+        help="Personas que dependen económicamente de ti. Máximo permitido: 4."
     )
 
     intereses_vivienda_anual = st.number_input(
@@ -149,16 +182,18 @@ with col3:
         min_value=0.0,
         value=4500000.0,
         step=100000.0,
-        help="Aquí registras el valor de los intereses que pagas en un credito hipotecario, máximo 1200 UVTS al año $62,848,800"
+        help="Intereses pagados por crédito hipotecario durante el año."
     )
 
 with col4:
+    st.markdown("### 🏥 Deducciones")
+
     pagos_salud_anual = st.number_input(
         "¿Cuánto pagas anualmente en planes de salud?",
         min_value=0.0,
         value=6700000.0,
         step=100000.0,
-        help="Aquí registras el valor de los pagos en salud, máximo 192 UVTS al año $10,055,808"
+        help="Pagos anuales por medicina prepagada o seguros de salud."
     )
 
     aportes_pension_afc_anual = st.number_input(
@@ -166,7 +201,7 @@ with col4:
         min_value=0.0,
         value=1500000.0,
         step=100000.0,
-        help="Puedes hacer aportes a pensión voluntaria o cuenta AFC, para obtener beneficio, dentro del cupo de 1340 UVTS"
+        help="Aportes voluntarios que pueden generar beneficios tributarios."
     )
 
     compras_factura_electronica = st.number_input(
@@ -174,9 +209,8 @@ with col4:
         min_value=0.0,
         value=45000000.0,
         step=100000.0,
-        help="Por ahora este campo se captura, pero no se está usando en el cálculo base del MVP."
+        help="Compras realizadas con factura electrónica durante el año. Actualmente no impacta el cálculo."
     )
-
 st.divider()
 
 # =========================
