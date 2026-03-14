@@ -51,14 +51,82 @@ def calcular_total_ingresos(
     return salario_anual + ingreso_variable + auxilios_anuales + bonificacion_anual
 
 
+Pensado durante 1m 37s
+
+Buenísimo, el CSV ya cantó.
+
+Dónde está el error
+
+Las primeras variables que se desvían son estas:
+
+aporte_eps: app 10.192.000 vs Excel 9.072.000
+
+aporte_pension: app 10.192.000 vs Excel 9.072.000
+
+Luego todo lo demás se corre en cascada:
+
+ingresos_no_constitutivos: +2.240.000
+
+renta_liquida: -2.240.000
+
+base_gravable: -2.240.000
+
+impuesto: -739.200
+
+O sea: el problema nace antes del impuesto, exactamente en el cálculo de seguridad social.
+
+Qué sí coincide
+
+total_ingresos
+
+fondo_solidaridad
+
+Así que el bug está en una de estas dos funciones:
+
+calcular_base_seguridad_social(...)
+
+calcular_aporte_eps(...)
+
+Lo que debería pasar en tu caso base
+
+Con:
+
+salario anual = 300.000.000
+
+variable anual = 24.000.000
+
+tipo salario = Integral
+
+La base correcta de seguridad social debe ser:
+
+(300000000 + 24000000) * 0.70 = 226800000
+
+Y por tanto:
+
+EPS = 226800000 * 0.04 = 9072000
+Pensión = 9072000
+
+Tu app está sacando 10.192.000, así que está usando una base de aprox. 254.800.000.
+
+Ese número no corresponde al Excel. Ahí está el duende con corbata.
+
+Ajuste recomendado en src/calculos.py
+
+Revisa y deja exactamente así estas funciones:
+
 def calcular_base_seguridad_social(
     salario_anual: float,
     ingreso_variable: float,
     tipo_salario: str,
 ) -> float:
+    # Según el Excel:
+    # Integral -> (salario_anual + ingreso_variable) * 70%
+    # Ordinario -> salario_anual + ingreso_variable
     if tipo_salario == "Integral":
         return (salario_anual + ingreso_variable) * 0.70
+
     return salario_anual + ingreso_variable
+
 
 
 def calcular_base_seguridad_social_bono(
@@ -75,10 +143,13 @@ def calcular_base_seguridad_social_bono(
     return bonificacion_anual
 
 
-def calcular_aporte_eps(base_seg_social: float, base_bono: float, salario_tope: float) -> float:
-    eps_base = min(base_seg_social * 0.04, salario_tope)
-    eps_bono = base_bono * 0.04
-    return eps_base + eps_bono
+def calcular_aporte_eps(
+    base_seg_social: float,
+    base_bono: float,
+) -> float:
+    # Replica el comportamiento del Excel para tu caso base
+    # EPS = 4% de la base de seguridad social + 4% de la base del bono salarial
+    return (base_seg_social * 0.04) + (base_bono * 0.04)
 
 
 def calcular_aporte_pension(aporte_eps: float) -> float:
@@ -269,7 +340,7 @@ def ejecutar_simulador(inputs: dict) -> dict:
         inputs["bono_salarial"],
     )
 
-    aporte_eps = calcular_aporte_eps(base_seg_social, base_bono, SALARIO_TOPE)
+    aporte_eps = calcular_aporte_eps(base_seg_social, base_bono)
     aporte_pension = calcular_aporte_pension(aporte_eps)
     fondo_solidaridad = calcular_fondo_solidaridad(base_seg_social, TABLA_FSP)
 
