@@ -27,9 +27,7 @@ def money_input(
     help_text=None,
     disabled=False
 ):
-
-    # valor inicial formateado
-    valor_inicial =f"${int(value):,}".replace(",", ".")
+    valor_inicial = f"${int(value):,}".replace(",", ".")
 
     valor_str = st.text_input(
         label,
@@ -39,21 +37,14 @@ def money_input(
         disabled=disabled
     )
 
-    # limpiar caracteres que no sean números
     solo_numeros = re.sub(r"[^\d]", "", valor_str)
 
     if solo_numeros == "":
-        valor_num = 0
+        valor_num = 0.0
     else:
-        valor_num = int(solo_numeros)
+        valor_num = float(solo_numeros)
 
-    # formatear nuevamente
-    valor_formateado = f"{valor_num:,}".replace(",", ".")
-
-    # actualizar estado para mantener formato
-    st.session_state[key] = valor_formateado
-
-    return float(valor_num)
+    return valor_num
 
 
 # =========================
