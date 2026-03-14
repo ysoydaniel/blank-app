@@ -24,6 +24,7 @@ def money_input(label, value=0, key=None):
     valor_str = st.text_input(
         label,
         value=f"${value:,.0f}".replace(",", "."),
+        help_text: str | None = None,
         key=key
     )
 
