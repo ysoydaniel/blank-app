@@ -46,7 +46,8 @@ with col1:
 
     tipo_salario = st.selectbox(
         "¿Qué tipo de salario tienes?",
-        ["Integral", "Ordinario"]
+        ["Integral", "Ordinario"],
+        help="Salario ordinario es el que tiene primas y cesantias, salario integral no tiene primas ni cesantias y no puede ser menor a 13 SMLV"
     )
 
     recibe_auxilios = st.radio(
