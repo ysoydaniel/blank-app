@@ -105,7 +105,7 @@ with col1:
         value=2000000.0 if recibe_auxilios == "Sí" else 0.0,
         step=100000.0,
         disabled=(recibe_auxilios == "No"),
-        help="Monto mensual de auxilios no salariales. No debería superar el 50% del salario.",
+        help_text="Monto mensual de auxilios no salariales. No debería superar el 50% del salario.",
         key="auxilio"
     )
     
