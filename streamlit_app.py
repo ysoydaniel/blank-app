@@ -463,7 +463,7 @@ elif porcentaje_ahorro >= 0.10:
     st.info("📊 Hay una oportunidad tributaria relevante para el cliente.")
 else:
     st.warning("💡 El beneficio existe, pero el impacto es más moderado.")
-        st.divider()
+    st.divider()
 
         c4, c5 = st.columns([1.3, 1])
 
