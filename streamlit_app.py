@@ -19,6 +19,37 @@ st.caption("Prototipo funcional")
 def valor_si_no_a_bool(valor: str) -> bool:
     return valor == "Sí"
 
+def money_input(
+    label: str,
+    *,
+    value: float = 0.0,
+    min_value: float = 0.0,
+    step: float = 100000.0,
+    help_text: str | None = None,
+    disabled: bool = False,
+    key: str | None = None,
+) -> float:
+    valor = st.number_input(
+        label,
+        min_value=min_value,
+        value=value,
+        step=step,
+        help=help_text,
+        disabled=disabled,
+        key=key,
+    )
+
+    st.markdown(
+        f"""
+        <div style="font-size:13px; color:#93C5FD; font-weight:600; margin-top:-6px; margin-bottom:8px;">
+            💰 {formato_moneda(valor)}
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
+
+    return valor
+
 
 # =========================
 # Header / modo debug
@@ -58,12 +89,11 @@ col1, col2, sep, col3, col4 = st.columns([1, 1, 0.06, 1, 1])
 with col1:
     st.markdown("### 💼 Ingresos")
     
-    salario_mensual = st.number_input(
+     salario_mensual = money_input(
         "¿Cuál es tu salario mensual?",
-        min_value=0.0,
         value=25000000.0,
-        step=100000.0,
-        help="Ingresa tu salario mensual antes de deducciones."
+        help_text="Ingresa tu salario mensual antes de deducciones.",
+        key="salario_mensual"
     )
 
     tipo_salario = st.selectbox(
