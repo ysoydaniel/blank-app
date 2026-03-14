@@ -2,7 +2,7 @@ import streamlit as st
 import pandas as pd
 
 from src.calculos import ejecutar_simulador
-from src.formateo import formato_moneda, formato_numero, formato_porcentaje
+from src.formateo import formato_moneda, formato_numero
 
 st.set_page_config(
     page_title="Simulador Tributario 2026",
@@ -13,6 +13,24 @@ st.set_page_config(
 st.title("Simulador Tributario 2026")
 st.caption("Prototipo funcional basado en la maqueta de Excel")
 
+# =========================
+# Helpers
+# =========================
+def valor_si_no_a_bool(valor: str) -> bool:
+    return valor == "Sí"
+
+
+# =========================
+# Header / modo debug
+# =========================
+with st.sidebar:
+    st.markdown("## Configuración")
+    mostrar_debug = st.checkbox("Mostrar detalle técnico", value=True)
+    st.caption("Úsalo para comparar contra el Excel y encontrar diferencias.")
+
+# =========================
+# Formulario
+# =========================
 st.markdown("## Datos de ingreso del cliente")
 
 col1, col2 = st.columns(2)
@@ -23,12 +41,12 @@ with col1:
         min_value=0.0,
         value=25000000.0,
         step=100000.0,
-        help="Si es salario ordinario se multiplica por 12; si es salario integral se usa la lógica del simulador."
+        help="Si es salario ordinario se multiplica por 12; si es salario integral se usa la lógica actual del simulador."
     )
 
     tipo_salario = st.selectbox(
         "¿Qué tipo de salario tienes?",
-        ["Ordinario", "Integral"]
+        ["Integral", "Ordinario"]
     )
 
     recibe_auxilios = st.radio(
@@ -79,7 +97,7 @@ with col2:
         "¿Tu bono es salarial?",
         ["Sí", "No"],
         horizontal=True,
-        help="Si marcas sí, el bono tiene aporte a seguridad social; si marcas no, no tiene aporte."
+        help="Si marcas Sí, el bono tiene aporte a seguridad social; si marcas No, no tiene aporte."
     )
 
 st.divider()
@@ -137,6 +155,9 @@ with col4:
 
 st.divider()
 
+# =========================
+# Normalización de inputs
+# =========================
 errores = []
 
 if recibe_auxilios == "No":
@@ -169,6 +190,9 @@ inputs = {
     "compras_factura_electronica": compras_factura_electronica,
 }
 
+# =========================
+# Ejecutar simulación
+# =========================
 if st.button("Calcular simulación", use_container_width=True):
     if errores:
         for error in errores:
@@ -177,32 +201,6 @@ if st.button("Calcular simulación", use_container_width=True):
         resultado = ejecutar_simulador(inputs)
 
         st.markdown("## Resultados")
-
-        st.write("salario_anual:", resultado["salario_anual"])
-st.write("ingreso_variable:", resultado["ingreso_variable"])
-st.write("auxilios_anuales:", resultado["auxilios_anuales"])
-st.write("bonificacion_anual:", resultado["bonificacion_anual"])
-st.write("total_ingresos:", resultado["total_ingresos"])
-
-st.write("aporte_eps:", resultado["aporte_eps"])
-st.write("aporte_pension:", resultado["aporte_pension"])
-st.write("fondo_solidaridad:", resultado["fondo_solidaridad"])
-st.write("ingresos_no_constitutivos:", resultado["ingresos_no_constitutivos"])
-
-st.write("renta_liquida:", resultado["renta_liquida"])
-st.write("dependientes:", resultado["dependientes"])
-st.write("intereses_vivienda:", resultado["intereses_vivienda"])
-st.write("pagos_salud:", resultado["pagos_salud"])
-st.write("cesantias:", resultado["cesantias"])
-st.write("aportes_pension_afc:", resultado["aportes_pension_afc"])
-st.write("renta_exenta_laboral:", resultado["renta_exenta_laboral"])
-st.write("total_deducciones:", resultado["total_deducciones"])
-st.write("deducciones_admisibles:", resultado["deducciones_admisibles"])
-
-st.write("base_gravable:", resultado["base_gravable"])
-st.write("base_gravable_pac:", resultado["base_gravable_pac"])
-st.write("base_uvt:", resultado["base_uvt"])
-st.write("base_uvt_pac:", resultado["base_uvt_pac"])
 
         c1, c2, c3 = st.columns(3)
 
@@ -221,7 +219,7 @@ st.write("base_uvt_pac:", resultado["base_uvt_pac"])
 
         st.divider()
 
-        c4, c5 = st.columns([1.2, 1])
+        c4, c5 = st.columns([1.3, 1])
 
         with c4:
             st.markdown("### Desglose del cálculo")
@@ -233,12 +231,24 @@ st.write("base_uvt_pac:", resultado["base_uvt_pac"])
                     {"Concepto": "Auxilios anuales", "Valor": formato_moneda(resultado["auxilios_anuales"])},
                     {"Concepto": "Bonificación anual", "Valor": formato_moneda(resultado["bonificacion_anual"])},
                     {"Concepto": "Total ingresos", "Valor": formato_moneda(resultado["total_ingresos"])},
+                    {"Concepto": "Aporte EPS", "Valor": formato_moneda(resultado["aporte_eps"])},
+                    {"Concepto": "Aporte pensión", "Valor": formato_moneda(resultado["aporte_pension"])},
+                    {"Concepto": "Fondo solidaridad", "Valor": formato_moneda(resultado["fondo_solidaridad"])},
                     {"Concepto": "Ingresos no constitutivos", "Valor": formato_moneda(resultado["ingresos_no_constitutivos"])},
+                    {"Concepto": "Renta líquida", "Valor": formato_moneda(resultado["renta_liquida"])},
+                    {"Concepto": "Renta líquida PAC", "Valor": formato_moneda(resultado["renta_liquida_pac"])},
+                    {"Concepto": "Dependientes", "Valor": formato_moneda(resultado["dependientes"])},
+                    {"Concepto": "Intereses vivienda", "Valor": formato_moneda(resultado["intereses_vivienda"])},
+                    {"Concepto": "Pagos salud", "Valor": formato_moneda(resultado["pagos_salud"])},
+                    {"Concepto": "Cesantías", "Valor": formato_moneda(resultado["cesantias"])},
+                    {"Concepto": "Aportes pensión/AFC", "Valor": formato_moneda(resultado["aportes_pension_afc"])},
+                    {"Concepto": "Renta exenta laboral", "Valor": formato_moneda(resultado["renta_exenta_laboral"])},
+                    {"Concepto": "Total deducciones", "Valor": formato_moneda(resultado["total_deducciones"])},
                     {"Concepto": "Deducciones admisibles", "Valor": formato_moneda(resultado["deducciones_admisibles"])},
                     {"Concepto": "Base gravable", "Valor": formato_moneda(resultado["base_gravable"])},
                     {"Concepto": "Base gravable con PAC", "Valor": formato_moneda(resultado["base_gravable_pac"])},
-                    {"Concepto": "Base gravable UVT", "Valor": formato_numero(resultado["base_uvt"])},
-                    {"Concepto": "Base gravable UVT con PAC", "Valor": formato_numero(resultado["base_uvt_pac"])},
+                    {"Concepto": "Base gravable UVT", "Valor": formato_numero(resultado["base_uvt"], 6)},
+                    {"Concepto": "Base gravable UVT con PAC", "Valor": formato_numero(resultado["base_uvt_pac"], 6)},
                 ]
             )
 
@@ -253,23 +263,101 @@ st.write("base_uvt_pac:", resultado["base_uvt_pac"])
 
             st.info(
                 "Este MVP replica la lógica base del Excel. "
-                "Antes de producción conviene validar reglas puntuales como dependientes y compras con factura electrónica."
+                "Si hay diferencias, revisa el bloque técnico para comparar paso a paso contra la hoja de cálculos."
             )
 
-        with st.expander("Ver detalle técnico"):
-            st.write({
-                "aporte_eps": resultado["aporte_eps"],
-                "aporte_pension": resultado["aporte_pension"],
-                "fondo_solidaridad": resultado["fondo_solidaridad"],
-                "renta_liquida": resultado["renta_liquida"],
-                "renta_liquida_pac": resultado["renta_liquida_pac"],
-                "dependientes": resultado["dependientes"],
-                "intereses_vivienda": resultado["intereses_vivienda"],
-                "pagos_salud": resultado["pagos_salud"],
-                "cesantias": resultado["cesantias"],
-                "aportes_pension_afc": resultado["aportes_pension_afc"],
-                "renta_exenta_laboral": resultado["renta_exenta_laboral"],
-                "total_deducciones": resultado["total_deducciones"],
-            })
+        # =========================
+        # Debug técnico
+        # =========================
+        if mostrar_debug:
+            st.divider()
+            st.markdown("## Debug técnico")
+
+            st.markdown("### Valores calculados por la app")
+            debug_df = pd.DataFrame(
+                [
+                    {"Variable": "salario_anual", "Valor app": resultado["salario_anual"]},
+                    {"Variable": "ingreso_variable", "Valor app": resultado["ingreso_variable"]},
+                    {"Variable": "auxilios_anuales", "Valor app": resultado["auxilios_anuales"]},
+                    {"Variable": "bonificacion_anual", "Valor app": resultado["bonificacion_anual"]},
+                    {"Variable": "total_ingresos", "Valor app": resultado["total_ingresos"]},
+                    {"Variable": "aporte_eps", "Valor app": resultado["aporte_eps"]},
+                    {"Variable": "aporte_pension", "Valor app": resultado["aporte_pension"]},
+                    {"Variable": "fondo_solidaridad", "Valor app": resultado["fondo_solidaridad"]},
+                    {"Variable": "ingresos_no_constitutivos", "Valor app": resultado["ingresos_no_constitutivos"]},
+                    {"Variable": "renta_liquida", "Valor app": resultado["renta_liquida"]},
+                    {"Variable": "renta_liquida_pac", "Valor app": resultado["renta_liquida_pac"]},
+                    {"Variable": "dependientes", "Valor app": resultado["dependientes"]},
+                    {"Variable": "intereses_vivienda", "Valor app": resultado["intereses_vivienda"]},
+                    {"Variable": "pagos_salud", "Valor app": resultado["pagos_salud"]},
+                    {"Variable": "cesantias", "Valor app": resultado["cesantias"]},
+                    {"Variable": "aportes_pension_afc", "Valor app": resultado["aportes_pension_afc"]},
+                    {"Variable": "renta_exenta_laboral", "Valor app": resultado["renta_exenta_laboral"]},
+                    {"Variable": "total_deducciones", "Valor app": resultado["total_deducciones"]},
+                    {"Variable": "deducciones_admisibles", "Valor app": resultado["deducciones_admisibles"]},
+                    {"Variable": "base_gravable", "Valor app": resultado["base_gravable"]},
+                    {"Variable": "base_gravable_pac", "Valor app": resultado["base_gravable_pac"]},
+                    {"Variable": "base_uvt", "Valor app": resultado["base_uvt"]},
+                    {"Variable": "base_uvt_pac", "Valor app": resultado["base_uvt_pac"]},
+                    {"Variable": "impuesto_sin_optimizacion", "Valor app": resultado["impuesto_sin_optimizacion"]},
+                    {"Variable": "impuesto_optimizado", "Valor app": resultado["impuesto_optimizado"]},
+                    {"Variable": "beneficio", "Valor app": resultado["beneficio"]},
+                ]
+            )
+            st.dataframe(debug_df, use_container_width=True, hide_index=True)
+
+            st.markdown("### Valores esperados del Excel para el caso base")
+            excel_base_df = pd.DataFrame(
+                [
+                    {"Variable": "salario_anual", "Valor Excel esperado": 300000000},
+                    {"Variable": "ingreso_variable", "Valor Excel esperado": 24000000},
+                    {"Variable": "auxilios_anuales", "Valor Excel esperado": 24000000},
+                    {"Variable": "bonificacion_anual", "Valor Excel esperado": 40000000},
+                    {"Variable": "total_ingresos", "Valor Excel esperado": 388000000},
+                    {"Variable": "aporte_eps", "Valor Excel esperado": 9072000},
+                    {"Variable": "aporte_pension", "Valor Excel esperado": 9072000},
+                    {"Variable": "fondo_solidaridad", "Valor Excel esperado": 2268000},
+                    {"Variable": "ingresos_no_constitutivos", "Valor Excel esperado": 35412000},
+                    {"Variable": "renta_liquida", "Valor Excel esperado": 352588000},
+                    {"Variable": "renta_liquida_pac", "Valor Excel esperado": 312588000},
+                    {"Variable": "dependientes", "Valor Excel esperado": 20111616},
+                    {"Variable": "intereses_vivienda", "Valor Excel esperado": 4500000},
+                    {"Variable": "pagos_salud", "Valor Excel esperado": 6700000},
+                    {"Variable": "cesantias", "Valor Excel esperado": 0},
+                    {"Variable": "aportes_pension_afc", "Valor Excel esperado": 1500000},
+                    {"Variable": "renta_exenta_laboral", "Valor Excel esperado": 41375460},
+                    {"Variable": "total_deducciones", "Valor Excel esperado": 74187076},
+                    {"Variable": "deducciones_admisibles", "Valor Excel esperado": 70181160},
+                    {"Variable": "base_gravable", "Valor Excel esperado": 282406840},
+                    {"Variable": "base_gravable_pac", "Valor Excel esperado": 242406840},
+                    {"Variable": "base_uvt", "Valor Excel esperado": 5392.118990338718},
+                    {"Variable": "base_uvt_pac", "Valor Excel esperado": 4628.381257876045},
+                    {"Variable": "impuesto_sin_optimizacion", "Valor Excel esperado": 63602947.2},
+                    {"Variable": "impuesto_optimizado", "Valor Excel esperado": 50402947.2},
+                    {"Variable": "beneficio", "Valor Excel esperado": 13200000},
+                ]
+            )
+            st.dataframe(excel_base_df, use_container_width=True, hide_index=True)
+
+            st.markdown("### Comparación rápida")
+            comparacion = {
+                "impuesto_sin_optimizacion_app": resultado["impuesto_sin_optimizacion"],
+                "impuesto_sin_optimizacion_excel": 63602947.2,
+                "delta_impuesto_sin_optimizacion": resultado["impuesto_sin_optimizacion"] - 63602947.2,
+                "impuesto_optimizado_app": resultado["impuesto_optimizado"],
+                "impuesto_optimizado_excel": 50402947.2,
+                "delta_impuesto_optimizado": resultado["impuesto_optimizado"] - 50402947.2,
+                "beneficio_app": resultado["beneficio"],
+                "beneficio_excel": 13200000,
+                "delta_beneficio": resultado["beneficio"] - 13200000,
+                "base_gravable_app": resultado["base_gravable"],
+                "base_gravable_excel": 282406840,
+                "delta_base_gravable": resultado["base_gravable"] - 282406840,
+                "base_uvt_app": resultado["base_uvt"],
+                "base_uvt_excel": 5392.118990338718,
+                "delta_base_uvt": resultado["base_uvt"] - 5392.118990338718,
+            }
+            st.json(comparacion)
+
 else:
     st.info("Completa los datos y pulsa **Calcular simulación**.")
