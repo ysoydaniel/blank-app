@@ -467,7 +467,7 @@ else:
 
     c4, c5 = st.columns([1.3, 1])
 
-        with c4:
+    with c4:
             st.markdown("### Desglose del cálculo")
 
             df_detalle = pd.DataFrame(
