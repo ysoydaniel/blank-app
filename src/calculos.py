@@ -227,7 +227,7 @@ def calcular_base_uvt(base_gravable: float, uvt: float) -> float:
     return base_gravable / uvt
 
 
-def calcular_impuesto_renta(base_uvt: float, uvt: float) -> float:
+def calcular_impuesto_renta(base_uvt: float, uvt: float = UVT) -> float:
     for tramo in TRAMOS_RENTA:
         desde = tramo["desde"]
         hasta = tramo["hasta"]
@@ -236,10 +236,10 @@ def calcular_impuesto_renta(base_uvt: float, uvt: float) -> float:
 
         if hasta is None:
             if base_uvt >= desde:
-                return (((base_uvt - desde) * tarifa) + base) * uvt
+                return round((((base_uvt - desde) * tarifa) + base) * uvt, 2)
         else:
             if desde <= base_uvt < hasta:
-                return (((base_uvt - desde) * tarifa) + base) * uvt
+                return round((((base_uvt - desde) * tarifa) + base) * uvt, 2)
 
     return 0.0
 
