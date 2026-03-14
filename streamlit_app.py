@@ -1,5 +1,6 @@
 import streamlit as st
 import pandas as pd
+import re
 
 from src.calculos import ejecutar_simulador
 from src.formateo import formato_moneda, formato_numero
@@ -27,28 +28,32 @@ def money_input(
     disabled=False
 ):
 
+    # valor inicial formateado
+    valor_inicial = f"{int(value):,}".replace(",", ".")
+
     valor_str = st.text_input(
         label,
-        value=f"${value:,.0f}".replace(",", "."),
+        value=valor_inicial,
         key=key,
         help=help_text,
         disabled=disabled
     )
 
-    valor_num = (
-        valor_str
-        .replace("$", "")
-        .replace(".", "")
-        .replace(",", "")
-        .strip()
-    )
+    # limpiar caracteres que no sean números
+    solo_numeros = re.sub(r"[^\d]", "", valor_str)
 
-    try:
-        valor_num = float(valor_num)
-    except:
+    if solo_numeros == "":
         valor_num = 0
+    else:
+        valor_num = int(solo_numeros)
 
-    return valor_num
+    # formatear nuevamente
+    valor_formateado = f"{valor_num:,}".replace(",", ".")
+
+    # actualizar estado para mantener formato
+    st.session_state[key] = valor_formateado
+
+    return float(valor_num)
 
 
 # =========================
