@@ -1,6 +1,8 @@
 import re
 import pandas as pd
 import streamlit as st
+import matplotlib.pyplot as plt
+from src.calculos import calcular_impuesto_renta
 
 from src.calculos import ejecutar_simulador
 from src.formateo import formato_moneda, formato_numero
@@ -496,6 +498,30 @@ if st.button("🧮 Calcular simulación", use_container_width=True):
 
         st.markdown("## Resultados")
 
+        st.markdown(
+    f"""
+    <div style="
+        padding:26px;
+        border-radius:22px;
+        background:linear-gradient(135deg,rgba(16,185,129,0.22),rgba(16,185,129,0.08));
+        border:1px solid rgba(16,185,129,0.35);
+        text-align:center;
+        margin-bottom:18px;
+    ">
+        <div style="font-size:13px;color:#6EE7B7;font-weight:700;letter-spacing:.08em;">
+        OPORTUNIDAD TRIBUTARIA DETECTADA
+        </div>
+        <div style="font-size:46px;font-weight:900;color:white;margin-top:6px;">
+        {formato_moneda(beneficio)}
+        </div>
+        <div style="font-size:14px;color:#CBD5E1;margin-top:4px;">
+        ahorro potencial estimado
+        </div>
+    </div>
+    """,
+    unsafe_allow_html=True
+)
+
         c1, c2, c3 = st.columns(3)
 
         with c1:
@@ -524,6 +550,101 @@ if st.button("🧮 Calcular simulación", use_container_width=True):
                 tone="success",
                 eyebrow="Impacto"
             )
+
+        st.markdown("### Comparación visual")
+
+max_valor = max(impuesto_original, impuesto_optimizado)
+
+porcentaje_actual = impuesto_original / max_valor
+porcentaje_opt = impuesto_optimizado / max_valor
+
+st.markdown("**Escenario actual**")
+st.progress(porcentaje_actual)
+st.caption(formato_moneda(impuesto_original))
+
+st.markdown("**Escenario optimizado**")
+st.progress(porcentaje_opt)
+st.caption(formato_moneda(impuesto_optimizado))
+
+st.divider()
+st.markdown("## Simulación interactiva de optimización")
+
+topup_max = int(resultado.get("topup_full", 0))
+
+if topup_max > 0:
+
+    topup_usuario = st.slider(
+        "Simula cuánto más podría aportar el cliente en pensión voluntaria / AFC",
+        min_value=0,
+        max_value=topup_max,
+        value=0,
+        step=500000,
+        help="Mueve el control para ver cómo cambia el impuesto."
+    )
+
+    nueva_base = resultado["base_gravable"] - topup_usuario
+
+    if nueva_base < 0:
+        nueva_base = 0
+
+    base_uvt_temp = nueva_base / resultado["uvt"]
+
+    impuesto_topup = calcular_impuesto_renta(
+        base_uvt_temp,
+        resultado["uvt"]
+    )
+
+    ahorro_topup = resultado["impuesto_sin_optimizacion"] - impuesto_topup
+
+    c1, c2, c3 = st.columns(3)
+
+    with c1:
+        st.metric("Aporte adicional", formato_moneda(topup_usuario))
+
+    with c2:
+        st.metric("Nuevo impuesto estimado", formato_moneda(impuesto_topup))
+
+    with c3:
+        st.metric("Ahorro tributario", formato_moneda(ahorro_topup))
+
+        st.markdown("### Curva de optimización tributaria")
+
+    aportes = []
+    ahorros = []
+
+    step = topup_max / 10 if topup_max > 0 else 1
+
+    for i in range(11):
+
+        aporte = step * i
+        base = resultado["base_gravable"] - aporte
+
+        if base < 0:
+            base = 0
+
+        base_uvt_temp = base / resultado["uvt"]
+
+        impuesto_temp = calcular_impuesto_renta(
+            base_uvt_temp,
+            resultado["uvt"]
+        )
+
+        ahorro_temp = resultado["impuesto_sin_optimizacion"] - impuesto_temp
+
+        aportes.append(aporte)
+        ahorros.append(ahorro_temp)
+
+    fig, ax = plt.subplots()
+
+    ax.plot(aportes, ahorros)
+
+    ax.set_xlabel("Aporte adicional")
+    ax.set_ylabel("Ahorro tributario")
+
+    st.pyplot(fig)
+
+else:
+    st.info("El cliente ya se encuentra en el máximo beneficio tributario permitido.")
 
         st.markdown("### Impacto de la optimización tributaria")
         st.progress(min(max(porcentaje_ahorro, 0), 1))
