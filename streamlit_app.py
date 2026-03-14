@@ -35,7 +35,7 @@ def money_input(
         label,
         value=valor_inicial,
         key=key,
-        help_text=help_text,
+        help=help_text,
         disabled=disabled
     )
 
