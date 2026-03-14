@@ -133,26 +133,28 @@ with col2:
 with sep:
     st.markdown(
         """
-        <div style="
-            width: 100%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100%;
-            min-height: 520px;
-        ">
-            <div style="
-                width: 1px;
-                height: 100%;
-                min-height: 520px;
-                background: linear-gradient(
-                    to bottom,
-                    rgba(255,255,255,0.02),
-                    rgba(96,165,250,0.45),
-                    rgba(255,255,255,0.02)
-                );
-            "></div>
-        </div>
+        <div class="vertical-divider"></div>
+
+        <style>
+        .vertical-divider {
+            width: 1px;
+            height: 520px;
+            margin: auto;
+            background: linear-gradient(
+                to bottom,
+                rgba(255,255,255,0.05),
+                rgba(96,165,250,0.45),
+                rgba(255,255,255,0.05)
+            );
+        }
+
+        /* Ocultar divisor en pantallas pequeñas */
+        @media (max-width: 900px) {
+            .vertical-divider {
+                display: none;
+            }
+        }
+        </style>
         """,
         unsafe_allow_html=True
     )
