@@ -29,7 +29,7 @@ def money_input(
 ):
 
     # valor inicial formateado
-    valor_inicial = f"{int(value):,}".replace(",", ".")
+    valor_inicial =f"${value:,.0f}".replace(",", "."),
 
     valor_str = st.text_input(
         label,
