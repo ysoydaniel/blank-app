@@ -178,6 +178,32 @@ if st.button("Calcular simulación", use_container_width=True):
 
         st.markdown("## Resultados")
 
+        st.write("salario_anual:", resultado["salario_anual"])
+st.write("ingreso_variable:", resultado["ingreso_variable"])
+st.write("auxilios_anuales:", resultado["auxilios_anuales"])
+st.write("bonificacion_anual:", resultado["bonificacion_anual"])
+st.write("total_ingresos:", resultado["total_ingresos"])
+
+st.write("aporte_eps:", resultado["aporte_eps"])
+st.write("aporte_pension:", resultado["aporte_pension"])
+st.write("fondo_solidaridad:", resultado["fondo_solidaridad"])
+st.write("ingresos_no_constitutivos:", resultado["ingresos_no_constitutivos"])
+
+st.write("renta_liquida:", resultado["renta_liquida"])
+st.write("dependientes:", resultado["dependientes"])
+st.write("intereses_vivienda:", resultado["intereses_vivienda"])
+st.write("pagos_salud:", resultado["pagos_salud"])
+st.write("cesantias:", resultado["cesantias"])
+st.write("aportes_pension_afc:", resultado["aportes_pension_afc"])
+st.write("renta_exenta_laboral:", resultado["renta_exenta_laboral"])
+st.write("total_deducciones:", resultado["total_deducciones"])
+st.write("deducciones_admisibles:", resultado["deducciones_admisibles"])
+
+st.write("base_gravable:", resultado["base_gravable"])
+st.write("base_gravable_pac:", resultado["base_gravable_pac"])
+st.write("base_uvt:", resultado["base_uvt"])
+st.write("base_uvt_pac:", resultado["base_uvt_pac"])
+
         c1, c2, c3 = st.columns(3)
 
         c1.metric(
