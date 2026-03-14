@@ -1,116 +1,221 @@
-import streamlit as st
-import pandas as pd
 import re
+import pandas as pd
+import streamlit as st
 
 from src.calculos import ejecutar_simulador
 from src.formateo import formato_moneda, formato_numero
 
 st.set_page_config(
-    page_title="Simulador Tributario 2026 ",
-    page_icon="💰",
+    page_title="Simulador Tributario 2026",
+    page_icon="🧮",
     layout="wide"
 )
 
+# =========================
+# ESTILOS
+# =========================
 st.markdown("""
 <style>
-.result-card {
-    border-radius: 22px;
-    padding: 22px 24px;
-    background: linear-gradient(180deg, rgba(255,255,255,0.07), rgba(255,255,255,0.04));
-    border: 1px solid rgba(255,255,255,0.08);
-    box-shadow: 0 14px 40px rgba(0,0,0,0.18);
-    min-height: 150px;
-}
+    .stApp {
+        background: linear-gradient(135deg, #0b1020 0%, #111827 45%, #0f172a 100%);
+        color: #F9FAFB;
+    }
 
-.result-label {
-    font-size: 14px;
-    color: #CBD5E1;
-    font-weight: 600;
-    margin-bottom: 10px;
-}
+    h1, h2, h3 {
+        color: #F9FAFB;
+        font-weight: 700;
+        letter-spacing: -0.02em;
+    }
 
-.result-value {
-    font-size: 40px;
-    line-height: 1.05;
-    color: white;
-    font-weight: 800;
-    letter-spacing: -0.03em;
-    margin-bottom: 10px;
-}
+    p, label, div, span {
+        color: #E5E7EB;
+    }
 
-.result-subtext {
-    font-size: 13px;
-    color: #94A3B8;
-    line-height: 1.4;
-}
+    /* Inputs numéricos / texto / select */
+    div[data-baseweb="input"] > div,
+    div[data-baseweb="select"] > div {
+        background: rgba(255, 255, 255, 0.06);
+        border: 1px solid rgba(96, 165, 250, 0.35);
+        border-radius: 14px;
+        min-height: 48px;
+        box-shadow: 0 8px 24px rgba(0,0,0,0.18);
+    }
 
-.result-card.primary {
-    background: linear-gradient(135deg, rgba(37,99,235,0.22), rgba(29,78,216,0.08));
-    border: 1px solid rgba(96,165,250,0.22);
-}
+    div[data-baseweb="input"] input,
+    div[data-baseweb="select"] span {
+        color: #F9FAFB !important;
+        font-weight: 500;
+    }
 
-.result-card.success {
-    background: linear-gradient(135deg, rgba(16,185,129,0.20), rgba(16,185,129,0.06));
-    border: 1px solid rgba(52,211,153,0.20);
-}
+    div[data-baseweb="input"] > div:focus-within,
+    div[data-baseweb="select"] > div:hover {
+        border: 1px solid rgba(96, 165, 250, 0.85);
+        box-shadow: 0 0 0 1px rgba(96, 165, 250, 0.25);
+    }
 
-.result-card.warning {
-    background: linear-gradient(135deg, rgba(245,158,11,0.18), rgba(245,158,11,0.05));
-    border: 1px solid rgba(251,191,36,0.16);
-}
+    /* Radio buttons */
+    div[role="radiogroup"] label {
+        background: rgba(255,255,255,0.05);
+        padding: 8px 14px;
+        border-radius: 12px;
+        border: 1px solid rgba(255,255,255,0.08);
+        margin-right: 8px;
+    }
 
-.result-mini {
-    font-size: 12px;
-    color: #93C5FD;
-    font-weight: 700;
-    letter-spacing: .06em;
-    text-transform: uppercase;
-    margin-bottom: 6px;
-}
+    /* Botón principal */
+    .stButton > button {
+        width: 100%;
+        background: linear-gradient(135deg, #2563EB 0%, #1D4ED8 100%);
+        color: white;
+        border: none;
+        border-radius: 14px;
+        padding: 0.8rem 1rem;
+        font-weight: 700;
+        font-size: 1rem;
+        box-shadow: 0 10px 30px rgba(37, 99, 235, 0.35);
+    }
+
+    .stButton > button:hover {
+        background: linear-gradient(135deg, #3B82F6 0%, #2563EB 100%);
+        transform: translateY(-1px);
+    }
+
+    /* Sidebar */
+    section[data-testid="stSidebar"] {
+        background: rgba(10, 15, 30, 0.95);
+        border-right: 1px solid rgba(255,255,255,0.06);
+    }
+
+    /* Dataframe contenedor */
+    div[data-testid="stDataFrame"] {
+        background: rgba(255,255,255,0.04);
+        border-radius: 18px;
+        padding: 8px;
+        border: 1px solid rgba(255,255,255,0.06);
+    }
+
+    /* Inputs de texto monetarios: prefijo $ visual */
+    div[data-testid="stTextInput"] {
+        position: relative;
+    }
+
+    div[data-testid="stTextInput"]::before {
+        content: "$";
+        position: absolute;
+        left: 12px;
+        top: 35px;
+        color: #9CA3AF;
+        font-weight: 700;
+        font-size: 15px;
+        z-index: 1;
+    }
+
+    div[data-testid="stTextInput"] input {
+        padding-left: 26px !important;
+        background: rgba(255, 255, 255, 0.06) !important;
+        border-radius: 14px !important;
+        color: #F9FAFB !important;
+    }
+
+    /* Result cards */
+    .result-card {
+        border-radius: 22px;
+        padding: 22px 24px;
+        background: linear-gradient(180deg, rgba(255,255,255,0.07), rgba(255,255,255,0.04));
+        border: 1px solid rgba(255,255,255,0.08);
+        box-shadow: 0 14px 40px rgba(0,0,0,0.18);
+        min-height: 150px;
+    }
+
+    .result-label {
+        font-size: 14px;
+        color: #CBD5E1;
+        font-weight: 600;
+        margin-bottom: 10px;
+    }
+
+    .result-value {
+        font-size: 40px;
+        line-height: 1.05;
+        color: white;
+        font-weight: 800;
+        letter-spacing: -0.03em;
+        margin-bottom: 10px;
+    }
+
+    .result-subtext {
+        font-size: 13px;
+        color: #94A3B8;
+        line-height: 1.4;
+    }
+
+    .result-card.primary {
+        background: linear-gradient(135deg, rgba(37,99,235,0.22), rgba(29,78,216,0.08));
+        border: 1px solid rgba(96,165,250,0.22);
+    }
+
+    .result-card.success {
+        background: linear-gradient(135deg, rgba(16,185,129,0.20), rgba(16,185,129,0.06));
+        border: 1px solid rgba(52,211,153,0.20);
+    }
+
+    .result-card.warning {
+        background: linear-gradient(135deg, rgba(245,158,11,0.18), rgba(245,158,11,0.05));
+        border: 1px solid rgba(251,191,36,0.16);
+    }
+
+    .result-mini {
+        font-size: 12px;
+        color: #93C5FD;
+        font-weight: 700;
+        letter-spacing: .06em;
+        text-transform: uppercase;
+        margin-bottom: 6px;
+    }
+
+    .soft-card {
+        padding: 18px 20px;
+        border-radius: 18px;
+        background: rgba(255,255,255,0.05);
+        border: 1px solid rgba(255,255,255,0.08);
+        box-shadow: 0 10px 35px rgba(0,0,0,0.12);
+    }
+
+    .section-divider {
+        margin: 10px 0 18px 0;
+        height: 1px;
+        background: linear-gradient(90deg, rgba(255,255,255,0.03), rgba(96,165,250,0.35), rgba(255,255,255,0.03));
+    }
+
+    .vertical-divider {
+        width: 1px;
+        height: 540px;
+        margin: auto;
+        background: linear-gradient(
+            to bottom,
+            rgba(255,255,255,0.05),
+            rgba(96,165,250,0.45),
+            rgba(255,255,255,0.05)
+        );
+    }
+
+    @media (max-width: 900px) {
+        .vertical-divider {
+            display: none;
+        }
+    }
+
+    #MainMenu {visibility: hidden;}
+    footer {visibility: hidden;}
+    header {visibility: hidden;}
 </style>
 """, unsafe_allow_html=True)
 
-st.markdown("""
-<style>
-
-/* contenedor del input */
-div[data-testid="stTextInput"] {
-    position: relative;
-}
-
-/* símbolo de moneda */
-div[data-testid="stTextInput"]::before {
-    content: "$";
-    position: absolute;
-    left: 12px;
-    top: 34px;
-    color: #9CA3AF;
-    font-weight: 600;
-    font-size: 15px;
-    z-index: 1;
-}
-
-/* padding del input para que no tape el símbolo */
-div[data-testid="stTextInput"] input {
-    padding-left: 26px !important;
-}
-
-</style>
-""", unsafe_allow_html=True)
-
-st.title("Simulador Tributario 2026")
-st.caption("Prototipo funcional")
-
 # =========================
-# Helpers
+# HELPERS
 # =========================
-def valor_si_no_a_bool(valor: str) -> bool:
-    return valor == "Sí"
-
 def _format_money_state(key: str):
-
     valor = st.session_state.get(key, "")
-
     solo_numeros = re.sub(r"[^\d]", "", valor)
 
     if solo_numeros == "":
@@ -118,7 +223,6 @@ def _format_money_state(key: str):
         return
 
     numero = int(solo_numeros)
-
     st.session_state[key] = f"{numero:,}".replace(",", ".")
 
 
@@ -129,7 +233,6 @@ def money_input(
     help_text=None,
     disabled=False
 ):
-
     if key not in st.session_state:
         st.session_state[key] = f"{int(value):,}".replace(",", ".")
 
@@ -143,8 +246,8 @@ def money_input(
     )
 
     valor = re.sub(r"[^\d]", "", st.session_state.get(key, ""))
-
     return float(valor) if valor else 0.0
+
 
 def result_card(title: str, value: str, subtitle: str = "", tone: str = "primary", eyebrow: str = ""):
     st.markdown(
@@ -159,28 +262,43 @@ def result_card(title: str, value: str, subtitle: str = "", tone: str = "primary
         unsafe_allow_html=True
     )
 
-
 # =========================
-# Header / modo debug
+# SIDEBAR
 # =========================
 with st.sidebar:
     st.markdown("## Configuración")
-    mostrar_debug = st.checkbox("Mostrar detalle técnico", value= False)
-    st.caption("Úsalo para comparar contra el Excel y encontrar diferencias.")
+    mostrar_debug = st.checkbox("Mostrar detalle técnico", value=True)
+    st.caption("Úsalo para comparar contra el Excel y detectar diferencias.")
 
 # =========================
-# Formulario
+# HEADER
 # =========================
-
-
 st.markdown("""
 <div style="
     padding: 22px 24px;
     border-radius: 22px;
-    background: rgba(255,255,255,0.04);
+    background: rgba(255,255,255,0.05);
     border: 1px solid rgba(255,255,255,0.08);
+    box-shadow: 0 12px 40px rgba(0,0,0,0.22);
     margin-bottom: 18px;
 ">
+    <div style="font-size: 13px; color: #93C5FD; font-weight: 700; letter-spacing: .08em;">
+        HACKATHON MVP
+    </div>
+    <div style="font-size: 34px; color: white; font-weight: 800; margin-top: 6px;">
+        🧮 Simulador Tributario 2026
+    </div>
+    <div style="font-size: 16px; color: #CBD5E1; margin-top: 8px;">
+        Convierte un modelo en Excel en una experiencia web guiada, clara y lista para escalar.
+    </div>
+</div>
+""", unsafe_allow_html=True)
+
+# =========================
+# FORMULARIO
+# =========================
+st.markdown("""
+<div class="soft-card">
     <div style="font-size: 13px; color: #93C5FD; font-weight: 700; letter-spacing: .08em;">
         FORMULARIO
     </div>
@@ -193,17 +311,19 @@ st.markdown("""
 </div>
 """, unsafe_allow_html=True)
 
-col1, col2, sep, col3, col4 = st.columns([1, 1, 0.06, 1, 1])
+st.markdown('<div class="section-divider"></div>', unsafe_allow_html=True)
+
+col1, col2, sep, col3, col4 = st.columns([1, 1, 0.05, 1, 1])
 
 with col1:
     st.markdown("### 💼 Ingresos")
-    
+
     salario_mensual = money_input(
-    "¿Cuál es tu salario mensual?",
-    value=25000000,
-    help_text="Ingresa tu salario mensual antes de deducciones.",
-    key="salario"
-)
+        "¿Cuál es tu salario mensual?",
+        value=25000000,
+        help_text="Ingresa tu salario mensual antes de deducciones.",
+        key="salario_mensual"
+    )
 
     tipo_salario = st.selectbox(
         "¿Qué tipo de salario tienes?",
@@ -215,32 +335,32 @@ with col1:
         "¿Recibes auxilios?",
         ["Sí", "No"],
         horizontal=True,
-        help="Auxilios no salariales como conectividad, transporte u otros beneficios."
+        help="Auxilios no salariales como transporte o conectividad."
     )
 
     valor_auxilios_mensual = money_input(
-    "¿Cuál es el valor mensual de tus auxilios?",
-    value=2000000 if recibe_auxilios == "Sí" else 0,
-    help_text="Auxilios no salariales como transporte o conectividad.",
-    disabled=(recibe_auxilios == "No"),
-    key="auxilios"
-)
-    
-    recibe_variable = st.radio(
-        "¿Recibes comisiones o salario variable?",
-        ["Sí", "No"],
-        horizontal=True,
-        help="Ingresos variables como comisiones, bonos comerciales o incentivos."
+        "¿Cuál es el valor mensual de tus auxilios?",
+        value=2000000 if recibe_auxilios == "Sí" else 0,
+        help_text="Monto mensual de auxilios no salariales. No debería superar el 50% del salario.",
+        disabled=(recibe_auxilios == "No"),
+        key="valor_auxilios"
     )
 
 with col2:
     st.markdown("### 📈 Variables")
 
+    recibe_variable = st.radio(
+        "¿Recibes comisiones o salario variable?",
+        ["Sí", "No"],
+        horizontal=True,
+        help="Ingresos variables como comisiones o incentivos."
+    )
+
     valor_variable_anual = money_input(
         "¿Cuál es el valor anual de tu variable o comisiones?",
-        value=24000000.0 if recibe_variable == "Sí" else 0.0,
-        disabled=(recibe_variable == "No"),
+        value=24000000 if recibe_variable == "Sí" else 0,
         help_text="Total anual de ingresos variables.",
+        disabled=(recibe_variable == "No"),
         key="variable_anual"
     )
 
@@ -253,9 +373,9 @@ with col2:
 
     valor_bonificaciones = money_input(
         "¿Cuál es el valor de tus bonificaciones?",
-        value=40000000.0 if tiene_bonificaciones == "Sí" else 0.0,
+        value=40000000 if tiene_bonificaciones == "Sí" else 0,
+        help_text="Monto total anual de bonificaciones recibidas.",
         disabled=(tiene_bonificaciones == "No"),
-        help_text="Monto total anual de bonificaciones.",
         key="bonificaciones"
     )
 
@@ -267,40 +387,14 @@ with col2:
     )
 
 with sep:
-    st.markdown(
-        """
-        <div class="vertical-divider"></div>
-
-        <style>
-        .vertical-divider {
-            width: 1px;
-            height: 520px;
-            margin: auto;
-            background: linear-gradient(
-                to bottom,
-                rgba(255,255,255,0.05),
-                rgba(96,165,250,0.45),
-                rgba(255,255,255,0.05)
-            );
-        }
-
-        /* Ocultar divisor en pantallas pequeñas */
-        @media (max-width: 900px) {
-            .vertical-divider {
-                display: none;
-            }
-        }
-        </style>
-        """,
-        unsafe_allow_html=True
-    )
+    st.markdown('<div class="vertical-divider"></div>', unsafe_allow_html=True)
 
 with col3:
     st.markdown("### 🧾 Beneficios")
 
     aporte_voluntario_obligatorio_anual = money_input(
         "¿Cuánto aportas voluntariamente a tu fondo obligatorio?",
-        value=15000000.0,
+        value=15000000,
         help_text="Aportes voluntarios adicionales al fondo de pensiones.",
         key="aporte_voluntario"
     )
@@ -316,7 +410,7 @@ with col3:
 
     intereses_vivienda_anual = money_input(
         "¿Cuánto pagas de intereses de vivienda al año?",
-        value=4500000.0,
+        value=4500000,
         help_text="Intereses pagados por crédito hipotecario.",
         key="intereses_vivienda"
     )
@@ -326,28 +420,29 @@ with col4:
 
     pagos_salud_anual = money_input(
         "¿Cuánto pagas en planes de salud al año?",
-        value=6700000.0,
+        value=6700000,
         help_text="Pagos por medicina prepagada o seguros de salud.",
         key="pagos_salud"
     )
 
     aportes_pension_afc_anual = money_input(
         "¿Cuánto aportas en pensión voluntaria o AFC?",
-        value=1500000.0,
-        help_text="Aportes voluntarios que generan beneficios tributarios.",
+        value=1500000,
+        help_text="Aportes voluntarios que pueden generar beneficios tributarios.",
         key="afc"
     )
 
     compras_factura_electronica = money_input(
         "¿Cuánto estimas comprar con factura electrónica?",
-        value=45000000.0,
-        help_text="Compras con factura electrónica durante el año.",
+        value=45000000,
+        help_text="Compras realizadas con factura electrónica durante el año. Actualmente no impacta el cálculo base.",
         key="factura_electronica"
     )
-st.divider()
+
+st.markdown('<div class="section-divider"></div>', unsafe_allow_html=True)
 
 # =========================
-# Normalización de inputs
+# NORMALIZACIÓN
 # =========================
 errores = []
 
@@ -382,92 +477,90 @@ inputs = {
 }
 
 # =========================
-# Ejecutar simulación
+# EJECUCIÓN
 # =========================
-if st.button("Calcular simulación", use_container_width=True):
+if st.button("🧮 Calcular simulación", use_container_width=True):
     if errores:
         for error in errores:
             st.error(error)
     else:
         resultado = ejecutar_simulador(inputs)
 
-        st.markdown("## Resultados")
+        impuesto_original = resultado["impuesto_sin_optimizacion"]
+        impuesto_optimizado = resultado["impuesto_optimizado"]
+        beneficio = resultado["beneficio"]
+
+        porcentaje_ahorro = 0
+        if impuesto_original > 0:
+            porcentaje_ahorro = beneficio / impuesto_original
 
         st.markdown("## Resultados")
 
-impuesto_original = resultado["impuesto_sin_optimizacion"]
-impuesto_optimizado = resultado["impuesto_optimizado"]
-beneficio = resultado["beneficio"]
+        c1, c2, c3 = st.columns(3)
 
-porcentaje_ahorro = 0
-if impuesto_original > 0:
-    porcentaje_ahorro = beneficio / impuesto_original
+        with c1:
+            result_card(
+                title="Impuesto actual",
+                value=formato_moneda(impuesto_original),
+                subtitle="Escenario sin optimización tributaria.",
+                tone="warning",
+                eyebrow="Escenario base"
+            )
 
-c1, c2, c3 = st.columns(3)
+        with c2:
+            result_card(
+                title="Impuesto optimizado",
+                value=formato_moneda(impuesto_optimizado),
+                subtitle="Escenario con beneficios tributarios aplicados.",
+                tone="primary",
+                eyebrow="Escenario optimizado"
+            )
 
-with c1:
-    result_card(
-        title="Impuesto actual",
-        value=formato_moneda(impuesto_original),
-        subtitle="Escenario sin optimización tributaria.",
-        tone="warning",
-        eyebrow="Escenario base"
-    )
+        with c3:
+            result_card(
+                title="Ahorro estimado",
+                value=formato_moneda(beneficio),
+                subtitle=f"Reducción aproximada del {porcentaje_ahorro:.1%} sobre el impuesto.",
+                tone="success",
+                eyebrow="Impacto"
+            )
 
-with c2:
-    result_card(
-        title="Impuesto optimizado",
-        value=formato_moneda(impuesto_optimizado),
-        subtitle="Escenario con beneficios tributarios aplicados.",
-        tone="primary",
-        eyebrow="Escenario optimizado"
-    )
+        st.markdown("### Impacto de la optimización tributaria")
+        st.progress(min(max(porcentaje_ahorro, 0), 1))
 
-with c3:
-    result_card(
-        title="Ahorro estimado",
-        value=formato_moneda(beneficio),
-        subtitle=f"Reducción aproximada del {porcentaje_ahorro:.1%} sobre el impuesto.",
-        tone="success",
-        eyebrow="Impacto"
-    )
+        st.markdown(
+            f"""
+            <div style="
+                margin-top:10px;
+                padding:16px 18px;
+                border-radius:16px;
+                background:rgba(16,185,129,0.08);
+                border:1px solid rgba(16,185,129,0.18);
+            ">
+                <div style="font-size:14px; color:#34D399; font-weight:700;">
+                    💰 Ahorro potencial identificado
+                </div>
+                <div style="font-size:13px; color:#CBD5E1; margin-top:6px;">
+                    El cliente podría reducir su carga tributaria en <b>{formato_moneda(beneficio)}</b>,
+                    equivalente a una mejora aproximada del <b>{porcentaje_ahorro:.1%}</b>.
+                </div>
+            </div>
+            """,
+            unsafe_allow_html=True
+        )
 
-    st.markdown("### Impacto de la optimización tributaria")
+        if porcentaje_ahorro >= 0.20:
+            st.success("🚀 Excelente oportunidad de optimización tributaria.")
+        elif porcentaje_ahorro >= 0.10:
+            st.info("📊 Hay una oportunidad tributaria relevante para el cliente.")
+        else:
+            st.warning("💡 El beneficio existe, pero el impacto es más moderado.")
 
-st.progress(min(max(porcentaje_ahorro, 0), 1))
+        st.divider()
 
-st.markdown(
-    f"""
-    <div style="
-        margin-top:10px;
-        padding:16px 18px;
-        border-radius:16px;
-        background:rgba(16,185,129,0.08);
-        border:1px solid rgba(16,185,129,0.18);
-    ">
-        <div style="font-size:14px; color:#34D399; font-weight:700;">
-            💰 Ahorro potencial identificado
-        </div>
-        <div style="font-size:13px; color:#CBD5E1; margin-top:6px;">
-            El cliente podría reducir su carga tributaria en <b>{formato_moneda(beneficio)}</b>,
-            equivalente a una mejora aproximada del <b>{porcentaje_ahorro:.1%}</b>.
-        </div>
-    </div>
-    """,
-    unsafe_allow_html=True
-)
+        left, right = st.columns([1.35, 1])
 
-if porcentaje_ahorro >= 0.20:
-    st.success("🚀 Excelente oportunidad de optimización tributaria.")
-elif porcentaje_ahorro >= 0.10:
-    st.info("📊 Hay una oportunidad tributaria relevante para el cliente.")
-else:
-    st.warning("💡 El beneficio existe, pero el impacto es más moderado.")
-    st.divider()
-
-    c4, c5 = st.columns([1.3, 1])
-
-    with c4:
+        with left:
             st.markdown("### Desglose del cálculo")
 
             df_detalle = pd.DataFrame(
@@ -500,21 +593,52 @@ else:
 
             st.dataframe(df_detalle, use_container_width=True, hide_index=True)
 
-    with c5:
+        with right:
             st.markdown("### Interpretación")
-            st.success(
-                f"Con base en la información registrada, el cliente podría obtener un beneficio tributario estimado de "
-                f"{formato_moneda(resultado['beneficio'])}."
+            st.markdown(
+                f"""
+                <div class="soft-card">
+                    <div style="font-size:13px; color:#93C5FD; font-weight:700; letter-spacing:.06em; text-transform:uppercase; margin-bottom:8px;">
+                        Lectura ejecutiva
+                    </div>
+                    <div style="font-size:16px; color:white; font-weight:700; margin-bottom:10px;">
+                        Beneficio tributario estimado
+                    </div>
+                    <div style="font-size:28px; color:#34D399; font-weight:800; margin-bottom:12px;">
+                        {formato_moneda(resultado["beneficio"])}
+                    </div>
+                    <div style="font-size:14px; color:#CBD5E1; line-height:1.55;">
+                        Con base en la información registrada, el cliente podría reducir su carga tributaria
+                        aprovechando beneficios permitidos en el modelo actual.
+                    </div>
+                </div>
+                """,
+                unsafe_allow_html=True
             )
 
-        # =========================
-        # Debug técnico
-        # =========================
-    if mostrar_debug:
+            st.markdown("<div style='height:14px'></div>", unsafe_allow_html=True)
+
+            st.markdown(
+                f"""
+                <div class="soft-card">
+                    <div style="font-size:14px; color:#CBD5E1; margin-bottom:8px;">Comparativo rápido</div>
+                    <div style="font-size:14px; color:#94A3B8;">Antes</div>
+                    <div style="font-size:22px; color:white; font-weight:800; margin-bottom:10px;">
+                        {formato_moneda(impuesto_original)}
+                    </div>
+                    <div style="font-size:14px; color:#94A3B8;">Después</div>
+                    <div style="font-size:22px; color:white; font-weight:800;">
+                        {formato_moneda(impuesto_optimizado)}
+                    </div>
+                </div>
+                """,
+                unsafe_allow_html=True
+            )
+
+        if mostrar_debug:
             st.divider()
             st.markdown("## Debug técnico")
 
-            st.markdown("### Valores calculados por la app")
             debug_df = pd.DataFrame(
                 [
                     {"Variable": "salario_anual", "Valor app": resultado["salario_anual"]},
@@ -545,59 +669,8 @@ else:
                     {"Variable": "beneficio", "Valor app": resultado["beneficio"]},
                 ]
             )
+
             st.dataframe(debug_df, use_container_width=True, hide_index=True)
 
-            st.markdown("### Valores esperados del Excel para el caso base")
-            excel_base_df = pd.DataFrame(
-                [
-                    {"Variable": "salario_anual", "Valor Excel esperado": 300000000},
-                    {"Variable": "ingreso_variable", "Valor Excel esperado": 24000000},
-                    {"Variable": "auxilios_anuales", "Valor Excel esperado": 24000000},
-                    {"Variable": "bonificacion_anual", "Valor Excel esperado": 40000000},
-                    {"Variable": "total_ingresos", "Valor Excel esperado": 388000000},
-                    {"Variable": "aporte_eps", "Valor Excel esperado": 9072000},
-                    {"Variable": "aporte_pension", "Valor Excel esperado": 9072000},
-                    {"Variable": "fondo_solidaridad", "Valor Excel esperado": 2268000},
-                    {"Variable": "ingresos_no_constitutivos", "Valor Excel esperado": 35412000},
-                    {"Variable": "renta_liquida", "Valor Excel esperado": 352588000},
-                    {"Variable": "renta_liquida_pac", "Valor Excel esperado": 312588000},
-                    {"Variable": "dependientes", "Valor Excel esperado": 20111616},
-                    {"Variable": "intereses_vivienda", "Valor Excel esperado": 4500000},
-                    {"Variable": "pagos_salud", "Valor Excel esperado": 6700000},
-                    {"Variable": "cesantias", "Valor Excel esperado": 0},
-                    {"Variable": "aportes_pension_afc", "Valor Excel esperado": 1500000},
-                    {"Variable": "renta_exenta_laboral", "Valor Excel esperado": 41375460},
-                    {"Variable": "total_deducciones", "Valor Excel esperado": 74187076},
-                    {"Variable": "deducciones_admisibles", "Valor Excel esperado": 70181160},
-                    {"Variable": "base_gravable", "Valor Excel esperado": 282406840},
-                    {"Variable": "base_gravable_pac", "Valor Excel esperado": 242406840},
-                    {"Variable": "base_uvt", "Valor Excel esperado": 5392.118990338718},
-                    {"Variable": "base_uvt_pac", "Valor Excel esperado": 4628.381257876045},
-                    {"Variable": "impuesto_sin_optimizacion", "Valor Excel esperado": 63602947.2},
-                    {"Variable": "impuesto_optimizado", "Valor Excel esperado": 50402947.2},
-                    {"Variable": "beneficio", "Valor Excel esperado": 13200000},
-                ]
-            )
-            st.dataframe(excel_base_df, use_container_width=True, hide_index=True)
-
-            st.markdown("### Comparación rápida")
-            comparacion = {
-                "impuesto_sin_optimizacion_app": resultado["impuesto_sin_optimizacion"],
-                "impuesto_sin_optimizacion_excel": 63602947.2,
-                "delta_impuesto_sin_optimizacion": resultado["impuesto_sin_optimizacion"] - 63602947.2,
-                "impuesto_optimizado_app": resultado["impuesto_optimizado"],
-                "impuesto_optimizado_excel": 50402947.2,
-                "delta_impuesto_optimizado": resultado["impuesto_optimizado"] - 50402947.2,
-                "beneficio_app": resultado["beneficio"],
-                "beneficio_excel": 13200000,
-                "delta_beneficio": resultado["beneficio"] - 13200000,
-                "base_gravable_app": resultado["base_gravable"],
-                "base_gravable_excel": 282406840,
-                "delta_base_gravable": resultado["base_gravable"] - 282406840,
-                "base_uvt_app": resultado["base_uvt"],
-                "base_uvt_excel": 5392.118990338718,
-                "delta_base_uvt": resultado["base_uvt"] - 5392.118990338718,
-            }
-            st.json(comparacion)
-    else:
+else:
     st.info("Completa los datos y pulsa **Calcular simulación**.")
