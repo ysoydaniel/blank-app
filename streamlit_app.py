@@ -35,7 +35,7 @@ st.markdown("## Datos de ingreso del cliente")
 
 col1, col2, col3, col4 = st.columns(4)
 
-with col2:
+with col1:
     salario_mensual = st.number_input(
         "¿Cuál es tu salario mensual?",
         min_value=0.0,
@@ -75,7 +75,7 @@ with col2:
 
     )
     
-with col3:
+with col2:
 
     valor_variable_anual = st.number_input(
         "¿Cuál es el valor anual de tu variable o comisiones?",
@@ -108,13 +108,23 @@ with col3:
         help="Si marcas Sí, el bono tiene aporte a seguridad social; si marcas No, no tiene aporte."
     )
 
-st.divider()
+st.markdown(
+"""
+<div style="
+    border-left:1px solid rgba(255,255,255,0.15);
+    height:350px;
+    margin:auto;
+"></div>
+""",
+unsafe_allow_html=True
+)
 
 st.markdown("## Beneficios y deducciones")
 
-col3, col4 = st.columns(2)
+
 
 with col3:
+    
     aporte_voluntario_obligatorio_anual = st.number_input(
         "¿Cuánto aportas anualmente de manera voluntaria a tu fondo obligatorio?",
         min_value=0.0,
