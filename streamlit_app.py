@@ -89,7 +89,7 @@ col1, col2, sep, col3, col4 = st.columns([1, 1, 0.06, 1, 1])
 with col1:
     st.markdown("### 💼 Ingresos")
     
-     salario_mensual = money_input(
+    salario_mensual = money_input(
         "¿Cuál es tu salario mensual?",
         value=25000000.0,
         help_text="Ingresa tu salario mensual antes de deducciones.",
