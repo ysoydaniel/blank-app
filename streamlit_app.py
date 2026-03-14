@@ -74,6 +74,8 @@ with col1:
         help="Valida si recibes algún valor adicional a tu salario y que este sea prestacional (pagues seguridad social por el)"
 
     )
+    
+with col2:
 
     valor_variable_anual = st.number_input(
         "¿Cuál es el valor anual de tu variable o comisiones?",
@@ -83,8 +85,7 @@ with col1:
         disabled=(recibe_variable == "No"),
         help="Ingresa el promedio de los ingresos que percibe por comisiones o variable y que tienen carga prestacional"
     )
-
-with col2:
+    
     tiene_bonificaciones = st.radio(
         "¿Tienes bonificaciones?",
         ["Sí", "No"],
