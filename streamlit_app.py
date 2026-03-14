@@ -88,15 +88,17 @@ with col1:
         help="Monto mensual de auxilios no salariales. No debería superar el 50% del salario."
     )
 
-with col2:
-    st.markdown("### 📈 Variables")
-
-    recibe_variable = st.radio(
+recibe_variable = st.radio(
         "¿Recibes comisiones o salario variable?",
         ["Sí", "No"],
         horizontal=True,
         help="Ingresos variables como comisiones, bonos comerciales o incentivos."
     )
+
+with col2:
+    st.markdown("### 📈 Variables")
+
+    
 
     valor_variable_anual = st.number_input(
         "¿Cuál es el valor anual de tu variable o comisiones?",
