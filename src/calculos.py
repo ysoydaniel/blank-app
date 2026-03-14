@@ -1,3 +1,5 @@
+import math
+
 UVT = 52374
 SMLV = 1750905
 MINIMO_INT = 22761765
@@ -24,245 +26,14 @@ TABLA_FSP = [
 ]
 
 
-def calcular_salario_anual(salario_mensual: float, tipo_salario: str) -> float:
-    """
-    Replica la fórmula del Excel:
-    =IF(tipo_salario="Integral", salario*12, salario*14.12)
-    """
-    if tipo_salario == "Integral":
-        return salario_mensual * 12
-    return salario_mensual * 14.12
-
-
-def calcular_ingreso_variable(valor_variable_anual: float) -> float:
-    return valor_variable_anual
-
-
-def calcular_auxilios_anuales(valor_auxilios_mensual: float) -> float:
-    return valor_auxilios_mensual * 12
-
-
-def calcular_bonificacion_anual(valor_bonificaciones: float) -> float:
-    return valor_bonificaciones
-
-
-def calcular_total_ingresos(
-    salario_anual: float,
-    ingreso_variable: float,
-    auxilios_anuales: float,
-    bonificacion_anual: float,
-) -> float:
-    return salario_anual + ingreso_variable + auxilios_anuales + bonificacion_anual
-
-
-def calcular_base_seguridad_social(
-    salario_anual: float,
-    ingreso_variable: float,
-    tipo_salario: str,
-) -> float:
-    """
-    Excel:
-    =IF(tipo_salario="Integral",(salario_anual+ingreso_variable)*70%,(salario_anual+ingreso_variable))
-    """
-    if tipo_salario == "Integral":
-        return (salario_anual + ingreso_variable) * 0.70
-    return salario_anual + ingreso_variable
-
-
-def calcular_base_seguridad_social_bono(
-    bonificacion_anual: float,
-    tipo_salario: str,
-    bono_salarial: str,
-) -> float:
-    """
-    Si el bono es salarial entra a seguridad social.
-    Para integral aplica 70%.
-    """
-    if bono_salarial != "Sí":
-        return 0.0
-
-    if tipo_salario == "Integral":
-        return bonificacion_anual * 0.70
-
-    return bonificacion_anual
-
-
-def calcular_aporte_eps(
-    base_seg_social: float,
-    base_bono: float,
-    salario_tope: float = SALARIO_TOPE,
-) -> float:
-    """
-    Replica EXACTAMENTE C16 del Excel:
-    =IF(C13*4%>parametros!C6,parametros!C6,C13*4%)+C14*4%
-    """
-    eps_base = salario_tope if (base_seg_social * 0.04) > salario_tope else (base_seg_social * 0.04)
-    eps_bono = base_bono * 0.04
-    return eps_base + eps_bono
-
-
-def calcular_aporte_pension(aporte_eps: float) -> float:
-    """
-    En el Excel C17 = C16
-    """
-    return aporte_eps
-
-
-def calcular_fondo_solidaridad(base_seg_social: float, tabla_fsp: list[dict]) -> float:
-    for tramo in tabla_fsp:
-        desde = tramo["desde"]
-        hasta = tramo["hasta"]
-        tarifa = tramo["tarifa"]
-
-        if hasta is None:
-            if base_seg_social >= desde:
-                return base_seg_social * tarifa
-        else:
-            if desde <= base_seg_social < hasta:
-                return base_seg_social * tarifa
-
-    return 0.0
-
-
-def calcular_ingresos_no_constitutivos(
-    aporte_eps: float,
-    aporte_pension: float,
-    fondo_solidaridad: float,
-    aporte_voluntario_obligatorio: float,
-) -> float:
-    return aporte_eps + aporte_pension + fondo_solidaridad + aporte_voluntario_obligatorio
-
-
-def calcular_renta_liquida(
-    total_ingresos: float,
-    ingresos_no_constitutivos: float,
-) -> float:
-    return total_ingresos - ingresos_no_constitutivos
-
-
-def calcular_renta_liquida_con_pac(
-    total_ingresos: float,
-    bonificacion_anual: float,
-    ingresos_no_constitutivos: float,
-) -> float:
-    return total_ingresos - bonificacion_anual - ingresos_no_constitutivos
-
-
-def calcular_maximo_beneficio_ley_2277(uvt: float) -> float:
-    return uvt * 1340
-
-
-def calcular_dependientes(
-    numero_dependientes: int,
-    salario_mensual: float,
-    uvt: float,
-) -> float:
-    """
-    Replica EXACTAMENTE la fórmula del Excel:
-    =(IF(dep=0,0,IF(salario*10%>UVT*32,UVT*32,salario)))*12
-    Sí, se ve rara. Sí, Excel hace eso. Sí, Excel a veces elige la violencia.
-    """
-    if numero_dependientes == 0:
-        return 0.0
-
-    tope_mensual = uvt * 32
-
-    if salario_mensual * 0.10 > tope_mensual:
-        return tope_mensual * 12
-
-    return salario_mensual * 12
-
-
-def calcular_intereses_vivienda(intereses_vivienda_anual: float) -> float:
-    return intereses_vivienda_anual
-
-
-def calcular_pagos_salud(pagos_salud_anual: float) -> float:
-    return pagos_salud_anual
-
-
-def calcular_cesantias(salario_mensual: float, tipo_salario: str) -> float:
-    if tipo_salario == "Integral":
-        return 0.0
-    return salario_mensual
-
-
-def calcular_aportes_pension_voluntaria_afc(aportes_pension_afc_anual: float) -> float:
-    return aportes_pension_afc_anual
-
-
-def calcular_renta_exenta_sin_limite(
-    renta_liquida: float,
-    dependientes: float,
-    intereses_vivienda: float,
-    pagos_salud: float,
-    cesantias: float,
-    aportes_pension_afc: float,
-) -> float:
-    base = (
-        renta_liquida
-        - dependientes
-        - intereses_vivienda
-        - pagos_salud
-        - cesantias
-        - aportes_pension_afc
-    )
-    return base * 0.25
-
-
-def calcular_renta_exenta_laboral(renta_exenta_sin_limite: float, uvt: float) -> float:
-    tope = uvt * 790
-    return min(renta_exenta_sin_limite, tope)
-
-
-def calcular_total_deducciones_rentas_exentas(
-    dependientes: float,
-    intereses_vivienda: float,
-    pagos_salud: float,
-    cesantias: float,
-    aportes_pension_afc: float,
-    renta_exenta_laboral: float,
-) -> float:
-    return (
-        dependientes
-        + intereses_vivienda
-        + pagos_salud
-        + cesantias
-        + aportes_pension_afc
-        + renta_exenta_laboral
-    )
-
-
-def calcular_deducciones_admisibles(
-    total_deducciones: float,
-    maximo_beneficio_ley_2277: float,
-) -> float:
-    return min(total_deducciones, maximo_beneficio_ley_2277)
-
-
-def calcular_base_gravable(
-    total_ingresos: float,
-    ingresos_no_constitutivos: float,
-    deducciones_admisibles: float,
-) -> float:
-    return total_ingresos - ingresos_no_constitutivos - deducciones_admisibles
-
-
-def calcular_base_gravable_con_pac(
-    total_ingresos: float,
-    bonificacion_anual: float,
-    ingresos_no_constitutivos: float,
-    deducciones_admisibles: float,
-) -> float:
-    return total_ingresos - bonificacion_anual - ingresos_no_constitutivos - deducciones_admisibles
-
-
-def calcular_base_uvt(base_gravable: float, uvt: float) -> float:
-    return base_gravable / uvt
-
+# =========================
+# IMPUESTO
+# =========================
 
 def calcular_impuesto_renta(base_uvt: float, uvt: float) -> float:
+
     for tramo in TRAMOS_RENTA:
+
         desde = tramo["desde"]
         hasta = tramo["hasta"]
         tarifa = tramo["tarifa"]
@@ -271,6 +42,7 @@ def calcular_impuesto_renta(base_uvt: float, uvt: float) -> float:
         if hasta is None:
             if base_uvt >= desde:
                 return (((base_uvt - desde) * tarifa) + base) * uvt
+
         else:
             if desde <= base_uvt < hasta:
                 return (((base_uvt - desde) * tarifa) + base) * uvt
@@ -278,149 +50,158 @@ def calcular_impuesto_renta(base_uvt: float, uvt: float) -> float:
     return 0.0
 
 
-def validar_salario_integral(salario_mensual: float, tipo_salario: str) -> list[str]:
-    """
-    Validación opcional de negocio.
-    No altera cálculos, pero sirve para UI.
-    """
-    errores = []
+# =========================
+# TOP UP
+# =========================
 
-    if tipo_salario == "Integral" and salario_mensual < MINIMO_INT:
-        errores.append(
-            f"El salario integral no debería ser menor a {MINIMO_INT:,.0f}."
-        )
+def calcular_topup_full(
+    ingreso_anual,
+    aportes_actuales,
+    uvt
+):
 
-    return errores
+    limite_porcentaje = ingreso_anual * 0.30
+    limite_uvt = 3800 * uvt
+
+    max_aporte = min(limite_porcentaje, limite_uvt)
+
+    topup = max_aporte - aportes_actuales
+
+    return max(topup, 0)
 
 
-def ejecutar_simulador(inputs: dict) -> dict:
-    salario_anual = calcular_salario_anual(inputs["salario_mensual"], inputs["tipo_salario"])
-    ingreso_variable = calcular_ingreso_variable(inputs["valor_variable_anual"])
-    auxilios_anuales = calcular_auxilios_anuales(inputs["valor_auxilios_mensual"])
-    bonificacion_anual = calcular_bonificacion_anual(inputs["valor_bonificaciones"])
+# =========================
+# SIMULADOR
+# =========================
 
-    total_ingresos = calcular_total_ingresos(
-        salario_anual,
-        ingreso_variable,
-        auxilios_anuales,
-        bonificacion_anual,
+def ejecutar_simulador(inputs):
+
+    salario_mensual = inputs["salario_mensual"]
+    tipo_salario = inputs["tipo_salario"]
+
+    auxilios = inputs["valor_auxilios_mensual"] * 12
+    variable = inputs["valor_variable_anual"]
+    bonificaciones = inputs["valor_bonificaciones"]
+
+    aportes_voluntarios = inputs["aportes_pension_afc_anual"]
+
+    # =========================
+    # INGRESOS
+    # =========================
+
+    salario_anual = salario_mensual * 12
+
+    total_ingresos = (
+        salario_anual +
+        auxilios +
+        variable +
+        bonificaciones
     )
 
-    base_seg_social = calcular_base_seguridad_social(
-        salario_anual,
-        ingreso_variable,
-        inputs["tipo_salario"],
+    # =========================
+    # SEGURIDAD SOCIAL
+    # =========================
+
+    base_ss = min(salario_mensual, 25 * UVT)
+
+    aporte_eps = base_ss * 0.04 * 12
+    aporte_pension = base_ss * 0.04 * 12
+
+    ingresos_no_constitutivos = (
+        aporte_eps +
+        aporte_pension
     )
 
-    base_bono = calcular_base_seguridad_social_bono(
-        bonificacion_anual,
-        inputs["tipo_salario"],
-        inputs["bono_salarial"],
+    # =========================
+    # RENTA LIQUIDA
+    # =========================
+
+    renta_liquida = total_ingresos - ingresos_no_constitutivos
+
+    # =========================
+    # DEDUCCIONES
+    # =========================
+
+    dependientes = min(inputs["numero_dependientes"] * 0.10 * renta_liquida, 72 * UVT)
+
+    intereses_vivienda = min(inputs["intereses_vivienda_anual"], 100 * UVT)
+
+    pagos_salud = min(inputs["pagos_salud_anual"], 192 * UVT)
+
+    deducciones = (
+        dependientes +
+        intereses_vivienda +
+        pagos_salud +
+        aportes_voluntarios
     )
 
-    aporte_eps = calcular_aporte_eps(base_seg_social, base_bono, SALARIO_TOPE)
-    aporte_pension = calcular_aporte_pension(aporte_eps)
-    fondo_solidaridad = calcular_fondo_solidaridad(base_seg_social, TABLA_FSP)
+    deducciones_admisibles = min(deducciones, renta_liquida * 0.40)
 
-    ingresos_no_constitutivos = calcular_ingresos_no_constitutivos(
-        aporte_eps,
-        aporte_pension,
-        fondo_solidaridad,
-        inputs["aporte_voluntario_obligatorio_anual"],
+    # =========================
+    # BASE GRAVABLE
+    # =========================
+
+    base_gravable = renta_liquida - deducciones_admisibles
+
+    base_uvt = base_gravable / UVT
+
+    impuesto = calcular_impuesto_renta(base_uvt, UVT)
+
+    # =========================
+    # TOP UP FULL
+    # =========================
+
+    topup_full = calcular_topup_full(
+        ingreso_anual=total_ingresos,
+        aportes_actuales=aportes_voluntarios,
+        uvt=UVT
     )
 
-    renta_liquida = calcular_renta_liquida(total_ingresos, ingresos_no_constitutivos)
-    renta_liquida_pac = calcular_renta_liquida_con_pac(
-        total_ingresos,
-        bonificacion_anual,
-        ingresos_no_constitutivos,
-    )
+    base_gravable_topup = base_gravable - topup_full
 
-    maximo_beneficio_ley = calcular_maximo_beneficio_ley_2277(UVT)
+    base_uvt_topup = base_gravable_topup / UVT
 
-    dependientes = calcular_dependientes(
-        inputs["numero_dependientes"],
-        inputs["salario_mensual"],
-        UVT,
-    )
+    impuesto_topup = calcular_impuesto_renta(base_uvt_topup, UVT)
 
-    intereses_vivienda = calcular_intereses_vivienda(inputs["intereses_vivienda_anual"])
-    pagos_salud = calcular_pagos_salud(inputs["pagos_salud_anual"])
-    cesantias = calcular_cesantias(inputs["salario_mensual"], inputs["tipo_salario"])
-    aportes_pension_afc = calcular_aportes_pension_voluntaria_afc(inputs["aportes_pension_afc_anual"])
+    beneficio = impuesto - impuesto_topup
 
-    renta_exenta_sin_limite = calcular_renta_exenta_sin_limite(
-        renta_liquida,
-        dependientes,
-        intereses_vivienda,
-        pagos_salud,
-        cesantias,
-        aportes_pension_afc,
-    )
-
-    renta_exenta_laboral = calcular_renta_exenta_laboral(renta_exenta_sin_limite, UVT)
-
-    total_deducciones = calcular_total_deducciones_rentas_exentas(
-        dependientes,
-        intereses_vivienda,
-        pagos_salud,
-        cesantias,
-        aportes_pension_afc,
-        renta_exenta_laboral,
-    )
-
-    deducciones_admisibles = calcular_deducciones_admisibles(
-        total_deducciones,
-        maximo_beneficio_ley,
-    )
-
-    base_gravable = calcular_base_gravable(
-        total_ingresos,
-        ingresos_no_constitutivos,
-        deducciones_admisibles,
-    )
-
-    base_gravable_pac = calcular_base_gravable_con_pac(
-        total_ingresos,
-        bonificacion_anual,
-        ingresos_no_constitutivos,
-        deducciones_admisibles,
-    )
-
-    base_uvt = calcular_base_uvt(base_gravable, UVT)
-    base_uvt_pac = calcular_base_uvt(base_gravable_pac, UVT)
-
-    impuesto_normal = calcular_impuesto_renta(base_uvt, UVT)
-    impuesto_pac = calcular_impuesto_renta(base_uvt_pac, UVT)
+    # =========================
+    # RESULTADO
+    # =========================
 
     return {
+
+        "uvt": UVT,
+
         "salario_anual": salario_anual,
-        "ingreso_variable": ingreso_variable,
-        "auxilios_anuales": auxilios_anuales,
-        "bonificacion_anual": bonificacion_anual,
+        "ingreso_variable": variable,
+        "auxilios_anuales": auxilios,
+        "bonificacion_anual": bonificaciones,
+
         "total_ingresos": total_ingresos,
-        "base_seg_social": base_seg_social,
-        "base_bono": base_bono,
+
         "aporte_eps": aporte_eps,
         "aporte_pension": aporte_pension,
-        "fondo_solidaridad": fondo_solidaridad,
+
         "ingresos_no_constitutivos": ingresos_no_constitutivos,
+
         "renta_liquida": renta_liquida,
-        "renta_liquida_pac": renta_liquida_pac,
+
         "dependientes": dependientes,
         "intereses_vivienda": intereses_vivienda,
         "pagos_salud": pagos_salud,
-        "cesantias": cesantias,
-        "aportes_pension_afc": aportes_pension_afc,
-        "renta_exenta_sin_limite": renta_exenta_sin_limite,
-        "renta_exenta_laboral": renta_exenta_laboral,
-        "total_deducciones": total_deducciones,
+
+        "total_deducciones": deducciones,
         "deducciones_admisibles": deducciones_admisibles,
+
         "base_gravable": base_gravable,
-        "base_gravable_pac": base_gravable_pac,
+
         "base_uvt": base_uvt,
-        "base_uvt_pac": base_uvt_pac,
-        "impuesto_sin_optimizacion": round(impuesto_normal, 2),
-        "impuesto_optimizado": round(impuesto_pac, 2),
-        "beneficio": round(impuesto_normal - impuesto_pac, 2),
+
+        "impuesto_sin_optimizacion": impuesto,
+
+        "topup_full": topup_full,
+        "impuesto_topup": impuesto_topup,
+
+        "beneficio": beneficio
     }
