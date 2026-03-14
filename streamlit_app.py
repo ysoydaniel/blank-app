@@ -599,6 +599,5 @@ else:
                 "delta_base_uvt": resultado["base_uvt"] - 5392.118990338718,
             }
             st.json(comparacion)
-
 else:
     st.info("Completa los datos y pulsa **Calcular simulación**.")
