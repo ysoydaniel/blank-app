@@ -11,7 +11,7 @@ st.set_page_config(
 )
 
 st.title("Simulador Tributario 2026")
-st.caption("Prototipo funcional basado en la maqueta de Excel")
+st.caption("Prototipo funcional")
 
 # =========================
 # Helpers
@@ -259,11 +259,6 @@ if st.button("Calcular simulación", use_container_width=True):
             st.success(
                 f"Con base en la información registrada, el cliente podría obtener un beneficio tributario estimado de "
                 f"{formato_moneda(resultado['beneficio'])}."
-            )
-
-            st.info(
-                "Este MVP replica la lógica base del Excel. "
-                "Si hay diferencias, revisa el bloque técnico para comparar paso a paso contra la hoja de cálculos."
             )
 
         # =========================
