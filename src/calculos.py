@@ -277,6 +277,24 @@ def calcular_impuesto_renta(base_uvt: float, uvt: float) -> float:
 
     return 0.0
 
+def calcular_topup_full(ingreso_anual, aportes_actuales, uvt):
+    """
+    Calcula cuánto podría aportar adicionalmente el cliente
+    para llegar al máximo beneficio tributario permitido.
+    """
+
+    limite_porcentaje = ingreso_anual * 0.30
+    limite_uvt = 3800 * uvt
+
+    max_aporte = min(limite_porcentaje, limite_uvt)
+
+    topup = max_aporte - aportes_actuales
+
+    if topup < 0:
+        topup = 0
+
+    return topup
+
 
 def validar_salario_integral(salario_mensual: float, tipo_salario: str) -> list[str]:
     """
@@ -393,6 +411,12 @@ def ejecutar_simulador(inputs: dict) -> dict:
     impuesto_normal = calcular_impuesto_renta(base_uvt, UVT)
     impuesto_pac = calcular_impuesto_renta(base_uvt_pac, UVT)
 
+    topup_full = calcular_topup_full(
+    ingreso_anual=total_ingresos,
+    aportes_actuales=aportes_pension_afc,
+    uvt=UVT
+)
+
     return {
         "salario_anual": salario_anual,
         "ingreso_variable": ingreso_variable,
@@ -423,4 +447,6 @@ def ejecutar_simulador(inputs: dict) -> dict:
         "impuesto_sin_optimizacion": round(impuesto_normal, 2),
         "impuesto_optimizado": round(impuesto_pac, 2),
         "beneficio": round(impuesto_normal - impuesto_pac, 2),
+        "topup_full": topup_full,
+"uvt": UVT,
     }
