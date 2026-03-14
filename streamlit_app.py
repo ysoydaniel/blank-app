@@ -5,7 +5,7 @@ from src.calculos import ejecutar_simulador
 from src.formateo import formato_moneda, formato_numero
 
 st.set_page_config(
-    page_title="Simulador Tributario 2026",
+    page_title="Simulador Tributario 2026 ",
     page_icon="💰",
     layout="wide"
 )
