@@ -510,7 +510,7 @@ else:
         # =========================
         # Debug técnico
         # =========================
-        if mostrar_debug:
+    if mostrar_debug:
             st.divider()
             st.markdown("## Debug técnico")
 
