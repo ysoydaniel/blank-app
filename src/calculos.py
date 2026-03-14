@@ -1,5 +1,7 @@
 UVT = 52374
 SMLV = 1750905
+MINIMO_INT = 22761765
+SALARIO_TOPE = SMLV * 25  # 43.772.625
 
 TRAMOS_RENTA = [
     {"desde": 0, "hasta": 1090, "tarifa": 0.00, "base": 0},
@@ -24,9 +26,8 @@ TABLA_FSP = [
 
 def calcular_salario_anual(salario_mensual: float, tipo_salario: str) -> float:
     """
-    Replica la lógica identificada en el Excel:
-    - Integral -> salario * 12
-    - Ordinario -> salario * 14.12
+    Replica la fórmula del Excel:
+    =IF(tipo_salario="Integral", salario*12, salario*14.12)
     """
     if tipo_salario == "Integral":
         return salario_mensual * 12
@@ -60,13 +61,11 @@ def calcular_base_seguridad_social(
     tipo_salario: str,
 ) -> float:
     """
-    Según el Excel:
-    - Integral -> (salario_anual + ingreso_variable) * 70%
-    - Ordinario -> salario_anual + ingreso_variable
+    Excel:
+    =IF(tipo_salario="Integral",(salario_anual+ingreso_variable)*70%,(salario_anual+ingreso_variable))
     """
     if tipo_salario == "Integral":
         return (salario_anual + ingreso_variable) * 0.70
-
     return salario_anual + ingreso_variable
 
 
@@ -76,8 +75,8 @@ def calcular_base_seguridad_social_bono(
     bono_salarial: str,
 ) -> float:
     """
-    Si el bono es salarial, entra a seguridad social.
-    Si es integral, aplica 70% a la bonificación.
+    Si el bono es salarial entra a seguridad social.
+    Para integral aplica 70%.
     """
     if bono_salarial != "Sí":
         return 0.0
@@ -91,18 +90,20 @@ def calcular_base_seguridad_social_bono(
 def calcular_aporte_eps(
     base_seg_social: float,
     base_bono: float,
+    salario_tope: float = SALARIO_TOPE,
 ) -> float:
     """
-    Ajuste clave:
-    EPS = 4% base seguridad social + 4% base bono salarial
-    Sin aplicar tope adicional aquí, para replicar el Excel compartido.
+    Replica EXACTAMENTE C16 del Excel:
+    =IF(C13*4%>parametros!C6,parametros!C6,C13*4%)+C14*4%
     """
-    return (base_seg_social * 0.04) + (base_bono * 0.04)
+    eps_base = salario_tope if (base_seg_social * 0.04) > salario_tope else (base_seg_social * 0.04)
+    eps_bono = base_bono * 0.04
+    return eps_base + eps_bono
 
 
 def calcular_aporte_pension(aporte_eps: float) -> float:
     """
-    En el Excel, pensión replica el mismo valor de EPS.
+    En el Excel C17 = C16
     """
     return aporte_eps
 
@@ -157,8 +158,9 @@ def calcular_dependientes(
     uvt: float,
 ) -> float:
     """
-    Replica EXACTAMENTE la fórmula observada en el Excel,
-    aunque conceptualmente se vea rara.
+    Replica EXACTAMENTE la fórmula del Excel:
+    =(IF(dep=0,0,IF(salario*10%>UVT*32,UVT*32,salario)))*12
+    Sí, se ve rara. Sí, Excel hace eso. Sí, Excel a veces elige la violencia.
     """
     if numero_dependientes == 0:
         return 0.0
@@ -276,6 +278,21 @@ def calcular_impuesto_renta(base_uvt: float, uvt: float) -> float:
     return 0.0
 
 
+def validar_salario_integral(salario_mensual: float, tipo_salario: str) -> list[str]:
+    """
+    Validación opcional de negocio.
+    No altera cálculos, pero sirve para UI.
+    """
+    errores = []
+
+    if tipo_salario == "Integral" and salario_mensual < MINIMO_INT:
+        errores.append(
+            f"El salario integral no debería ser menor a {MINIMO_INT:,.0f}."
+        )
+
+    return errores
+
+
 def ejecutar_simulador(inputs: dict) -> dict:
     salario_anual = calcular_salario_anual(inputs["salario_mensual"], inputs["tipo_salario"])
     ingreso_variable = calcular_ingreso_variable(inputs["valor_variable_anual"])
@@ -301,7 +318,7 @@ def ejecutar_simulador(inputs: dict) -> dict:
         inputs["bono_salarial"],
     )
 
-    aporte_eps = calcular_aporte_eps(base_seg_social, base_bono)
+    aporte_eps = calcular_aporte_eps(base_seg_social, base_bono, SALARIO_TOPE)
     aporte_pension = calcular_aporte_pension(aporte_eps)
     fondo_solidaridad = calcular_fondo_solidaridad(base_seg_social, TABLA_FSP)
 
