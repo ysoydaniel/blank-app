@@ -99,13 +99,14 @@ with col1:
         help="Auxilios no salariales como conectividad, transporte u otros beneficios."
     )
 
-    valor_auxilios_mensual = st.number_input(
+    valor_auxilios_mensual = money_input(
         "¿Cuál es el valor mensual de tus auxilios?",
         min_value=0.0,
         value=2000000.0 if recibe_auxilios == "Sí" else 0.0,
         step=100000.0,
         disabled=(recibe_auxilios == "No"),
-        help="Monto mensual de auxilios no salariales. No debería superar el 50% del salario."
+        help="Monto mensual de auxilios no salariales. No debería superar el 50% del salario.",
+        key="auxilio"
     )
     
     recibe_variable = st.radio(
