@@ -23,6 +23,16 @@ TABLA_FSP = [
     {"desde": 35018100 * 12, "hasta": None, "tarifa": 0.02},
 ]
 
+def calcular_topup_full(ingreso_anual, aportes_actuales, uvt):
+
+    limite_porcentaje = ingreso_anual * 0.30
+    limite_uvt = 3800 * uvt
+
+    max_aporte = min(limite_porcentaje, limite_uvt)
+
+    topup = max_aporte - aportes_actuales
+
+    return max(topup, 0)
 
 def calcular_salario_anual(salario_mensual: float, tipo_salario: str) -> float:
     """
@@ -393,6 +403,12 @@ def ejecutar_simulador(inputs: dict) -> dict:
     impuesto_normal = calcular_impuesto_renta(base_uvt, UVT)
     impuesto_pac = calcular_impuesto_renta(base_uvt_pac, UVT)
 
+    topup_full = calcular_topup_full(
+    ingreso_anual=total_ingresos,
+    aportes_actuales=aportes_pension_afc,
+    uvt=UVT
+)
+
     return {
         "salario_anual": salario_anual,
         "ingreso_variable": ingreso_variable,
@@ -423,4 +439,5 @@ def ejecutar_simulador(inputs: dict) -> dict:
         "impuesto_sin_optimizacion": round(impuesto_normal, 2),
         "impuesto_optimizado": round(impuesto_pac, 2),
         "beneficio": round(impuesto_normal - impuesto_pac, 2),
+        "topup_full": topup_full,
     }
