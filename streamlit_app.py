@@ -19,13 +19,20 @@ st.caption("Prototipo funcional")
 def valor_si_no_a_bool(valor: str) -> bool:
     return valor == "Sí"
 
-def money_input(label, value=0, key=None):
+def money_input(
+    label,
+    value=0,
+    key=None,
+    help_text=None,
+    disabled=False
+):
 
     valor_str = st.text_input(
         label,
         value=f"${value:,.0f}".replace(",", "."),
-        help_text: str | None = None,
-        key=key
+        key=key,
+        help=help_text,
+        disabled=disabled
     )
 
     valor_num = (
@@ -33,6 +40,7 @@ def money_input(label, value=0, key=None):
         .replace("$", "")
         .replace(".", "")
         .replace(",", "")
+        .strip()
     )
 
     try:
@@ -83,9 +91,9 @@ with col1:
     
     salario_mensual = money_input(
     "¿Cuál es tu salario mensual?",
-    help_text="Ingresa tu salario mensual antes de deducciones.",
     value=25000000,
-    key="salario"
+    help_text="Ingresa tu salario mensual antes de deducciones.",
+    key="salario_mensual"
 )
 
     tipo_salario = st.selectbox(
