@@ -98,7 +98,7 @@ with col1:
     "¿Cuál es tu salario mensual?",
     value=25000000,
     help_text="Ingresa tu salario mensual antes de deducciones.",
-    key="salario_mensual"
+    key="salario"
 )
 
     tipo_salario = st.selectbox(
@@ -115,12 +115,12 @@ with col1:
     )
 
     valor_auxilios_mensual = money_input(
-        "¿Cuál es el valor mensual de tus auxilios?",
-        value=2000000.0 if recibe_auxilios == "Sí" else 0.0,
-        disabled=(recibe_auxilios == "No"),
-        help_text="El valor mensual de auxilios no debería superar el 50% del salario.",
-        key="valor_auxilios"
-    )
+    "¿Cuál es el valor mensual de tus auxilios?",
+    value=2000000 if recibe_auxilios == "Sí" else 0,
+    help_text="Auxilios no salariales como transporte o conectividad.",
+    disabled=(recibe_auxilios == "No"),
+    key="auxilios"
+)
     
     recibe_variable = st.radio(
         "¿Recibes comisiones o salario variable?",
