@@ -11,6 +11,34 @@ st.set_page_config(
     layout="wide"
 )
 
+st.markdown("""
+<style>
+
+/* contenedor del input */
+div[data-testid="stTextInput"] {
+    position: relative;
+}
+
+/* símbolo de moneda */
+div[data-testid="stTextInput"]::before {
+    content: "$";
+    position: absolute;
+    left: 12px;
+    top: 34px;
+    color: #9CA3AF;
+    font-weight: 600;
+    font-size: 15px;
+    z-index: 1;
+}
+
+/* padding del input para que no tape el símbolo */
+div[data-testid="stTextInput"] input {
+    padding-left: 26px !important;
+}
+
+</style>
+""", unsafe_allow_html=True)
+
 st.title("Simulador Tributario 2026")
 st.caption("Prototipo funcional")
 
@@ -20,6 +48,21 @@ st.caption("Prototipo funcional")
 def valor_si_no_a_bool(valor: str) -> bool:
     return valor == "Sí"
 
+def _format_money_state(key: str):
+
+    valor = st.session_state.get(key, "")
+
+    solo_numeros = re.sub(r"[^\d]", "", valor)
+
+    if solo_numeros == "":
+        st.session_state[key] = ""
+        return
+
+    numero = int(solo_numeros)
+
+    st.session_state[key] = f"{numero:,}".replace(",", ".")
+
+
 def money_input(
     label,
     value=0,
@@ -27,24 +70,22 @@ def money_input(
     help_text=None,
     disabled=False
 ):
-    valor_inicial = f"${int(value):,}".replace(",", ".")
 
-    valor_str = st.text_input(
+    if key not in st.session_state:
+        st.session_state[key] = f"{int(value):,}".replace(",", ".")
+
+    st.text_input(
         label,
-        value=valor_inicial,
         key=key,
         help=help_text,
-        disabled=disabled
+        disabled=disabled,
+        on_change=_format_money_state,
+        args=(key,)
     )
 
-    solo_numeros = re.sub(r"[^\d]", "", valor_str)
+    valor = re.sub(r"[^\d]", "", st.session_state.get(key, ""))
 
-    if solo_numeros == "":
-        valor_num = 0.0
-    else:
-        valor_num = float(solo_numeros)
-
-    return valor_num
+    return float(valor) if valor else 0.0
 
 
 # =========================
