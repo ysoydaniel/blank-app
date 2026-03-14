@@ -33,9 +33,9 @@ with st.sidebar:
 # =========================
 st.markdown("## Datos de ingreso del cliente")
 
-col1, col2 = st.columns(2)
+col1, col2, col3, col4 = st.columns(4)
 
-with col1:
+with col3:
     salario_mensual = st.number_input(
         "¿Cuál es tu salario mensual?",
         min_value=0.0,
@@ -75,7 +75,7 @@ with col1:
 
     )
     
-with col2:
+with col4:
 
     valor_variable_anual = st.number_input(
         "¿Cuál es el valor anual de tu variable o comisiones?",
