@@ -25,7 +25,7 @@ def valor_si_no_a_bool(valor: str) -> bool:
 # =========================
 with st.sidebar:
     st.markdown("## Configuración")
-    mostrar_debug = st.checkbox("Mostrar detalle técnico", value= true)
+    mostrar_debug = st.checkbox("Mostrar detalle técnico", value= False)
     st.caption("Úsalo para comparar contra el Excel y encontrar diferencias.")
 
 # =========================
