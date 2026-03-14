@@ -19,36 +19,27 @@ st.caption("Prototipo funcional")
 def valor_si_no_a_bool(valor: str) -> bool:
     return valor == "Sí"
 
-def money_input(
-    label: str,
-    *,
-    value: float = 0.0,
-    min_value: float = 0.0,
-    step: float = 100000.0,
-    help_text: str | None = None,
-    disabled: bool = False,
-    key: str | None = None,
-) -> float:
-    valor = st.number_input(
+def money_input(label, value=0, key=None):
+
+    valor_str = st.text_input(
         label,
-        min_value=min_value,
-        value=value,
-        step=step,
-        help=help_text,
-        disabled=disabled,
-        key=key,
+        value=f"${value:,.0f}".replace(",", "."),
+        key=key
     )
 
-    st.markdown(
-        f"""
-        <div style="font-size:13px; color:#93C5FD; font-weight:600; margin-top:-6px; margin-bottom:8px;">
-            💰 {formato_moneda(valor)}
-        </div>
-        """,
-        unsafe_allow_html=True
+    valor_num = (
+        valor_str
+        .replace("$", "")
+        .replace(".", "")
+        .replace(",", "")
     )
 
-    return valor
+    try:
+        valor_num = float(valor_num)
+    except:
+        valor_num = 0
+
+    return valor_num
 
 
 # =========================
@@ -90,11 +81,10 @@ with col1:
     st.markdown("### 💼 Ingresos")
     
     salario_mensual = money_input(
-        "¿Cuál es tu salario mensual?",
-        value=25000000.0,
-        help_text="Ingresa tu salario mensual antes de deducciones.",
-        key="salario_mensual"
-    )
+    "¿Cuál es tu salario mensual?",
+    value=25000000,
+    key="salario"
+)
 
     tipo_salario = st.selectbox(
         "¿Qué tipo de salario tienes?",
