@@ -500,7 +500,7 @@ else:
 
             st.dataframe(df_detalle, use_container_width=True, hide_index=True)
 
-        with c5:
+    with c5:
             st.markdown("### Interpretación")
             st.success(
                 f"Con base en la información registrada, el cliente podría obtener un beneficio tributario estimado de "
