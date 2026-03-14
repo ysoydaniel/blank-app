@@ -31,11 +31,12 @@ with st.sidebar:
 # =========================
 # Formulario
 # =========================
-st.markdown("## Datos de ingreso del cliente")
 
-col1, col2, col3, col4 = st.columns(4)
+
+col1, col2, sep, col3, col4 = st.columns([1,1,0.05,1,1])
 
 with col1:
+    st.markdown("## Datos de ingreso del cliente")
     salario_mensual = st.number_input(
         "¿Cuál es tu salario mensual?",
         min_value=0.0,
@@ -108,23 +109,24 @@ with col2:
         help="Si marcas Sí, el bono tiene aporte a seguridad social; si marcas No, no tiene aporte."
     )
 
-st.markdown(
-"""
-<div style="
-    border-left:1px solid rgba(255,255,255,0.15);
-    height:350px;
-    margin:auto;
-"></div>
-""",
-unsafe_allow_html=True
-)
+with sep:
+    st.markdown(
+        """
+        <div style="
+            border-left:1px solid rgba(200,200,200,0.4);
+            height:420px;
+            margin:auto;
+        "></div>
+        """,
+        unsafe_allow_html=True
+    )
 
-st.markdown("## Beneficios y deducciones")
+
 
 
 
 with col3:
-    
+    st.markdown("## Beneficios y deducciones")
     aporte_voluntario_obligatorio_anual = st.number_input(
         "¿Cuánto aportas anualmente de manera voluntaria a tu fondo obligatorio?",
         min_value=0.0,
