@@ -53,7 +53,9 @@ with col1:
     recibe_auxilios = st.radio(
         "¿Recibes auxilios? Tipo conectividad o transporte",
         ["Sí", "No"],
-        horizontal=True
+        horizontal=True,
+        help="Valida si recibes algún tipo de auxilio que es ingreso tributario pero no es parte de tu salario"
+
     )
 
     valor_auxilios_mensual = st.number_input(
@@ -68,7 +70,9 @@ with col1:
     recibe_variable = st.radio(
         "¿Recibes comisiones o salario variable?",
         ["Sí", "No"],
-        horizontal=True
+        horizontal=True,
+        help="Valida si recibes algún valor adicional a tu salario y que este sea prestacional (pagues seguridad social por el)"
+
     )
 
     valor_variable_anual = st.number_input(
@@ -76,14 +80,16 @@ with col1:
         min_value=0.0,
         value=24000000.0 if recibe_variable == "Sí" else 0.0,
         step=100000.0,
-        disabled=(recibe_variable == "No")
+        disabled=(recibe_variable == "No"),
+        help="Ingresa el promedio de los ingresos que percibe por comisiones o variable y que tienen carga prestacional"
     )
 
 with col2:
     tiene_bonificaciones = st.radio(
         "¿Tienes bonificaciones?",
         ["Sí", "No"],
-        horizontal=True
+        horizontal=True,
+        help="Pagos ocasionales extralegales que la empresa te entregue" 
     )
 
     valor_bonificaciones = st.number_input(
@@ -112,7 +118,8 @@ with col3:
         "¿Cuánto aportas anualmente de manera voluntaria a tu fondo obligatorio?",
         min_value=0.0,
         value=15000000.0,
-        step=100000.0
+        step=100000.0,
+        help="Si aportas voluntariamente al obligatorio tienes beneficio tributario hasta del 25% de tu ingreso año sin pasar de 2500 UVT"
     )
 
     numero_dependientes = st.number_input(
@@ -128,7 +135,8 @@ with col3:
         "¿Cuánto pagas anualmente de intereses de vivienda?",
         min_value=0.0,
         value=4500000.0,
-        step=100000.0
+        step=100000.0,
+        help="Aquí registras el valor de los intereses que pagas en un credito hipotecario, máximo 1200 UVTS al año $62,848,800"
     )
 
 with col4:
@@ -136,14 +144,16 @@ with col4:
         "¿Cuánto pagas anualmente en planes de salud?",
         min_value=0.0,
         value=6700000.0,
-        step=100000.0
+        step=100000.0,
+        help="Aquí registras el valor de los pagos en salud, máximo 192 UVTS al año $10,055,808"
     )
 
     aportes_pension_afc_anual = st.number_input(
         "¿Cuánto aportas anualmente en pensión voluntaria o AFC?",
         min_value=0.0,
         value=1500000.0,
-        step=100000.0
+        step=100000.0,
+        help="Puedes hacer aportes a pensión voluntaria o cuenta AFC, para obtener beneficio, dentro del cupo de 1340 UVTS"
     )
 
     compras_factura_electronica = st.number_input(
