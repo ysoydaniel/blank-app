@@ -13,6 +13,65 @@ st.set_page_config(
 
 st.markdown("""
 <style>
+.result-card {
+    border-radius: 22px;
+    padding: 22px 24px;
+    background: linear-gradient(180deg, rgba(255,255,255,0.07), rgba(255,255,255,0.04));
+    border: 1px solid rgba(255,255,255,0.08);
+    box-shadow: 0 14px 40px rgba(0,0,0,0.18);
+    min-height: 150px;
+}
+
+.result-label {
+    font-size: 14px;
+    color: #CBD5E1;
+    font-weight: 600;
+    margin-bottom: 10px;
+}
+
+.result-value {
+    font-size: 40px;
+    line-height: 1.05;
+    color: white;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    margin-bottom: 10px;
+}
+
+.result-subtext {
+    font-size: 13px;
+    color: #94A3B8;
+    line-height: 1.4;
+}
+
+.result-card.primary {
+    background: linear-gradient(135deg, rgba(37,99,235,0.22), rgba(29,78,216,0.08));
+    border: 1px solid rgba(96,165,250,0.22);
+}
+
+.result-card.success {
+    background: linear-gradient(135deg, rgba(16,185,129,0.20), rgba(16,185,129,0.06));
+    border: 1px solid rgba(52,211,153,0.20);
+}
+
+.result-card.warning {
+    background: linear-gradient(135deg, rgba(245,158,11,0.18), rgba(245,158,11,0.05));
+    border: 1px solid rgba(251,191,36,0.16);
+}
+
+.result-mini {
+    font-size: 12px;
+    color: #93C5FD;
+    font-weight: 700;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+}
+</style>
+""", unsafe_allow_html=True)
+
+st.markdown("""
+<style>
 
 /* contenedor del input */
 div[data-testid="stTextInput"] {
@@ -86,6 +145,19 @@ def money_input(
     valor = re.sub(r"[^\d]", "", st.session_state.get(key, ""))
 
     return float(valor) if valor else 0.0
+
+def result_card(title: str, value: str, subtitle: str = "", tone: str = "primary", eyebrow: str = ""):
+    st.markdown(
+        f"""
+        <div class="result-card {tone}">
+            {f'<div class="result-mini">{eyebrow}</div>' if eyebrow else ''}
+            <div class="result-label">{title}</div>
+            <div class="result-value">{value}</div>
+            {f'<div class="result-subtext">{subtitle}</div>' if subtitle else ''}
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
 
 
 # =========================
@@ -321,21 +393,76 @@ if st.button("Calcular simulación", use_container_width=True):
 
         st.markdown("## Resultados")
 
-        c1, c2, c3 = st.columns(3)
+        st.markdown("## Resultados")
 
-        c1.metric(
-            "Tu impuesto de renta sin optimización",
-            formato_moneda(resultado["impuesto_sin_optimizacion"])
-        )
-        c2.metric(
-            "Tu impuesto de renta optimizado al máximo",
-            formato_moneda(resultado["impuesto_optimizado"])
-        )
-        c3.metric(
-            "Beneficio",
-            formato_moneda(resultado["beneficio"])
-        )
+impuesto_original = resultado["impuesto_sin_optimizacion"]
+impuesto_optimizado = resultado["impuesto_optimizado"]
+beneficio = resultado["beneficio"]
 
+porcentaje_ahorro = 0
+if impuesto_original > 0:
+    porcentaje_ahorro = beneficio / impuesto_original
+
+c1, c2, c3 = st.columns(3)
+
+with c1:
+    result_card(
+        title="Impuesto actual",
+        value=formato_moneda(impuesto_original),
+        subtitle="Escenario sin optimización tributaria.",
+        tone="warning",
+        eyebrow="Escenario base"
+    )
+
+with c2:
+    result_card(
+        title="Impuesto optimizado",
+        value=formato_moneda(impuesto_optimizado),
+        subtitle="Escenario con beneficios tributarios aplicados.",
+        tone="primary",
+        eyebrow="Escenario optimizado"
+    )
+
+with c3:
+    result_card(
+        title="Ahorro estimado",
+        value=formato_moneda(beneficio),
+        subtitle=f"Reducción aproximada del {porcentaje_ahorro:.1%} sobre el impuesto.",
+        tone="success",
+        eyebrow="Impacto"
+    )
+
+    st.markdown("### Impacto de la optimización tributaria")
+
+st.progress(min(max(porcentaje_ahorro, 0), 1))
+
+st.markdown(
+    f"""
+    <div style="
+        margin-top:10px;
+        padding:16px 18px;
+        border-radius:16px;
+        background:rgba(16,185,129,0.08);
+        border:1px solid rgba(16,185,129,0.18);
+    ">
+        <div style="font-size:14px; color:#34D399; font-weight:700;">
+            💰 Ahorro potencial identificado
+        </div>
+        <div style="font-size:13px; color:#CBD5E1; margin-top:6px;">
+            El cliente podría reducir su carga tributaria en <b>{formato_moneda(beneficio)}</b>,
+            equivalente a una mejora aproximada del <b>{porcentaje_ahorro:.1%}</b>.
+        </div>
+    </div>
+    """,
+    unsafe_allow_html=True
+)
+
+if porcentaje_ahorro >= 0.20:
+    st.success("🚀 Excelente oportunidad de optimización tributaria.")
+elif porcentaje_ahorro >= 0.10:
+    st.info("📊 Hay una oportunidad tributaria relevante para el cliente.")
+else:
+    st.warning("💡 El beneficio existe, pero el impacto es más moderado.")
         st.divider()
 
         c4, c5 = st.columns([1.3, 1])
