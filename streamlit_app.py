@@ -628,6 +628,73 @@ if st.session_state.simulacion_calculada and st.session_state.resultado_simulaci
             eyebrow="Impacto"
         )
 
+    st.markdown(
+        f"""
+        <div class="soft-card" style="
+            margin-top:10px;
+            padding:16px 18px;
+            background:rgba(16,185,129,0.08);
+            border:1px solid rgba(16,185,129,0.18);
+        ">
+            <div style="font-size:14px; color:#86efac; font-weight:700;">
+                💰 Ahorro potencial identificado
+            </div>
+            <div style="font-size:13px; color:#d1fae5; margin-top:6px;">
+                El cliente podría reducir su carga tributaria en <b>{formato_moneda(beneficio)}</b>,
+                equivalente a una mejora aproximada del <b>{porcentaje_ahorro:.1%}</b>.
+            </div>
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
+
+    if porcentaje_ahorro >= 0.20:
+        st.success("🚀 Excelente oportunidad de optimización tributaria.")
+    elif porcentaje_ahorro >= 0.10:
+        st.info("📊 Hay una oportunidad tributaria relevante para el cliente.")
+    else:
+        st.warning("💡 El beneficio existe, pero el impacto es más moderado.")
+
+    st.divider()
+    st.markdown("## Simulación interactiva de optimización")
+
+    topup_max = int(resultado.get("topup_full", 0))
+
+    if topup_max > 0:
+        topup_usuario = st.slider(
+            "Simula cuánto más podría aportar el cliente en pensión voluntaria / AFC",
+            min_value=0,
+            max_value=topup_max,
+            value=0,
+            step=500000,
+            help="Mueve el control para ver cómo cambia el impuesto.",
+            key="slider_topup"
+        )
+
+        nueva_base = resultado["base_gravable"] - topup_usuario
+        if nueva_base < 0:
+            nueva_base = 0
+
+        base_uvt_temp = nueva_base / resultado["uvt"]
+
+        impuesto_topup = calcular_impuesto_renta(
+            base_uvt_temp,
+            resultado["uvt"]
+        )
+
+        ahorro_topup = resultado["impuesto_sin_optimizacion"] - impuesto_topup
+
+        tc1, tc2, tc3 = st.columns(3)
+
+        with tc1:
+            st.metric("Aporte adicional", formato_moneda(topup_usuario))
+
+        with tc2:
+            st.metric("Nuevo impuesto estimado", formato_moneda(impuesto_topup))
+
+        with tc3:
+            st.metric("Ahorro tributario", formato_moneda(ahorro_topup))
+    
     # =========================
     # DESGLOSE vs INTERPRETACIÓN
     # =========================
