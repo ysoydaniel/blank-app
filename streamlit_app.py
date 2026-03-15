@@ -54,13 +54,64 @@ st.markdown("""
         box-shadow: 0 0 0 2px rgba(0,199,61,0.10);
     }
 
-    /* Radio buttons */
+    /* ===== Select abierto / dropdown ===== */
+    div[data-baseweb="popover"] {
+        background: transparent !important;
+    }
+
+    div[data-baseweb="menu"] {
+        background: #ffffff !important;
+        border: 1px solid rgba(0,0,0,0.10) !important;
+        border-radius: 14px !important;
+        box-shadow: 0 12px 30px rgba(0,0,0,0.10) !important;
+        overflow: hidden !important;
+    }
+
+    ul[role="listbox"] {
+        background: #ffffff !important;
+        border: none !important;
+        border-radius: 14px !important;
+        box-shadow: none !important;
+        padding: 6px !important;
+    }
+
+    ul[role="listbox"] li {
+        background: #ffffff !important;
+        color: #0f172a !important;
+        border-radius: 10px !important;
+    }
+
+    ul[role="listbox"] li:hover {
+        background: rgba(0,199,61,0.08) !important;
+        color: #0f172a !important;
+    }
+
+    ul[role="listbox"] li[aria-selected="true"] {
+        background: rgba(0,199,61,0.12) !important;
+        color: #0f172a !important;
+        font-weight: 600 !important;
+    }
+
+    ul[role="listbox"] *,
+    div[data-baseweb="menu"] * {
+        color: #0f172a !important;
+    }
+
+    /* ===== Radio buttons ===== */
     div[role="radiogroup"] label {
-        background: #ffffff;
-        padding: 8px 14px;
-        border-radius: 12px;
-        border: 1px solid rgba(0,0,0,0.10);
-        margin-right: 8px;
+        background: #ffffff !important;
+        padding: 8px 14px !important;
+        border-radius: 12px !important;
+        border: 1px solid rgba(0,0,0,0.10) !important;
+        margin-right: 8px !important;
+    }
+
+    div[role="radiogroup"] label * {
+        color: #0f172a !important;
+    }
+
+    input[type="radio"] {
+        accent-color: #00c73d !important;
     }
 
     /* Botón principal */
@@ -217,45 +268,6 @@ st.markdown("""
     #MainMenu {visibility: hidden;}
     footer {visibility: hidden;}
     header {visibility: hidden;}
-
-    /* Select abierto: popup / menú */
-div[data-baseweb="popover"] {
-    background: transparent !important;
-}
-
-ul[role="listbox"] {
-    background: #ffffff !important;
-    border: 1px solid rgba(0,0,0,0.10) !important;
-    border-radius: 14px !important;
-    box-shadow: 0 12px 30px rgba(0,0,0,0.10) !important;
-    padding: 6px !important;
-}
-
-/* Opciones del select */
-ul[role="listbox"] li {
-    background: #ffffff !important;
-    color: #0f172a !important;
-    border-radius: 10px !important;
-}
-
-/* Hover de opciones */
-ul[role="listbox"] li:hover {
-    background: rgba(0,199,61,0.08) !important;
-    color: #0f172a !important;
-}
-
-/* Opción seleccionada */
-ul[role="listbox"] li[aria-selected="true"] {
-    background: rgba(0,199,61,0.12) !important;
-    color: #0f172a !important;
-    font-weight: 600 !important;
-}
-
-/* Texto dentro del menú desplegable */
-ul[role="listbox"] *,
-div[data-baseweb="menu"] * {
-    color: #0f172a !important;
-}
 </style>
 """, unsafe_allow_html=True)
 
@@ -534,7 +546,6 @@ if st.button("Calcular simulación", use_container_width=True):
 
 if st.session_state.simulacion_calculada and st.session_state.resultado_simulacion is not None:
     resultado = st.session_state.resultado_simulacion
-    inputs_calculados = st.session_state.inputs_simulacion
 
     impuesto_original = resultado["impuesto_sin_optimizacion"]
     impuesto_optimizado = resultado["impuesto_optimizado"]
