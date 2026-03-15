@@ -839,7 +839,7 @@ if st.session_state.simulacion_calculada and st.session_state.resultado_simulaci
 
     
     with sep:
-        st.markdown("<div class='vertical-divider'></div>", unsafe_allow_h
+        st.markdown("<div class='vertical-divider'></div>", unsafe_allow_html=True
 
     with right:
         st.markdown("### Interpretación")
