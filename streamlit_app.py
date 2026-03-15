@@ -628,6 +628,23 @@ if st.session_state.simulacion_calculada and st.session_state.resultado_simulaci
             eyebrow="Impacto"
         )
 
+    st.markdown("### Comparación visual")
+
+    max_valor = max(impuesto_original, impuesto_optimizado)
+    porcentaje_actual = impuesto_original / max_valor if max_valor > 0 else 0
+    porcentaje_opt = impuesto_optimizado / max_valor if max_valor > 0 else 0
+
+    st.markdown("**Escenario actual**")
+    st.progress(porcentaje_actual)
+    st.caption(formato_moneda(impuesto_original))
+
+    st.markdown("**Escenario optimizado**")
+    st.progress(porcentaje_opt)
+    st.caption(formato_moneda(impuesto_optimizado))
+
+    st.markdown("### Impacto de la optimización tributaria")
+    st.progress(min(max(porcentaje_ahorro, 0), 1))
+    
     st.markdown(
         f"""
         <div class="soft-card" style="
