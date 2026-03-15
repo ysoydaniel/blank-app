@@ -83,48 +83,83 @@ div[data-testid="stTextInput"] input:focus {
 }
 
 
-    /* ===== Select abierto / dropdown ===== */
-    div[data-baseweb="popover"] {
-        background: transparent !important;
-    }
+  
+* =========================
+   SELECTBOX – fondo blanco y dropdown blanco (quita “negro”)
+   ========================= */
 
-    div[data-baseweb="menu"] {
-        background: #ffffff !important;
-        border: 1px solid rgba(0,0,0,0.10) !important;
-        border-radius: 14px !important;
-        box-shadow: 0 12px 30px rgba(0,0,0,0.10) !important;
-        overflow: hidden !important;
-    }
+/* Caja cerrada del select (control principal) */
+.stSelectbox div[data-baseweb="select"] > div {
+  background: #ffffff !important;
+  border: 1px solid rgba(0,0,0,0.10) !important;
+  border-radius: 14px !important;
+  box-shadow: none !important;
+}
 
-    ul[role="listbox"] {
-        background: #ffffff !important;
-        border: none !important;
-        border-radius: 14px !important;
-        box-shadow: none !important;
-        padding: 6px !important;
-    }
+/* Texto dentro del select */
+.stSelectbox div[data-baseweb="select"] span,
+.stSelectbox div[data-baseweb="select"] input {
+  color: #0f172a !important;
+  outline: none !important;
+  box-shadow: none !important;
+}
 
-    ul[role="listbox"] li {
-        background: #ffffff !important;
-        color: #0f172a !important;
-        border-radius: 10px !important;
-    }
+/* Focus/hover del select */
+.stSelectbox div[data-baseweb="select"] > div:focus-within,
+.stSelectbox div[data-baseweb="select"] > div:hover {
+  border: 1px solid rgba(0,199,61,0.35) !important;
+  box-shadow: 0 0 0 2px rgba(0,199,61,0.10) !important;
+}
 
-    ul[role="listbox"] li:hover {
-        background: rgba(0,199,61,0.08) !important;
-        color: #0f172a !important;
-    }
+/* Popover del dropdown (portal) */
+div[data-baseweb="popover"] {
+  background: transparent !important;
+}
 
-    ul[role="listbox"] li[aria-selected="true"] {
-        background: rgba(0,199,61,0.12) !important;
-        color: #0f172a !important;
-        font-weight: 600 !important;
-    }
+/* Contenedor del menú desplegable */
+div[data-baseweb="menu"] {
+  background: #ffffff !important;
+  border: 1px solid rgba(0,0,0,0.10) !important;
+  border-radius: 14px !important;
+  box-shadow: 0 12px 30px rgba(0,0,0,0.10) !important;
+  overflow: hidden !important;
+}
 
-    ul[role="listbox"] *,
-    div[data-baseweb="menu"] * {
-        color: #0f172a !important;
-    }
+/* Lista y items del dropdown */
+div[role="listbox"],
+ul[role="listbox"] {
+  background: #ffffff !important;
+  border: none !important;
+}
+
+ul[role="listbox"] li {
+  background: #ffffff !important;
+  color: #0f172a !important;
+  border-radius: 10px !important;
+}
+
+ul[role="listbox"] li:hover {
+  background: rgba(0,199,61,0.08) !important;
+  color: #0f172a !important;
+}
+
+ul[role="listbox"] li[aria-selected="true"] {
+  background: rgba(0,199,61,0.12) !important;
+  color: #0f172a !important;
+  font-weight: 600 !important;
+}
+
+/* Evita que un tema dark pinte textos o fondos dentro del menú */
+div[data-baseweb="menu"] *,
+ul[role="listbox"] * {
+  color: #0f172a !important;
+  background: transparent;
+}
+
+/* Si el "negro" viene de outline global del navegador, esto lo evita */
+*:focus {
+  outline: none !important;
+}
 
     /* ===== Radio buttons ===== */
     div[role="radiogroup"] label {
