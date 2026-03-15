@@ -495,7 +495,7 @@ if st.button("🧮 Calcular simulación", use_container_width=True):
         st.session_state.inputs_simulacion = inputs.copy()
         st.session_state.simulacion_calculada = True
 
-        if st.session_state.simulacion_calculada and st.session_state.resultado_simulacion is not None:
+if st.session_state.simulacion_calculada and st.session_state.resultado_simulacion is not None:
     resultado = st.session_state.resultado_simulacion
     inputs_calculados = st.session_state.inputs_simulacion
 
@@ -801,4 +801,4 @@ if st.button("🧮 Calcular simulación", use_container_width=True):
         st.dataframe(debug_df, use_container_width=True, hide_index=True)
 
 else:
-    st.info("Completa los datos y pulsa **Calcular simulación**.")
+    st.info("Completa los datos y pulsa **Calcular simulación**.")      
