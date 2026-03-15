@@ -66,14 +66,14 @@ st.markdown("""
     /* Botón principal */
     .stButton > button {
         width: 100%;
-        background: linear-gradient(135deg, #00c83c 0%, #1D4ED8 100%);
+        background: linear-gradient(135deg, #00c73d 0%, #8fe000 100%);
         color: white;
         border: none;
         border-radius: 14px;
         padding: 0.8rem 1rem;
         font-weight: 700;
         font-size: 1rem;
-        box-shadow: 0 10px 30px rgba(37, 99, 235, 0.35);
+        box-shadow: 0 10px 30px rgba(37, 99, 235, 0);
     }
 
     .stButton > button:hover {
