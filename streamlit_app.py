@@ -181,7 +181,7 @@ st.markdown("""
     /* Toggle */
 button[kind="secondaryFormSubmit"],
 div[data-testid="stToggle"] label {
-    color: #f8fafc !important;
+    color: #00c73d !important;
 }
 
 div[data-testid="stToggle"] {
