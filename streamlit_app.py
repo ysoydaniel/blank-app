@@ -217,6 +217,45 @@ st.markdown("""
     #MainMenu {visibility: hidden;}
     footer {visibility: hidden;}
     header {visibility: hidden;}
+
+    /* Select abierto: popup / menú */
+div[data-baseweb="popover"] {
+    background: transparent !important;
+}
+
+ul[role="listbox"] {
+    background: #ffffff !important;
+    border: 1px solid rgba(0,0,0,0.10) !important;
+    border-radius: 14px !important;
+    box-shadow: 0 12px 30px rgba(0,0,0,0.10) !important;
+    padding: 6px !important;
+}
+
+/* Opciones del select */
+ul[role="listbox"] li {
+    background: #ffffff !important;
+    color: #0f172a !important;
+    border-radius: 10px !important;
+}
+
+/* Hover de opciones */
+ul[role="listbox"] li:hover {
+    background: rgba(0,199,61,0.08) !important;
+    color: #0f172a !important;
+}
+
+/* Opción seleccionada */
+ul[role="listbox"] li[aria-selected="true"] {
+    background: rgba(0,199,61,0.12) !important;
+    color: #0f172a !important;
+    font-weight: 600 !important;
+}
+
+/* Texto dentro del menú desplegable */
+ul[role="listbox"] *,
+div[data-baseweb="menu"] * {
+    color: #0f172a !important;
+}
 </style>
 """, unsafe_allow_html=True)
 
