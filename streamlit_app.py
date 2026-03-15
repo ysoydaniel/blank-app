@@ -246,7 +246,11 @@ div[data-testid="stToggle"] {
     }
 
     /* Result cards */
+    
+/* Separación entre cards en mobile */
+@media (max-width: 768px) {
     .result-card {
+        margin-bottom: 18px;
         border-radius: 22px;
         padding: 22px 24px;
         background: rgba(255,255,255,0.08);
