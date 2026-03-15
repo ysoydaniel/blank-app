@@ -391,19 +391,28 @@ if "simulacion_calculada" not in st.session_state:
 # =========================
 # HEADER
 # =========================
+
 st.markdown("""
-<div class="soft-card" style="margin-bottom:18px;">
-    <div style="font-size:13px;color:#86efac;font-weight:700;letter-spacing:.08em;">
-        SIMULADOR TRIBUTARIO • GLASS UI
-    </div>
-    <div style="font-size:34px; color:#ffffff; font-weight:800; margin-top:6px;">
-        Simulador Tributario 2026
-    </div>
-    <div style="font-size:16px; color:#d1fae5; margin-top:8px;">
-        Convierte un modelo en Excel en una experiencia web guiada, clara y lista para escalar.
+<div class="glass-card" style="display:flex; align-items:center; gap:16px;">
+    <img 
+        src="https://skandiacol-my.sharepoint.com/personal/csilvao_skandia_com_co/Documents/Templates/Iconos/Negativo/calculadora_s.png"
+        style="
+            height:48px;
+            width:auto;
+            border-radius:12px;
+        "
+    />
+    <div>
+        <div style="font-size:32px; font-weight:800; color:#0f172a;">
+            Simulador Tributario 2026
+        </div>
+        <div style="font-size:15px; color:#475569;">
+            Experiencia financiera premium
+        </div>
     </div>
 </div>
 """, unsafe_allow_html=True)
+
 
 # =========================
 # FORMULARIO
