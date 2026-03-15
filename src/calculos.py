@@ -160,7 +160,6 @@ def calcular_dependientes(
     """
     Replica EXACTAMENTE la fórmula del Excel:
     =(IF(dep=0,0,IF(salario*10%>UVT*32,UVT*32,salario)))*12
-    Sí, se ve rara. Sí, Excel hace eso. Sí, Excel a veces elige la violencia.
     """
     if numero_dependientes == 0:
         return 0.0
@@ -277,30 +276,33 @@ def calcular_impuesto_renta(base_uvt: float, uvt: float) -> float:
 
     return 0.0
 
-def calcular_topup_full(ingreso_anual, aportes_actuales, uvt):
+
+def calcular_topup_full(
+    ingreso_anual: float,
+    aportes_actuales_afc: float,
+    total_deducciones_actuales: float,
+    maximo_beneficio_ley_2277: float,
+    uvt: float,
+) -> float:
     """
-    Calcula cuánto podría aportar adicionalmente el cliente
-    para llegar al máximo beneficio tributario permitido.
+    Top-Up realista:
+    1. Respeta el límite propio de aportes voluntarios/AFC:
+       min(30% del ingreso anual, 3800 UVT)
+    2. Respeta el cupo global de beneficios:
+       maximo_beneficio_ley_2277 - total_deducciones_actuales
     """
 
     limite_porcentaje = ingreso_anual * 0.30
     limite_uvt = 3800 * uvt
+    max_aporte_afc = min(limite_porcentaje, limite_uvt)
 
-    max_aporte = min(limite_porcentaje, limite_uvt)
+    cupo_por_aporte = max(max_aporte_afc - aportes_actuales_afc, 0.0)
+    cupo_global_restante = max(maximo_beneficio_ley_2277 - total_deducciones_actuales, 0.0)
 
-    topup = max_aporte - aportes_actuales
-
-    if topup < 0:
-        topup = 0
-
-    return topup
+    return min(cupo_por_aporte, cupo_global_restante)
 
 
 def validar_salario_integral(salario_mensual: float, tipo_salario: str) -> list[str]:
-    """
-    Validación opcional de negocio.
-    No altera cálculos, pero sirve para UI.
-    """
     errores = []
 
     if tipo_salario == "Integral" and salario_mensual < MINIMO_INT:
@@ -412,10 +414,27 @@ def ejecutar_simulador(inputs: dict) -> dict:
     impuesto_pac = calcular_impuesto_renta(base_uvt_pac, UVT)
 
     topup_full = calcular_topup_full(
-    ingreso_anual=total_ingresos,
-    aportes_actuales=aportes_pension_afc,
-    uvt=UVT
-)
+        ingreso_anual=total_ingresos,
+        aportes_actuales_afc=aportes_pension_afc,
+        total_deducciones_actuales=total_deducciones,
+        maximo_beneficio_ley_2277=maximo_beneficio_ley,
+        uvt=UVT,
+    )
+
+    # escenario adicional solo para depuración / análisis
+    deducciones_topup = total_deducciones + topup_full
+    deducciones_admisibles_topup = calcular_deducciones_admisibles(
+        deducciones_topup,
+        maximo_beneficio_ley,
+    )
+
+    base_gravable_topup = calcular_base_gravable(
+        total_ingresos,
+        ingresos_no_constitutivos,
+        deducciones_admisibles_topup,
+    )
+    base_uvt_topup = calcular_base_uvt(base_gravable_topup, UVT)
+    impuesto_topup_full = calcular_impuesto_renta(base_uvt_topup, UVT)
 
     return {
         "salario_anual": salario_anual,
@@ -447,6 +466,9 @@ def ejecutar_simulador(inputs: dict) -> dict:
         "impuesto_sin_optimizacion": round(impuesto_normal, 2),
         "impuesto_optimizado": round(impuesto_pac, 2),
         "beneficio": round(impuesto_normal - impuesto_pac, 2),
-        "topup_full": topup_full,
-"uvt": UVT,
+        "topup_full": round(topup_full, 2),
+        "impuesto_topup_full": round(impuesto_topup_full, 2),
+        "base_gravable_topup": round(base_gravable_topup, 2),
+        "base_uvt_topup": round(base_uvt_topup, 6),
+        "uvt": UVT,
     }
