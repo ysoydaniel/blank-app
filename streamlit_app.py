@@ -246,9 +246,7 @@ div[data-testid="stToggle"] {
     }
 
     /* Result cards */
-    
-/* Separación entre cards en mobile */
-@media (max-width: 768px) {
+
     .result-card {
         margin-bottom: 18px;
         border-radius: 22px;
