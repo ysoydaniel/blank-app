@@ -43,6 +43,8 @@ st.markdown("""
         box-shadow: 0 12px 40px rgba(0,0,0,0.22);
         backdrop-filter: blur(16px);
         -webkit-backdrop-filter: blur(16px);
+        border-radius: 22px;
+        padding: 20px;
     }
 
     .soft-card {
@@ -74,9 +76,7 @@ st.markdown("""
     }
 
     @media (max-width: 900px) {
-        .vertical-divider {
-            display: none;
-        }
+        .vertical-divider { display: none; }
     }
 
     /* Sidebar */
@@ -103,6 +103,7 @@ st.markdown("""
     div[data-baseweb="select"] span {
         color: #f8fafc !important;
         font-weight: 500 !important;
+        outline: none !important;
     }
 
     div[data-baseweb="input"] > div:focus-within,
@@ -112,9 +113,7 @@ st.markdown("""
     }
 
     /* Dropdown selectbox */
-    div[data-baseweb="popover"] {
-        background: transparent !important;
-    }
+    div[data-baseweb="popover"] { background: transparent !important; }
 
     div[data-baseweb="menu"] {
         background: rgba(15,23,42,0.92) !important;
@@ -133,30 +132,19 @@ st.markdown("""
         padding: 6px !important;
     }
 
-    ul[role="listbox"] li,
-    div[role="option"] {
+    ul[role="listbox"] li {
         background: transparent !important;
         color: #f8fafc !important;
         border-radius: 10px !important;
     }
 
-    ul[role="listbox"] li:hover,
-    div[role="option"]:hover {
+    ul[role="listbox"] li:hover {
         background: rgba(52,211,153,0.12) !important;
-        color: #f8fafc !important;
     }
 
-    ul[role="listbox"] li[aria-selected="true"],
-    div[role="option"][aria-selected="true"] {
+    ul[role="listbox"] li[aria-selected="true"] {
         background: rgba(52,211,153,0.18) !important;
-        color: #f8fafc !important;
         font-weight: 600 !important;
-    }
-
-    ul[role="listbox"] *,
-    div[data-baseweb="menu"] *,
-    div[role="option"] * {
-        color: #f8fafc !important;
     }
 
     /* Radio buttons */
@@ -170,26 +158,11 @@ st.markdown("""
         -webkit-backdrop-filter: blur(10px);
     }
 
-    div[role="radiogroup"] label * {
-        color: #f8fafc !important;
-    }
+    div[role="radiogroup"] label * { color: #f8fafc !important; }
 
-    input[type="radio"] {
-        accent-color: #00c73d !important;
-    }
+    input[type="radio"] { accent-color: #00c73d !important; }
 
-    /* Toggle */
-button[kind="secondaryFormSubmit"],
-div[data-testid="stToggle"] label {
-    color: #00c73d !important;
-}
-
-div[data-testid="stToggle"] {
-    padding-top: 2px;
-    padding-bottom: 6px;
-}
-
-    /* Botón principal */
+    /* Botón principal (fix: ; faltantes) */
     .stButton > button {
         width: 100%;
         max-width: 340px;
@@ -201,23 +174,19 @@ div[data-testid="stToggle"] {
         border: none;
         padding: 0.95rem 1.2rem;
         font-weight: 700;
-        box-shadow: none
+        box-shadow: none;
         transition: all 0.25s ease;
     }
 
     .stButton > button:hover {
         transform: translateY(-2px);
-        box-shadow: none
+        box-shadow: none;
     }
 
-    .stButton > button:active {
-        transform: translateY(1px);
-    }
+    .stButton > button:active { transform: translateY(1px); }
 
     /* Money input */
-    div[data-testid="stTextInput"] {
-        position: relative;
-    }
+    div[data-testid="stTextInput"] { position: relative; }
 
     div[data-testid="stTextInput"]::before {
         content: "$";
@@ -237,6 +206,7 @@ div[data-testid="stToggle"] {
         color: #f8fafc !important;
         border: 1px solid rgba(255,255,255,0.10) !important;
         box-shadow: 0 8px 24px rgba(0,0,0,0.10) !important;
+        outline: none !important;
     }
 
     div[data-testid="stTextInput"] input:focus {
@@ -245,10 +215,8 @@ div[data-testid="stToggle"] {
         outline: none !important;
     }
 
-    /* Result cards */
-
+    /* Result cards: margen solo en mobile */
     .result-card {
-        margin-bottom: 18px;
         border-radius: 22px;
         padding: 22px 24px;
         background: rgba(255,255,255,0.08);
@@ -257,6 +225,10 @@ div[data-testid="stToggle"] {
         min-height: 150px;
         backdrop-filter: blur(16px);
         -webkit-backdrop-filter: blur(16px);
+    }
+
+    @media (max-width: 768px) {
+        .result-card { margin-bottom: 18px; }
     }
 
     .result-label {
@@ -336,14 +308,7 @@ def _format_money_state(key: str):
     numero = int(solo_numeros)
     st.session_state[key] = f"{numero:,}".replace(",", ".")
 
-
-def money_input(
-    label,
-    value=0,
-    key=None,
-    help_text=None,
-    disabled=False
-):
+def money_input(label, value=0, key=None, help_text=None, disabled=False):
     if key not in st.session_state:
         st.session_state[key] = f"{int(value):,}".replace(",", ".")
 
@@ -358,7 +323,6 @@ def money_input(
 
     valor = re.sub(r"[^\d]", "", st.session_state.get(key, ""))
     return float(valor) if valor else 0.0
-
 
 def result_card(title: str, value: str, subtitle: str = "", tone: str = "primary", eyebrow: str = ""):
     st.markdown(
@@ -381,28 +345,19 @@ with st.sidebar:
     mostrar_debug = st.checkbox("Mostrar detalle técnico", value=False)
     st.caption("Úsalo para comparar contra el Excel y detectar diferencias.")
 
-if "resultado_simulacion" not in st.session_state:
-    st.session_state.resultado_simulacion = None
-
-if "inputs_simulacion" not in st.session_state:
-    st.session_state.inputs_simulacion = None
-
-if "simulacion_calculada" not in st.session_state:
-    st.session_state.simulacion_calculada = False
+# Session state
+st.session_state.setdefault("resultado_simulacion", None)
+st.session_state.setdefault("inputs_simulacion", None)
+st.session_state.setdefault("simulacion_calculada", False)
 
 # =========================
 # HEADER
 # =========================
-
 st.markdown("""
 <div class="soft-card" style="display:flex; align-items:center; gap:16px;">
-    <img 
+    <img
         src="https://cdn-icons-png.flaticon.com/512/3861/3861512.png"
-        style="
-            height:48px;
-            width:auto;
-            border-radius:12px;
-        "
+        style="height:48px;width:auto;border-radius:12px;"
     />
     <div>
         <div style="font-size:34px; color:#ffffff; font-weight:800; margin-top:6px;">
@@ -415,29 +370,26 @@ st.markdown("""
 </div>
 """, unsafe_allow_html=True)
 
-
-# Separación
 st.markdown("<div style='height:24px'></div>", unsafe_allow_html=True)
-
 
 # =========================
 # FORMULARIO
 # =========================
 st.markdown("""
 <div class="soft-card">
-    <div style="font-size: 13px; color: #86efac; font-weight: 700; letter-spacing: .08em;">
+    <div style="font-size:13px; color:#86efac; font-weight:700; letter-spacing:.08em;">
         FORMULARIO
     </div>
-    <div style="font-size: 26px; color: #ffffff; font-weight: 800; margin-top: 6px;">
+    <div style="font-size:26px; color:#ffffff; font-weight:800; margin-top:6px;">
         Información del cliente
     </div>
-    <div style="font-size: 15px; color: #d1fae5; margin-top: 8px;">
+    <div style="font-size:15px; color:#d1fae5; margin-top:8px;">
         Completa los datos de ingresos y beneficios tributarios para estimar el impuesto y el ahorro potencial.
     </div>
 </div>
 """, unsafe_allow_html=True)
 
-st.markdown('<div class="section-divider"></div>', unsafe_allow_html=True)
+st.markdown("<div class='section-divider'></div>", unsafe_allow_html=True)
 
 col1, col2, sep, col3, col4 = st.columns([1, 1, 0.05, 1, 1])
 
@@ -457,13 +409,13 @@ with col1:
         help="El salario integral ya incluye prestaciones sociales. El ordinario sí genera prestaciones."
     )
 
-    recibe_auxilios_bool = st.radio(
-    "¿Recibes auxilios?",
-    ["Sí", "No"],
-    horizontal=True,
-    help="Auxilios no salariales como transporte o conectividad."
+    # ✅ FIX: radio devuelve "Sí"/"No" (string). No lo conviertas a bool.
+    recibe_auxilios = st.radio(
+        "¿Recibes auxilios?",
+        ["Sí", "No"],
+        horizontal=True,
+        help="Auxilios no salariales como transporte o conectividad."
     )
-    recibe_auxilios = "Sí" if recibe_auxilios_bool else "No"
 
     valor_auxilios_mensual = money_input(
         "¿Cuál es el valor mensual de tus auxilios?",
@@ -514,7 +466,7 @@ with col2:
     )
 
 with sep:
-    st.markdown('<div class="vertical-divider"></div>', unsafe_allow_html=True)
+    st.markdown("<div class='vertical-divider'></div>", unsafe_allow_html=True)
 
 with col3:
     st.markdown("### 🧾 Beneficios")
@@ -566,7 +518,7 @@ with col4:
         key="factura_electronica"
     )
 
-st.markdown('<div class="section-divider"></div>', unsafe_allow_html=True)
+st.markdown("<div class='section-divider'></div>", unsafe_allow_html=True)
 
 # =========================
 # NORMALIZACIÓN
@@ -575,10 +527,8 @@ errores = []
 
 if recibe_auxilios == "No":
     valor_auxilios_mensual = 0.0
-
 if recibe_variable == "No":
     valor_variable_anual = 0.0
-
 if tiene_bonificaciones == "No":
     valor_bonificaciones = 0.0
 
@@ -612,6 +562,9 @@ if st.button("Calcular simulación", use_container_width=True):
         st.session_state.inputs_simulacion = inputs.copy()
         st.session_state.simulacion_calculada = True
 
+# =========================
+# RESULTADOS
+# =========================
 if st.session_state.simulacion_calculada and st.session_state.resultado_simulacion is not None:
     resultado = st.session_state.resultado_simulacion
 
@@ -619,9 +572,7 @@ if st.session_state.simulacion_calculada and st.session_state.resultado_simulaci
     impuesto_optimizado = resultado["impuesto_optimizado"]
     beneficio = resultado["beneficio"]
 
-    porcentaje_ahorro = 0
-    if impuesto_original > 0:
-        porcentaje_ahorro = beneficio / impuesto_original
+    porcentaje_ahorro = (beneficio / impuesto_original) if impuesto_original > 0 else 0
 
     st.markdown("## Resultados")
 
@@ -677,132 +628,11 @@ if st.session_state.simulacion_calculada and st.session_state.resultado_simulaci
             eyebrow="Impacto"
         )
 
-    st.markdown("### Comparación visual")
-
-    max_valor = max(impuesto_original, impuesto_optimizado)
-    porcentaje_actual = impuesto_original / max_valor if max_valor > 0 else 0
-    porcentaje_opt = impuesto_optimizado / max_valor if max_valor > 0 else 0
-
-    st.markdown("**Escenario actual**")
-    st.progress(porcentaje_actual)
-    st.caption(formato_moneda(impuesto_original))
-
-    st.markdown("**Escenario optimizado**")
-    st.progress(porcentaje_opt)
-    st.caption(formato_moneda(impuesto_optimizado))
-
-    st.markdown("### Impacto de la optimización tributaria")
-    st.progress(min(max(porcentaje_ahorro, 0), 1))
-
-    st.markdown(
-        f"""
-        <div class="soft-card" style="
-            margin-top:10px;
-            padding:16px 18px;
-            background:rgba(16,185,129,0.08);
-            border:1px solid rgba(16,185,129,0.18);
-        ">
-            <div style="font-size:14px; color:#86efac; font-weight:700;">
-                💰 Ahorro potencial identificado
-            </div>
-            <div style="font-size:13px; color:#d1fae5; margin-top:6px;">
-                El cliente podría reducir su carga tributaria en <b>{formato_moneda(beneficio)}</b>,
-                equivalente a una mejora aproximada del <b>{porcentaje_ahorro:.1%}</b>.
-            </div>
-        </div>
-        """,
-        unsafe_allow_html=True
-    )
-
-    
-    # Separación
-    st.markdown("<div style='height:24px'></div>", unsafe_allow_html=True)
-
-    if porcentaje_ahorro >= 0.20:
-        st.success("🚀 Excelente oportunidad de optimización tributaria.")
-    elif porcentaje_ahorro >= 0.10:
-        st.info("📊 Hay una oportunidad tributaria relevante para el cliente.")
-    else:
-        st.warning("💡 El beneficio existe, pero el impacto es más moderado.")
-
+    # =========================
+    # DESGLOSE vs INTERPRETACIÓN
+    # =========================
     st.divider()
-    st.markdown("## Simulación interactiva de optimización")
-
-    topup_max = int(resultado.get("topup_full", 0))
-
-    if topup_max > 0:
-        topup_usuario = st.slider(
-            "Simula cuánto más podría aportar el cliente en pensión voluntaria / AFC",
-            min_value=0,
-            max_value=topup_max,
-            value=0,
-            step=500000,
-            help="Mueve el control para ver cómo cambia el impuesto.",
-            key="slider_topup"
-        )
-
-        nueva_base = resultado["base_gravable"] - topup_usuario
-        if nueva_base < 0:
-            nueva_base = 0
-
-        base_uvt_temp = nueva_base / resultado["uvt"]
-
-        impuesto_topup = calcular_impuesto_renta(
-            base_uvt_temp,
-            resultado["uvt"]
-        )
-
-        ahorro_topup = resultado["impuesto_sin_optimizacion"] - impuesto_topup
-
-        tc1, tc2, tc3 = st.columns(3)
-
-        with tc1:
-            st.metric("Aporte adicional", formato_moneda(topup_usuario))
-
-        with tc2:
-            st.metric("Nuevo impuesto estimado", formato_moneda(impuesto_topup))
-
-        with tc3:
-            st.metric("Ahorro tributario", formato_moneda(ahorro_topup))
-
-        st.markdown("### Curva de optimización tributaria")
-
-        aportes = []
-        ahorros = []
-
-        step = topup_max / 10 if topup_max > 0 else 1
-
-        for i in range(11):
-            aporte = step * i
-            base = resultado["base_gravable"] - aporte
-
-            if base < 0:
-                base = 0
-
-            base_uvt_temp = base / resultado["uvt"]
-
-            impuesto_temp = calcular_impuesto_renta(
-                base_uvt_temp,
-                resultado["uvt"]
-            )
-
-            ahorro_temp = resultado["impuesto_sin_optimizacion"] - impuesto_temp
-
-            aportes.append(aporte)
-            ahorros.append(ahorro_temp)
-
-        fig, ax = plt.subplots()
-        ax.plot(aportes, ahorros)
-        ax.set_xlabel("Aporte adicional")
-        ax.set_ylabel("Ahorro tributario")
-        st.pyplot(fig)
-
-    else:
-        st.info("El cliente ya se encuentra en el máximo beneficio tributario permitido.")
-
-    st.divider()
-
-    left, sep, right = st.columns([1.35, 0.05, 1])
+    left, sep2, right = st.columns([1.35, 0.05, 1])
 
     with left:
         st.markdown("### Desglose del cálculo")
@@ -837,9 +667,8 @@ if st.session_state.simulacion_calculada and st.session_state.resultado_simulaci
 
         st.dataframe(df_detalle, use_container_width=True, hide_index=True)
 
-    
-    with sep:
-        st.markdown("<div class='vertical-divider'></div>", unsafe_allow_html=True
+    with sep2:
+        st.markdown("<div class='vertical-divider'></div>", unsafe_allow_html=True)
 
     with right:
         st.markdown("### Interpretación")
@@ -864,29 +693,10 @@ if st.session_state.simulacion_calculada and st.session_state.resultado_simulaci
             unsafe_allow_html=True
         )
 
-        st.markdown("<div style='height:14px'></div>", unsafe_allow_html=True)
-
-        st.markdown(
-            f"""
-            <div class="soft-card">
-                <div style="font-size:14px; color:#d1fae5; margin-bottom:8px;">Comparativo rápido</div>
-                <div style="font-size:14px; color:#cbd5e1;">Antes</div>
-                <div style="font-size:22px; color:#ffffff; font-weight:800; margin-bottom:10px;">
-                    {formato_moneda(impuesto_original)}
-                </div>
-                <div style="font-size:14px; color:#cbd5e1;">Después</div>
-                <div style="font-size:22px; color:#ffffff; font-weight:800;">
-                    {formato_moneda(impuesto_optimizado)}
-                </div>
-            </div>
-            """,
-            unsafe_allow_html=True
-        )
-                    
-
-if mostrar_debug:
-    with st.expander("🔧 Debug técnico"):
-        st.dataframe(debug_df, use_container_width=True, hide_index=True)
+    # =========================
+    # DEBUG TÉCNICO (FIX: crear df antes de mostrarlo)
+    # =========================
+    if mostrar_debug:
         debug_df = pd.DataFrame(
             [
                 {"Variable": "salario_anual", "Valor app": resultado["salario_anual"]},
@@ -920,6 +730,8 @@ if mostrar_debug:
             ]
         )
 
-        st.dataframe(debug_df, use_container_width=True, hide_index=True)
+        with st.expander("🔧 Debug técnico"):
+            st.dataframe(debug_df, use_container_width=True, hide_index=True)
+
 else:
     st.info("Completa los datos y pulsa **Calcular simulación**.")
