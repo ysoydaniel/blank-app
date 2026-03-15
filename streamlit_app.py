@@ -186,10 +186,15 @@ st.markdown("""
 
     .soft-card {
         padding: 18px 20px;
-        border-radius: 18px;
-        background: rgba(255,255,255,0.05);
-        border: 1px solid rgba(255,255,255,0.08);
-        box-shadow: 0 10px 35px rgba(0,0,0,0.12);
+    border-radius: 18px;
+
+    background: rgba(255,255,255,0.04);
+
+    border: 1px solid rgba(0,199,61,0.15);
+
+    box-shadow:
+        0 12px 40px rgba(0,0,0,0.35),
+        0 0 30px rgba(0,199,61,0.05);
     }
 
     .section-divider {
