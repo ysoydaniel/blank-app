@@ -12,188 +12,305 @@ st.set_page_config(
     layout="wide"
 )
 
-
 # =========================
-# GLASSMORPHISM CSS
+# ESTILOS - GLASSMORPHISM
 # =========================
 st.markdown("""
 <style>
+    .stApp {
+        background:
+            radial-gradient(circle at 15% 20%, rgba(0, 199, 61, 0.18), transparent 28%),
+            radial-gradient(circle at 85% 18%, rgba(124, 224, 0, 0.14), transparent 24%),
+            radial-gradient(circle at 80% 80%, rgba(59, 130, 246, 0.10), transparent 24%),
+            linear-gradient(135deg, #0b1110 0%, #101a17 42%, #0d1418 100%);
+        color: #ecfdf5;
+    }
 
-/* =========================
-   BASE
-   ========================= */
-.stApp {
-    background: linear-gradient(
-        135deg,
-        #eef2f7 0%,
-        #f7f9fc 35%,
-        #eef6f2 100%
-    );
-    color: #0f172a;
-}
+    h1, h2, h3 {
+        color: #f8fafc;
+        font-weight: 700;
+        letter-spacing: -0.02em;
+    }
 
-/* Tipografía */
-h1, h2, h3, h4 {
-    font-weight: 800;
-    letter-spacing: -0.02em;
-    color: #0f172a;
-}
+    p, label, div, span {
+        color: #d1fae5;
+    }
 
-p, span, label {
-    color: #334155;
-}
+    /* Glass cards base */
+    .glass-card {
+        background: rgba(255,255,255,0.08);
+        border: 1px solid rgba(255,255,255,0.10);
+        box-shadow: 0 12px 40px rgba(0,0,0,0.22);
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
+    }
 
-/* =========================
-   GLASS CARD (contenedores)
-   ========================= */
-.glass-card {
-    background: rgba(255, 255, 255, 0.55);
-    backdrop-filter: blur(18px);
-    -webkit-backdrop-filter: blur(18px);
-    border-radius: 22px;
-    border: 1px solid rgba(255, 255, 255, 0.45);
-    box-shadow:
-        0 10px 35px rgba(0, 0, 0, 0.08),
-        inset 0 1px 0 rgba(255,255,255,0.5);
-    padding: 24px 26px;
-}
+    .soft-card {
+        padding: 20px;
+        border-radius: 22px;
+        background: rgba(255,255,255,0.08);
+        border: 1px solid rgba(255,255,255,0.10);
+        box-shadow: 0 12px 40px rgba(0,0,0,0.22);
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
+    }
 
-/* =========================
-   INPUTS (TEXT / NUMBER)
-   ========================= */
-div[data-baseweb="input"] > div {
-    background: rgba(255,255,255,0.65) !important;
-    backdrop-filter: blur(14px);
-    border-radius: 14px !important;
-    border: 1px solid rgba(0,0,0,0.08) !important;
-    box-shadow: none !important;
-}
+    .section-divider {
+        margin: 12px 0 20px 0;
+        height: 1px;
+        background: linear-gradient(90deg, transparent, rgba(52,211,153,0.35), transparent);
+    }
 
-div[data-baseweb="input"] input {
-    background: transparent !important;
-    color: #0f172a !important;
-    font-weight: 500 !important;
-    outline: none !important;
-    box-shadow: none !important;
-}
+    .vertical-divider {
+        width: 1px;
+        height: 540px;
+        margin: auto;
+        background: linear-gradient(
+            to bottom,
+            rgba(255,255,255,0.03),
+            rgba(52,211,153,0.35),
+            rgba(255,255,255,0.03)
+        );
+    }
 
-/* Focus elegante */
-div[data-baseweb="input"] > div:focus-within {
-    border: 1px solid rgba(0,199,61,0.45) !important;
-    box-shadow: 0 0 0 3px rgba(0,199,61,0.12) !important;
-}
+    @media (max-width: 900px) {
+        .vertical-divider {
+            display: none;
+        }
+    }
 
-/* =========================
-   SELECTBOX
-   ========================= */
-.stSelectbox div[data-baseweb="select"] > div {
-    background: rgba(255,255,255,0.65) !important;
-    backdrop-filter: blur(14px);
-    border-radius: 14px !important;
-    border: 1px solid rgba(0,0,0,0.08) !important;
-}
+    /* Sidebar */
+    section[data-testid="stSidebar"] {
+        background: rgba(10, 17, 16, 0.82);
+        border-right: 1px solid rgba(255,255,255,0.08);
+        backdrop-filter: blur(14px);
+        -webkit-backdrop-filter: blur(14px);
+    }
 
-.stSelectbox div[data-baseweb="select"] span {
-    color: #0f172a !important;
-}
+    /* Inputs */
+    div[data-baseweb="input"] > div,
+    div[data-baseweb="select"] > div {
+        background: rgba(255,255,255,0.07) !important;
+        border: 1px solid rgba(255,255,255,0.12) !important;
+        border-radius: 16px !important;
+        min-height: 48px !important;
+        box-shadow: 0 8px 24px rgba(0,0,0,0.10) !important;
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+    }
 
-/* Hover / focus */
-.stSelectbox div[data-baseweb="select"] > div:hover,
-.stSelectbox div[data-baseweb="select"] > div:focus-within {
-    border: 1px solid rgba(0,199,61,0.45) !important;
-    box-shadow: 0 0 0 3px rgba(0,199,61,0.12) !important;
-}
+    div[data-baseweb="input"] input,
+    div[data-baseweb="select"] span {
+        color: #f8fafc !important;
+        font-weight: 500 !important;
+    }
 
-/* =========================
-   DROPDOWN (MENU)
-   ========================= */
-div[data-baseweb="popover"] {
-    background: transparent !important;
-}
+    div[data-baseweb="input"] > div:focus-within,
+    div[data-baseweb="select"] > div:hover {
+        border: 1px solid rgba(52,211,153,0.45) !important;
+        box-shadow: 0 0 0 2px rgba(52,211,153,0.10) !important;
+    }
 
-div[data-baseweb="menu"] {
-    background: rgba(255,255,255,0.85) !important;
-    backdrop-filter: blur(20px);
-    border-radius: 18px !important;
-    border: 1px solid rgba(255,255,255,0.6) !important;
-    box-shadow: 0 18px 45px rgba(0,0,0,0.18) !important;
-    overflow: hidden !important;
-}
+    /* Dropdown selectbox */
+    div[data-baseweb="popover"] {
+        background: transparent !important;
+    }
 
-ul[role="listbox"] {
-    background: transparent !important;
-}
+    div[data-baseweb="menu"] {
+        background: rgba(15,23,42,0.92) !important;
+        border: 1px solid rgba(255,255,255,0.10) !important;
+        border-radius: 16px !important;
+        box-shadow: 0 18px 40px rgba(0,0,0,0.28) !important;
+        overflow: hidden !important;
+        backdrop-filter: blur(18px);
+        -webkit-backdrop-filter: blur(18px);
+    }
 
-ul[role="listbox"] li {
-    color: #0f172a !important;
-    border-radius: 12px !important;
-}
+    ul[role="listbox"] {
+        background: transparent !important;
+        border: none !important;
+        box-shadow: none !important;
+        padding: 6px !important;
+    }
 
-ul[role="listbox"] li:hover {
-    background: rgba(0,199,61,0.10) !important;
-}
+    ul[role="listbox"] li,
+    div[role="option"] {
+        background: transparent !important;
+        color: #f8fafc !important;
+        border-radius: 10px !important;
+    }
 
-ul[role="listbox"] li[aria-selected="true"] {
-    background: rgba(0,199,61,0.16) !important;
-    font-weight: 600 !important;
-}
+    ul[role="listbox"] li:hover,
+    div[role="option"]:hover {
+        background: rgba(52,211,153,0.12) !important;
+        color: #f8fafc !important;
+    }
 
-/* =========================
-   RADIO
-   ========================= */
-div[role="radiogroup"] label {
-    background: rgba(255,255,255,0.55) !important;
-    backdrop-filter: blur(12px);
-    border-radius: 14px !important;
-    border: 1px solid rgba(0,0,0,0.08) !important;
-    padding: 8px 14px !important;
-}
+    ul[role="listbox"] li[aria-selected="true"],
+    div[role="option"][aria-selected="true"] {
+        background: rgba(52,211,153,0.18) !important;
+        color: #f8fafc !important;
+        font-weight: 600 !important;
+    }
 
-input[type="radio"] {
-    accent-color: #00c73d !important;
-}
+    ul[role="listbox"] *,
+    div[data-baseweb="menu"] *,
+    div[role="option"] * {
+        color: #f8fafc !important;
+    }
 
-/* =========================
-   BUTTON
-   ========================= */
-.stButton > button {
-    background: linear-gradient(135deg, #00c73d, #7ce000);
-    color: white;
-    border-radius: 16px;
-    border: none;
-    padding: 0.9rem 1.4rem;
-    font-weight: 800;
-    box-shadow: 0 12px 30px rgba(0,199,61,0.35);
-    transition: all .25s ease;
-}
+    /* Radio buttons */
+    div[role="radiogroup"] label {
+        background: rgba(255,255,255,0.07) !important;
+        padding: 8px 14px !important;
+        border-radius: 12px !important;
+        border: 1px solid rgba(255,255,255,0.10) !important;
+        margin-right: 8px !important;
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+    }
 
-.stButton > button:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 20px 45px rgba(0,199,61,0.45);
-}
+    div[role="radiogroup"] label * {
+        color: #f8fafc !important;
+    }
 
-/* =========================
-   SIDEBAR
-   ========================= */
-section[data-testid="stSidebar"] {
-    background: rgba(255,255,255,0.65);
-    backdrop-filter: blur(18px);
-    border-right: 1px solid rgba(0,0,0,0.08);
-}
+    input[type="radio"] {
+        accent-color: #00c73d !important;
+    }
 
-/* =========================
-   CLEAN
-   ========================= */
-*:focus {
-    outline: none !important;
-}
+    /* Botón principal */
+    .stButton > button {
+        width: 100%;
+        max-width: 340px;
+        margin: 0 auto;
+        display: block;
+        background: linear-gradient(135deg, #00c73d 0%, #7ce000 100%);
+        color: white;
+        border-radius: 16px;
+        border: none;
+        padding: 0.95rem 1.2rem;
+        font-weight: 700;
+        box-shadow:
+            0 12px 30px rgba(0,199,61,0.30),
+            0 0 24px rgba(124,224,0,0.14);
+        transition: all 0.25s ease;
+    }
 
-#MainMenu {visibility: hidden;}
-footer {visibility: hidden;}
-header {visibility: hidden;}
+    .stButton > button:hover {
+        transform: translateY(-2px);
+        box-shadow:
+            0 18px 40px rgba(0,199,61,0.36),
+            0 0 28px rgba(124,224,0,0.18);
+    }
 
+    .stButton > button:active {
+        transform: translateY(1px);
+    }
+
+    /* Money input */
+    div[data-testid="stTextInput"] {
+        position: relative;
+    }
+
+    div[data-testid="stTextInput"]::before {
+        content: "$";
+        position: absolute;
+        left: 12px;
+        top: 35px;
+        color: rgba(255,255,255,0.65);
+        font-weight: 700;
+        font-size: 15px;
+        z-index: 1;
+    }
+
+    div[data-testid="stTextInput"] input {
+        padding-left: 26px !important;
+        background: rgba(255,255,255,0.07) !important;
+        border-radius: 16px !important;
+        color: #f8fafc !important;
+        border: 1px solid rgba(255,255,255,0.10) !important;
+        box-shadow: 0 8px 24px rgba(0,0,0,0.10) !important;
+    }
+
+    div[data-testid="stTextInput"] input:focus {
+        border: 1px solid rgba(52,211,153,0.40) !important;
+        box-shadow: 0 0 0 2px rgba(52,211,153,0.10) !important;
+        outline: none !important;
+    }
+
+    /* Result cards */
+    .result-card {
+        border-radius: 22px;
+        padding: 22px 24px;
+        background: rgba(255,255,255,0.08);
+        border: 1px solid rgba(255,255,255,0.10);
+        box-shadow: 0 14px 40px rgba(0,0,0,0.18);
+        min-height: 150px;
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
+    }
+
+    .result-label {
+        font-size: 14px;
+        color: #cbd5e1;
+        font-weight: 600;
+        margin-bottom: 10px;
+    }
+
+    .result-value {
+        font-size: 40px;
+        line-height: 1.05;
+        color: #ffffff;
+        font-weight: 800;
+        letter-spacing: -0.03em;
+        margin-bottom: 10px;
+    }
+
+    .result-subtext {
+        font-size: 13px;
+        color: #cbd5e1;
+        line-height: 1.4;
+    }
+
+    .result-card.primary {
+        background: linear-gradient(135deg, rgba(0,199,61,0.13), rgba(124,224,0,0.06));
+        border: 1px solid rgba(0,199,61,0.18);
+    }
+
+    .result-card.success {
+        background: linear-gradient(135deg, rgba(16,185,129,0.14), rgba(16,185,129,0.06));
+        border: 1px solid rgba(16,185,129,0.18);
+    }
+
+    .result-card.warning {
+        background: linear-gradient(135deg, rgba(245,158,11,0.14), rgba(245,158,11,0.06));
+        border: 1px solid rgba(245,158,11,0.18);
+    }
+
+    .result-mini {
+        font-size: 12px;
+        color: #86efac;
+        font-weight: 700;
+        letter-spacing: .06em;
+        text-transform: uppercase;
+        margin-bottom: 6px;
+    }
+
+    /* Dataframe */
+    div[data-testid="stDataFrame"] {
+        background: rgba(255,255,255,0.06);
+        border-radius: 18px;
+        padding: 8px;
+        border: 1px solid rgba(255,255,255,0.10);
+        box-shadow: 0 10px 30px rgba(0,0,0,0.12);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+    }
+
+    #MainMenu {visibility: hidden;}
+    footer {visibility: hidden;}
+    header {visibility: hidden;}
 </style>
-
 """, unsafe_allow_html=True)
 
 # =========================
@@ -269,10 +386,13 @@ if "simulacion_calculada" not in st.session_state:
 # =========================
 st.markdown("""
 <div class="soft-card" style="margin-bottom:18px;">
-    <div style="font-size: 34px; color: #0f172a; font-weight: 800; margin-top: 6px;">
+    <div style="font-size:13px;color:#86efac;font-weight:700;letter-spacing:.08em;">
+        SIMULADOR TRIBUTARIO • GLASS UI
+    </div>
+    <div style="font-size:34px; color:#ffffff; font-weight:800; margin-top:6px;">
         🧮 Simulador Tributario 2026
     </div>
-    <div style="font-size: 16px; color: #475569; margin-top: 8px;">
+    <div style="font-size:16px; color:#d1fae5; margin-top:8px;">
         Convierte un modelo en Excel en una experiencia web guiada, clara y lista para escalar.
     </div>
 </div>
@@ -283,13 +403,13 @@ st.markdown("""
 # =========================
 st.markdown("""
 <div class="soft-card">
-    <div style="font-size: 13px; color: #16a34a; font-weight: 700; letter-spacing: .08em;">
+    <div style="font-size: 13px; color: #86efac; font-weight: 700; letter-spacing: .08em;">
         FORMULARIO
     </div>
-    <div style="font-size: 26px; color: #0f172a; font-weight: 800; margin-top: 6px;">
+    <div style="font-size: 26px; color: #ffffff; font-weight: 800; margin-top: 6px;">
         Información del cliente
     </div>
-    <div style="font-size: 15px; color: #475569; margin-top: 8px;">
+    <div style="font-size: 15px; color: #d1fae5; margin-top: 8px;">
         Completa los datos de ingresos y beneficios tributarios para estimar el impuesto y el ahorro potencial.
     </div>
 </div>
@@ -484,21 +604,20 @@ if st.session_state.simulacion_calculada and st.session_state.resultado_simulaci
 
     st.markdown(
         f"""
-        <div style="
+        <div class="soft-card" style="
             padding:26px;
-            border-radius:22px;
-            background:linear-gradient(135deg,rgba(16,185,129,0.16),rgba(16,185,129,0.05));
-            border:1px solid rgba(16,185,129,0.22);
             text-align:center;
             margin-bottom:18px;
+            background:linear-gradient(135deg,rgba(16,185,129,0.14),rgba(16,185,129,0.06));
+            border:1px solid rgba(16,185,129,0.18);
         ">
-            <div style="font-size:13px;color:#16a34a;font-weight:700;letter-spacing:.08em;">
+            <div style="font-size:13px;color:#86efac;font-weight:700;letter-spacing:.08em;">
                 OPORTUNIDAD TRIBUTARIA DETECTADA
             </div>
-            <div style="font-size:46px;font-weight:900;color:#0f172a;margin-top:6px;">
+            <div style="font-size:46px;font-weight:900;color:#ffffff;margin-top:6px;">
                 {formato_moneda(beneficio)}
             </div>
-            <div style="font-size:14px;color:#475569;margin-top:4px;">
+            <div style="font-size:14px;color:#d1fae5;margin-top:4px;">
                 ahorro potencial estimado
             </div>
         </div>
@@ -554,17 +673,16 @@ if st.session_state.simulacion_calculada and st.session_state.resultado_simulaci
 
     st.markdown(
         f"""
-        <div style="
+        <div class="soft-card" style="
             margin-top:10px;
             padding:16px 18px;
-            border-radius:16px;
             background:rgba(16,185,129,0.08);
             border:1px solid rgba(16,185,129,0.18);
         ">
-            <div style="font-size:14px; color:#16a34a; font-weight:700;">
+            <div style="font-size:14px; color:#86efac; font-weight:700;">
                 💰 Ahorro potencial identificado
             </div>
-            <div style="font-size:13px; color:#475569; margin-top:6px;">
+            <div style="font-size:13px; color:#d1fae5; margin-top:6px;">
                 El cliente podría reducir su carga tributaria en <b>{formato_moneda(beneficio)}</b>,
                 equivalente a una mejora aproximada del <b>{porcentaje_ahorro:.1%}</b>.
             </div>
@@ -697,16 +815,16 @@ if st.session_state.simulacion_calculada and st.session_state.resultado_simulaci
         st.markdown(
             f"""
             <div class="soft-card">
-                <div style="font-size:13px; color:#16a34a; font-weight:700; letter-spacing:.06em; text-transform:uppercase; margin-bottom:8px;">
+                <div style="font-size:13px; color:#86efac; font-weight:700; letter-spacing:.06em; text-transform:uppercase; margin-bottom:8px;">
                     Lectura ejecutiva
                 </div>
-                <div style="font-size:16px; color:#0f172a; font-weight:700; margin-bottom:10px;">
+                <div style="font-size:16px; color:#ffffff; font-weight:700; margin-bottom:10px;">
                     Beneficio tributario estimado
                 </div>
-                <div style="font-size:28px; color:#16a34a; font-weight:800; margin-bottom:12px;">
+                <div style="font-size:28px; color:#86efac; font-weight:800; margin-bottom:12px;">
                     {formato_moneda(resultado["beneficio"])}
                 </div>
-                <div style="font-size:14px; color:#475569; line-height:1.55;">
+                <div style="font-size:14px; color:#d1fae5; line-height:1.55;">
                     Con base en la información registrada, el cliente podría reducir su carga tributaria
                     aprovechando beneficios permitidos en el modelo actual.
                 </div>
@@ -720,13 +838,13 @@ if st.session_state.simulacion_calculada and st.session_state.resultado_simulaci
         st.markdown(
             f"""
             <div class="soft-card">
-                <div style="font-size:14px; color:#475569; margin-bottom:8px;">Comparativo rápido</div>
-                <div style="font-size:14px; color:#64748b;">Antes</div>
-                <div style="font-size:22px; color:#0f172a; font-weight:800; margin-bottom:10px;">
+                <div style="font-size:14px; color:#d1fae5; margin-bottom:8px;">Comparativo rápido</div>
+                <div style="font-size:14px; color:#cbd5e1;">Antes</div>
+                <div style="font-size:22px; color:#ffffff; font-weight:800; margin-bottom:10px;">
                     {formato_moneda(impuesto_original)}
                 </div>
-                <div style="font-size:14px; color:#64748b;">Después</div>
-                <div style="font-size:22px; color:#0f172a; font-weight:800;">
+                <div style="font-size:14px; color:#cbd5e1;">Después</div>
+                <div style="font-size:22px; color:#ffffff; font-weight:800;">
                     {formato_moneda(impuesto_optimizado)}
                 </div>
             </div>
