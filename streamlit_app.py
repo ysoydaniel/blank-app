@@ -647,38 +647,6 @@ if st.session_state.simulacion_calculada and st.session_state.resultado_simulaci
         with tc3:
             st.metric("Ahorro tributario", formato_moneda(ahorro_topup))
 
-        st.markdown("### Curva de optimización tributaria")
-
-        aportes = []
-        ahorros = []
-
-        step = topup_max / 10 if topup_max > 0 else 1
-
-        for i in range(11):
-            aporte = step * i
-            base = resultado["base_gravable"] - aporte
-
-            if base < 0:
-                base = 0
-
-            base_uvt_temp = base / resultado["uvt"]
-
-            impuesto_temp = calcular_impuesto_renta(
-                base_uvt_temp,
-                resultado["uvt"]
-            )
-
-            ahorro_temp = resultado["impuesto_sin_optimizacion"] - impuesto_temp
-
-            aportes.append(aporte)
-            ahorros.append(ahorro_temp)
-
-        fig, ax = plt.subplots()
-        ax.plot(aportes, ahorros)
-        ax.set_xlabel("Aporte adicional")
-        ax.set_ylabel("Ahorro tributario")
-        st.pyplot(fig)
-
     else:
         st.info("El cliente ya se encuentra en el máximo beneficio tributario permitido.")
 
