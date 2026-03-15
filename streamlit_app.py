@@ -66,7 +66,7 @@ st.markdown("""
     /* Botón principal */
     .stButton > button {
         width: 100%;
-        background: linear-gradient(135deg, #2563EB 0%, #1D4ED8 100%);
+        background: linear-gradient(135deg, #00c83c 0%, #1D4ED8 100%);
         color: white;
         border: none;
         border-radius: 14px;
