@@ -178,6 +178,17 @@ st.markdown("""
         accent-color: #00c73d !important;
     }
 
+    /* Toggle */
+button[kind="secondaryFormSubmit"],
+div[data-testid="stToggle"] label {
+    color: #f8fafc !important;
+}
+
+div[data-testid="stToggle"] {
+    padding-top: 2px;
+    padding-bottom: 6px;
+}
+
     /* Botón principal */
     .stButton > button {
         width: 100%;
