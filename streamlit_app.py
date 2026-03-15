@@ -378,7 +378,7 @@ def result_card(title: str, value: str, subtitle: str = "", tone: str = "primary
 # =========================
 with st.sidebar:
     st.markdown("## Configuración")
-    mostrar_debug = st.checkbox("Mostrar detalle técnico", value=True)
+    mostrar_debug = st.checkbox("Mostrar detalle técnico", value=False)
     st.caption("Úsalo para comparar contra el Excel y detectar diferencias.")
 
 if "resultado_simulacion" not in st.session_state:
@@ -882,6 +882,44 @@ if st.session_state.simulacion_calculada and st.session_state.resultado_simulaci
             """,
             unsafe_allow_html=True
         )
+                    
 
+if mostrar_debug:
+    with st.expander("🔧 Debug técnico"):
+        st.dataframe(debug_df, use_container_width=True, hide_index=True)
+        debug_df = pd.DataFrame(
+            [
+                {"Variable": "salario_anual", "Valor app": resultado["salario_anual"]},
+                {"Variable": "ingreso_variable", "Valor app": resultado["ingreso_variable"]},
+                {"Variable": "auxilios_anuales", "Valor app": resultado["auxilios_anuales"]},
+                {"Variable": "bonificacion_anual", "Valor app": resultado["bonificacion_anual"]},
+                {"Variable": "total_ingresos", "Valor app": resultado["total_ingresos"]},
+                {"Variable": "aporte_eps", "Valor app": resultado["aporte_eps"]},
+                {"Variable": "aporte_pension", "Valor app": resultado["aporte_pension"]},
+                {"Variable": "fondo_solidaridad", "Valor app": resultado["fondo_solidaridad"]},
+                {"Variable": "ingresos_no_constitutivos", "Valor app": resultado["ingresos_no_constitutivos"]},
+                {"Variable": "renta_liquida", "Valor app": resultado["renta_liquida"]},
+                {"Variable": "renta_liquida_pac", "Valor app": resultado["renta_liquida_pac"]},
+                {"Variable": "dependientes", "Valor app": resultado["dependientes"]},
+                {"Variable": "intereses_vivienda", "Valor app": resultado["intereses_vivienda"]},
+                {"Variable": "pagos_salud", "Valor app": resultado["pagos_salud"]},
+                {"Variable": "cesantias", "Valor app": resultado["cesantias"]},
+                {"Variable": "aportes_pension_afc", "Valor app": resultado["aportes_pension_afc"]},
+                {"Variable": "renta_exenta_laboral", "Valor app": resultado["renta_exenta_laboral"]},
+                {"Variable": "total_deducciones", "Valor app": resultado["total_deducciones"]},
+                {"Variable": "deducciones_admisibles", "Valor app": resultado["deducciones_admisibles"]},
+                {"Variable": "base_gravable", "Valor app": resultado["base_gravable"]},
+                {"Variable": "base_gravable_pac", "Valor app": resultado["base_gravable_pac"]},
+                {"Variable": "base_uvt", "Valor app": resultado["base_uvt"]},
+                {"Variable": "base_uvt_pac", "Valor app": resultado["base_uvt_pac"]},
+                {"Variable": "impuesto_sin_optimizacion", "Valor app": resultado["impuesto_sin_optimizacion"]},
+                {"Variable": "impuesto_optimizado", "Valor app": resultado["impuesto_optimizado"]},
+                {"Variable": "beneficio", "Valor app": resultado["beneficio"]},
+                {"Variable": "topup_full", "Valor app": resultado.get("topup_full", 0)},
+                {"Variable": "impuesto_topup_full", "Valor app": resultado.get("impuesto_topup_full", 0)},
+            ]
+        )
+
+        st.dataframe(debug_df, use_container_width=True, hide_index=True)
 else:
     st.info("Completa los datos y pulsa **Calcular simulación**.")
