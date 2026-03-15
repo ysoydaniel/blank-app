@@ -397,7 +397,7 @@ st.markdown("""
         SIMULADOR TRIBUTARIO • GLASS UI
     </div>
     <div style="font-size:34px; color:#ffffff; font-weight:800; margin-top:6px;">
-        🧮 Simulador Tributario 2026
+        Simulador Tributario 2026
     </div>
     <div style="font-size:16px; color:#d1fae5; margin-top:8px;">
         Convierte un modelo en Excel en una experiencia web guiada, clara y lista para escalar.
