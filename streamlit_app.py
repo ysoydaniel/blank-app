@@ -414,6 +414,10 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 
+# Separación
+st.markdown("<div style='height:24px'></div>", unsafe_allow_html=True)
+
+
 # =========================
 # FORMULARIO
 # =========================
