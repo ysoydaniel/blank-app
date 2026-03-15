@@ -18,7 +18,10 @@ st.set_page_config(
 st.markdown("""
 <style>
     .stApp {
-        background: linear-gradient(135deg, #0b1020 0%, #111827 45%, #0f172a 100%);
+        background:
+         radial-gradient(circle at 20% 20%, rgba(0,199,61,0.12), transparent 40%),
+         radial-gradient(circle at 80% 70%, rgba(143,224,0,0.08), transparent 40%),
+         linear-gradient(140deg, #0b1f18 0%, #0f2a23 40%, #0a1512 100%);
         color: #F9FAFB;
     }
 
