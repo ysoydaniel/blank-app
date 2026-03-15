@@ -435,12 +435,12 @@ with col1:
         help="El salario integral ya incluye prestaciones sociales. El ordinario sí genera prestaciones."
     )
 
-    recibe_auxilios = st.radio(
-        "¿Recibes auxilios?",
-        ["Sí", "No"],
-        horizontal=True,
-        help="Auxilios no salariales como transporte o conectividad."
-    )
+    recibe_auxilios_bool = st.toggle(
+    "¿Recibes auxilios?",
+    value=True,
+    help="Auxilios no salariales como transporte o conectividad."
+)
+recibe_auxilios = "Sí" if recibe_auxilios_bool else "No"
 
     valor_auxilios_mensual = money_input(
         "¿Cuál es el valor mensual de tus auxilios?",
