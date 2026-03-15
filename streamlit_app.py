@@ -69,19 +69,23 @@ st.markdown("""
         max-width: 320px;
         margin: 0 auto;
         display: block;
-        background: linear-gradient(135deg, #00c73d 70%, #8fe000 100%);
+        background: linear-gradient(135deg, #00c73d 0%, #8fe000 100%);
         color: white;
         border: none;
         border-radius: 14px;
         padding: 0.8rem 1rem;
         font-weight: 700;
         font-size: 1rem;
-        box-shadow: 0 10px 30px rgba(37, 99, 235, 0);
+        letter-spacing: 0.02em;
+        cursor: pointer;
+        transition: all 0.25s ease;
+        box-shadow: 0 10 30px rgba(0,0,0,0.35), 0 0 0px rgba (143,224,0,0);
     }
 
     .stButton > button:hover {
-        background: linear-gradient(135deg, #3B82F6 0%, #2563EB 100%);
-        transform: translateY(-1px);
+        background: linear-gradient(135deg, #00D645 0%, #A7FF1F 100%);
+        box-shadow: 0 18px 40px rgba(0,0,0,0.45), 0 0 18px rgba (143,224,0,0.55);
+        transform: translateY(-2px);
     }
 
     /* Sidebar */
@@ -486,7 +490,7 @@ inputs = {
 # =========================
 # EJECUCIÓN
 # =========================
-if st.button("🧮 Calcular simulación", use_container_width=True):
+if st.button("Calcular simulación", use_container_width=True):
     if errores:
         for error in errores:
             st.error(error)
