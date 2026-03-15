@@ -292,9 +292,6 @@ st.markdown("""
     box-shadow: 0 12px 40px rgba(0,0,0,0.22);
     margin-bottom: 18px;
 ">
-    <div style="font-size: 13px; color: #93C5FD; font-weight: 700; letter-spacing: .08em;">
-        HACKATHON MVP
-    </div>
     <div style="font-size: 34px; color: white; font-weight: 800; margin-top: 6px;">
         🧮 Simulador Tributario 2026
     </div>
