@@ -713,6 +713,9 @@ if st.session_state.simulacion_calculada and st.session_state.resultado_simulaci
 
         with tc3:
             st.metric("Ahorro tributario", formato_moneda(ahorro_topup))
+
+    else:
+        st.info("El cliente ya se encuentra en el máximo beneficio tributario permitido.")
     
     # =========================
     # DESGLOSE vs INTERPRETACIÓN
