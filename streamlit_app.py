@@ -693,6 +693,25 @@ if st.session_state.simulacion_calculada and st.session_state.resultado_simulaci
             unsafe_allow_html=True
         )
 
+        st.markdown("<div style='height:14px'></div>", unsafe_allow_html=True)
+
+        st.markdown(
+            f"""
+            <div class="soft-card">
+                <div style="font-size:14px; color:#d1fae5; margin-bottom:8px;">Comparativo rápido</div>
+                <div style="font-size:14px; color:#cbd5e1;">Antes</div>
+                <div style="font-size:22px; color:#ffffff; font-weight:800; margin-bottom:10px;">
+                    {formato_moneda(impuesto_original)}
+                </div>
+                <div style="font-size:14px; color:#cbd5e1;">Después</div>
+                <div style="font-size:22px; color:#ffffff; font-weight:800;">
+                    {formato_moneda(impuesto_optimizado)}
+                </div>
+            </div>
+            """,
+            unsafe_allow_html=True
+        )
+
     # =========================
     # DEBUG TÉCNICO (FIX: crear df antes de mostrarlo)
     # =========================
