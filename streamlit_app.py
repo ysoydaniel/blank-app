@@ -12,335 +12,188 @@ st.set_page_config(
     layout="wide"
 )
 
+
 # =========================
-# ESTILOS
+# GLASSMORPHISM CSS
 # =========================
 st.markdown("""
 <style>
-    .stApp {
-        background: linear-gradient(180deg, #ffffff 0%, #f6f8f7 100%);
-        color: #1f2937;
-    }
 
-    h1, h2, h3 {
-        color: #0f172a;
-        font-weight: 700;
-        letter-spacing: -0.02em;
-    }
-
-    p, label, div, span {
-        color: #374151;
-    }
-
-   
 /* =========================
-   INPUTS (text/number) – quitar borde negro/outline
+   BASE
    ========================= */
+.stApp {
+    background: linear-gradient(
+        135deg,
+        #eef2f7 0%,
+        #f7f9fc 35%,
+        #eef6f2 100%
+    );
+    color: #0f172a;
+}
 
-/* Contenedor BaseWeb de inputs */
+/* Tipografía */
+h1, h2, h3, h4 {
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    color: #0f172a;
+}
+
+p, span, label {
+    color: #334155;
+}
+
+/* =========================
+   GLASS CARD (contenedores)
+   ========================= */
+.glass-card {
+    background: rgba(255, 255, 255, 0.55);
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+    border-radius: 22px;
+    border: 1px solid rgba(255, 255, 255, 0.45);
+    box-shadow:
+        0 10px 35px rgba(0, 0, 0, 0.08),
+        inset 0 1px 0 rgba(255,255,255,0.5);
+    padding: 24px 26px;
+}
+
+/* =========================
+   INPUTS (TEXT / NUMBER)
+   ========================= */
 div[data-baseweb="input"] > div {
-  background: #ffffff !important;
-  border: 1px solid rgba(0,0,0,0.10) !important;  /* <- en vez de negro */
-  border-radius: 14px !important;
-  box-shadow: none !important;
+    background: rgba(255,255,255,0.65) !important;
+    backdrop-filter: blur(14px);
+    border-radius: 14px !important;
+    border: 1px solid rgba(0,0,0,0.08) !important;
+    box-shadow: none !important;
 }
 
-/* El input real (clave para quitar outline del navegador) */
 div[data-baseweb="input"] input {
-  color: #0f172a !important;
-  font-weight: 500 !important;
-  outline: none !important;          /* <- quita borde/halo del navegador */
-  box-shadow: none !important;       /* <- quita glow */
+    background: transparent !important;
+    color: #0f172a !important;
+    font-weight: 500 !important;
+    outline: none !important;
+    box-shadow: none !important;
 }
 
-/* Focus: define tu propio foco (suave, verde) */
+/* Focus elegante */
 div[data-baseweb="input"] > div:focus-within {
-  border: 1px solid rgba(0,199,61,0.35) !important;
-  box-shadow: 0 0 0 2px rgba(0,199,61,0.10) !important;
+    border: 1px solid rgba(0,199,61,0.45) !important;
+    box-shadow: 0 0 0 3px rgba(0,199,61,0.12) !important;
 }
-
 
 /* =========================
-   stTextInput específico (tu money_input)
+   SELECTBOX
    ========================= */
-div[data-testid="stTextInput"] input {
-  padding-left: 26px !important;
-  background: #ffffff !important;
-  border-radius: 14px !important;
-
-  /* cambia este borde que lo tienes negro */
-  border: 1px solid rgba(0,0,0,0.10) !important;
-
-  outline: none !important;
-  box-shadow: none !important;
-  color: #0f172a !important;
-}
-
-div[data-testid="stTextInput"] input:focus {
-  border: 1px solid rgba(0,199,61,0.35) !important;
-  box-shadow: 0 0 0 2px rgba(0,199,61,0.10) !important;
-  outline: none !important;
-}
-
-
-  
-* =========================
-   SELECTBOX – fondo blanco y dropdown blanco (quita “negro”)
-   ========================= */
-
-/* Caja cerrada del select (control principal) */
 .stSelectbox div[data-baseweb="select"] > div {
-  background: #ffffff !important;
-  border: 1px solid rgba(0,0,0,0.10) !important;
-  border-radius: 14px !important;
-  box-shadow: none !important;
+    background: rgba(255,255,255,0.65) !important;
+    backdrop-filter: blur(14px);
+    border-radius: 14px !important;
+    border: 1px solid rgba(0,0,0,0.08) !important;
 }
 
-/* Texto dentro del select */
-.stSelectbox div[data-baseweb="select"] span,
-.stSelectbox div[data-baseweb="select"] input {
-  color: #0f172a !important;
-  outline: none !important;
-  box-shadow: none !important;
+.stSelectbox div[data-baseweb="select"] span {
+    color: #0f172a !important;
 }
 
-/* Focus/hover del select */
-.stSelectbox div[data-baseweb="select"] > div:focus-within,
-.stSelectbox div[data-baseweb="select"] > div:hover {
-  border: 1px solid rgba(0,199,61,0.35) !important;
-  box-shadow: 0 0 0 2px rgba(0,199,61,0.10) !important;
+/* Hover / focus */
+.stSelectbox div[data-baseweb="select"] > div:hover,
+.stSelectbox div[data-baseweb="select"] > div:focus-within {
+    border: 1px solid rgba(0,199,61,0.45) !important;
+    box-shadow: 0 0 0 3px rgba(0,199,61,0.12) !important;
 }
 
-/* Popover del dropdown (portal) */
+/* =========================
+   DROPDOWN (MENU)
+   ========================= */
 div[data-baseweb="popover"] {
-  background: transparent !important;
+    background: transparent !important;
 }
 
-/* Contenedor del menú desplegable */
 div[data-baseweb="menu"] {
-  background: #ffffff !important;
-  border: 1px solid rgba(0,0,0,0.10) !important;
-  border-radius: 14px !important;
-  box-shadow: 0 12px 30px rgba(0,0,0,0.10) !important;
-  overflow: hidden !important;
+    background: rgba(255,255,255,0.85) !important;
+    backdrop-filter: blur(20px);
+    border-radius: 18px !important;
+    border: 1px solid rgba(255,255,255,0.6) !important;
+    box-shadow: 0 18px 45px rgba(0,0,0,0.18) !important;
+    overflow: hidden !important;
 }
 
-/* Lista y items del dropdown */
-div[role="listbox"],
 ul[role="listbox"] {
-  background: #ffffff !important;
-  border: none !important;
+    background: transparent !important;
 }
 
 ul[role="listbox"] li {
-  background: #ffffff !important;
-  color: #0f172a !important;
-  border-radius: 10px !important;
+    color: #0f172a !important;
+    border-radius: 12px !important;
 }
 
 ul[role="listbox"] li:hover {
-  background: rgba(0,199,61,0.08) !important;
-  color: #0f172a !important;
+    background: rgba(0,199,61,0.10) !important;
 }
 
 ul[role="listbox"] li[aria-selected="true"] {
-  background: rgba(0,199,61,0.12) !important;
-  color: #0f172a !important;
-  font-weight: 600 !important;
+    background: rgba(0,199,61,0.16) !important;
+    font-weight: 600 !important;
 }
 
-/* Evita que un tema dark pinte textos o fondos dentro del menú */
-div[data-baseweb="menu"] *,
-ul[role="listbox"] * {
-  color: #0f172a !important;
-  background: transparent;
-}
-
-/* Si el "negro" viene de outline global del navegador, esto lo evita */
-*:focus {
-  outline: none !important;
-}
-
-    /* ===== Radio buttons ===== */
-    div[role="radiogroup"] label {
-        background: #ffffff !important;
-        padding: 8px 14px !important;
-        border-radius: 12px !important;
-        border: 1px solid rgba(0,0,0,0.10) !important;
-        margin-right: 8px !important;
-    }
-
-    div[role="radiogroup"] label * {
-        color: #0f172a !important;
-    }
-
-    input[type="radio"] {
-        accent-color: #00c73d !important;
-    }
-
-    /* Botón principal */
-    .stButton > button {
-        width: 100%;
-        max-width: 340px;
-        margin: 0 auto;
-        display: block;
-        background: linear-gradient(135deg, #00c73d 0%, #7ce000 100%);
-        color: white;
-        border-radius: 14px;
-        border: none;
-        padding: 0.9rem 1.2rem;
-        font-weight: 700;
-        box-shadow: 0 10px 25px rgba(0,199,61,0.25);
-        transition: all 0.25s ease;
-    }
-
-    .stButton > button:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 18px 40px rgba(0,199,61,0.35);
-    }
-
-    .stButton > button:active {
-        transform: translateY(1px);
-        box-shadow: 0 6px 15px rgba(0,199,61,0.25);
-    }
-
-    /* Sidebar */
-    section[data-testid="stSidebar"] {
-        background: #f9fafb;
-        border-right: 1px solid rgba(0,0,0,0.06);
-    }
-
-    /* Dataframe contenedor */
-    div[data-testid="stDataFrame"] {
-        background: #ffffff;
-        border-radius: 18px;
-        padding: 8px;
-        border: 1px solid rgba(0,0,0,0.08);
-    }
-
-    /* Inputs de texto monetarios: prefijo $ visual */
-    div[data-testid="stTextInput"] {
-        position: relative;
-    }
-
-    div[data-testid="stTextInput"]::before {
-        content: "$";
-        position: absolute;
-        left: 12px;
-        top: 35px;
-        color: #6b7280;
-        font-weight: 700;
-        font-size: 15px;
-        z-index: 1;
-    }
-
-    div[data-testid="stTextInput"] input {
-    padding-left: 26px !important;
-    background: #ffffff !important;
+/* =========================
+   RADIO
+   ========================= */
+div[role="radiogroup"] label {
+    background: rgba(255,255,255,0.55) !important;
+    backdrop-filter: blur(12px);
     border-radius: 14px !important;
-    color: #0f172a !important;
-    border: 1px solid #3f3f3f !important;
-    box-shadow: 0 0px 0px rgba(15, 23, 42, 0.04) !important;
+    border: 1px solid rgba(0,0,0,0.08) !important;
+    padding: 8px 14px !important;
 }
 
-div[data-testid="stTextInput"] input:focus {
-    border: 1px solid #3f3f3f !important;
-    box-shadow: 0 0 0 0px rgba(0,199,61,0.08) !important;
+input[type="radio"] {
+    accent-color: #00c73d !important;
+}
+
+/* =========================
+   BUTTON
+   ========================= */
+.stButton > button {
+    background: linear-gradient(135deg, #00c73d, #7ce000);
+    color: white;
+    border-radius: 16px;
+    border: none;
+    padding: 0.9rem 1.4rem;
+    font-weight: 800;
+    box-shadow: 0 12px 30px rgba(0,199,61,0.35);
+    transition: all .25s ease;
+}
+
+.stButton > button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 20px 45px rgba(0,199,61,0.45);
+}
+
+/* =========================
+   SIDEBAR
+   ========================= */
+section[data-testid="stSidebar"] {
+    background: rgba(255,255,255,0.65);
+    backdrop-filter: blur(18px);
+    border-right: 1px solid rgba(0,0,0,0.08);
+}
+
+/* =========================
+   CLEAN
+   ========================= */
+*:focus {
     outline: none !important;
 }
 
-    /* Result cards */
-    .result-card {
-        border-radius: 22px;
-        padding: 22px 24px;
-        background: #ffffff;
-        border: 1px solid rgba(0,0,0,0.08);
-        box-shadow: 0 14px 40px rgba(0,0,0,0.10);
-        min-height: 150px;
-    }
+#MainMenu {visibility: hidden;}
+footer {visibility: hidden;}
+header {visibility: hidden;}
 
-    .result-label {
-        font-size: 14px;
-        color: #475569;
-        font-weight: 600;
-        margin-bottom: 10px;
-    }
-
-    .result-value {
-        font-size: 40px;
-        line-height: 1.05;
-        color: #0f172a;
-        font-weight: 800;
-        letter-spacing: -0.03em;
-        margin-bottom: 10px;
-    }
-
-    .result-subtext {
-        font-size: 13px;
-        color: #64748b;
-        line-height: 1.4;
-    }
-
-    .result-card.primary {
-        background: linear-gradient(135deg, rgba(0,199,61,0.10), rgba(124,224,0,0.05));
-        border: 1px solid rgba(0,199,61,0.18);
-    }
-
-    .result-card.success {
-        background: linear-gradient(135deg, rgba(16,185,129,0.12), rgba(16,185,129,0.04));
-        border: 1px solid rgba(16,185,129,0.18);
-    }
-
-    .result-card.warning {
-        background: linear-gradient(135deg, rgba(245,158,11,0.12), rgba(245,158,11,0.04));
-        border: 1px solid rgba(245,158,11,0.18);
-    }
-
-    .result-mini {
-        font-size: 12px;
-        color: #16a34a;
-        font-weight: 700;
-        letter-spacing: .06em;
-        text-transform: uppercase;
-        margin-bottom: 6px;
-    }
-
-    .soft-card {
-        padding: 20px;
-        border-radius: 18px;
-        background: #ffffff;
-        border: 1px solid rgba(0,0,0,0.06);
-        box-shadow: 0 10px 30px rgba(0,0,0,0.08);
-    }
-
-    .section-divider {
-        margin: 10px 0 18px 0;
-        height: 1px;
-        background: linear-gradient(90deg, transparent, rgba(0,199,61,0.25), transparent);
-    }
-
-    .vertical-divider {
-        width: 1px;
-        height: 540px;
-        margin: auto;
-        background: linear-gradient(
-            to bottom,
-            rgba(0,0,0,0.03),
-            rgba(0,199,61,0.30),
-            rgba(0,0,0,0.03)
-        );
-    }
-
-    @media (max-width: 900px) {
-        .vertical-divider {
-            display: none;
-        }
-    }
-
-    #MainMenu {visibility: hidden;}
-    footer {visibility: hidden;}
-    header {visibility: hidden;}
 </style>
+
 """, unsafe_allow_html=True)
 
 # =========================
