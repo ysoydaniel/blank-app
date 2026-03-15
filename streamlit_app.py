@@ -18,15 +18,12 @@ st.set_page_config(
 st.markdown("""
 <style>
     .stApp {
-        background:
-         radial-gradient(circle at 20% 20%, rgba(0,199,61,0.12), transparent 40%),
-         radial-gradient(circle at 80% 70%, rgba(143,224,0,0.08), transparent 40%),
-         linear-gradient(140deg, #0b1f18 0%, #0f2a23 40%, #0a1512 100%);
-        color: #F9FAFB;
+        background: linear-gradient(180deg, #ffffff 0%, #f6f8f7 100%);
+    color: #1f2937;
     }
 
     h1, h2, h3 {
-        color: #F9FAFB;
+        color: #0f172a;
         font-weight: 700;
         letter-spacing: -0.02em;
     }
@@ -185,16 +182,15 @@ st.markdown("""
     }
 
     .soft-card {
-        padding: 18px 20px;
+        padding: 20px;
     border-radius: 18px;
 
-    background: rgba(255,255,255,0.04);
+    background: #ffffff;
 
-    border: 1px solid rgba(0,199,61,0.15);
+    border: 1px solid rgba(0,0,0,0.06);
 
     box-shadow:
-        0 12px 40px rgba(0,0,0,0.35),
-        0 0 30px rgba(0,199,61,0.05);
+        0 10px 30px rgba(0,0,0,0.08);
     }
 
     .section-divider {
