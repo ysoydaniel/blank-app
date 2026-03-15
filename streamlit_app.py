@@ -60,6 +60,29 @@ div[data-baseweb="input"] > div:focus-within {
 }
 
 
+/* =========================
+   stTextInput específico (tu money_input)
+   ========================= */
+div[data-testid="stTextInput"] input {
+  padding-left: 26px !important;
+  background: #ffffff !important;
+  border-radius: 14px !important;
+
+  /* cambia este borde que lo tienes negro */
+  border: 1px solid rgba(0,0,0,0.10) !important;
+
+  outline: none !important;
+  box-shadow: none !important;
+  color: #0f172a !important;
+}
+
+div[data-testid="stTextInput"] input:focus {
+  border: 1px solid rgba(0,199,61,0.35) !important;
+  box-shadow: 0 0 0 2px rgba(0,199,61,0.10) !important;
+  outline: none !important;
+}
+
+
     /* ===== Select abierto / dropdown ===== */
     div[data-baseweb="popover"] {
         background: transparent !important;
