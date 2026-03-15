@@ -176,12 +176,12 @@ div[data-baseweb="select"] > div:hover {
     background: #ffffff !important;
     border-radius: 14px !important;
     color: #0f172a !important;
-    border: 1px solid rgba(0,199,61,0.14) !important;
-    box-shadow: 0 4px 12px rgba(15, 23, 42, 0.04) !important;
+    border: 0px solid rgba(0,199,61,0.14) !important;
+    box-shadow: 0 0px 12px rgba(15, 23, 42, 0.04) !important;
 }
 
 div[data-testid="stTextInput"] input:focus {
-    border: 1px solid rgba(0,199,61,0.35) !important;
+    border: 0px solid rgba(0,199,61,0.35) !important;
     box-shadow: 0 0 0 2px rgba(0,199,61,0.08) !important;
     outline: none !important;
 }
