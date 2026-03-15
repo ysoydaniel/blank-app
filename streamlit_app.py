@@ -439,8 +439,8 @@ with col1:
     "¿Recibes auxilios?",
     value=True,
     help="Auxilios no salariales como transporte o conectividad."
-)
-recibe_auxilios = "Sí" if recibe_auxilios_bool else "No"
+    )
+    recibe_auxilios = "Sí" if recibe_auxilios_bool else "No"
 
     valor_auxilios_mensual = money_input(
         "¿Cuál es el valor mensual de tus auxilios?",
