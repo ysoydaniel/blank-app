@@ -393,7 +393,7 @@ if "simulacion_calculada" not in st.session_state:
 # =========================
 
 st.markdown("""
-<div class="glass-card" style="display:flex; align-items:center; gap:16px;">
+<div class="soft-card" style="display:flex; align-items:center; gap:16px;">
     <img 
         src="https://skandiacol-my.sharepoint.com/personal/csilvao_skandia_com_co/Documents/Templates/Iconos/Negativo/calculadora_s.png"
         style="
