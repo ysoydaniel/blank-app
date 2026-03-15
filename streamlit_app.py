@@ -406,7 +406,7 @@ st.markdown("""
         <div style="font-size:34px; color:#ffffff; font-weight:800; margin-top:6px;">
             Simulador Tributario 2026
         </div>
-        <div style="font-size:15px; color:#475569;">
+        <div style="font-size:16px; color:#d1fae5; margin-top:8px;">
             Experiencia web guiada, clara y lista para escalar.
         </div>
     </div>
