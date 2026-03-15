@@ -271,6 +271,15 @@ with st.sidebar:
     mostrar_debug = st.checkbox("Mostrar detalle técnico", value=True)
     st.caption("Úsalo para comparar contra el Excel y detectar diferencias.")
 
+if "resultado_simulacion" not in st.session_state:
+    st.session_state.resultado_simulacion = None
+
+if "inputs_simulacion" not in st.session_state:
+    st.session_state.inputs_simulacion = None
+
+if "simulacion_calculada" not in st.session_state:
+    st.session_state.simulacion_calculada = False
+
 # =========================
 # HEADER
 # =========================
@@ -482,305 +491,314 @@ if st.button("🧮 Calcular simulación", use_container_width=True):
         for error in errores:
             st.error(error)
     else:
-        resultado = ejecutar_simulador(inputs)
+        st.session_state.resultado_simulacion = ejecutar_simulador(inputs)
+        st.session_state.inputs_simulacion = inputs.copy()
+        st.session_state.simulacion_calculada = True
 
-        impuesto_original = resultado["impuesto_sin_optimizacion"]
-        impuesto_optimizado = resultado["impuesto_optimizado"]
-        beneficio = resultado["beneficio"]
+        if st.session_state.simulacion_calculada and st.session_state.resultado_simulacion is not None:
+    resultado = st.session_state.resultado_simulacion
+    inputs_calculados = st.session_state.inputs_simulacion
 
-        porcentaje_ahorro = 0
-        if impuesto_original > 0:
-            porcentaje_ahorro = beneficio / impuesto_original
+    impuesto_original = resultado["impuesto_sin_optimizacion"]
+    impuesto_optimizado = resultado["impuesto_optimizado"]
+    beneficio = resultado["beneficio"]
 
-        st.markdown("## Resultados")
+    porcentaje_ahorro = 0
+    if impuesto_original > 0:
+        porcentaje_ahorro = beneficio / impuesto_original
 
-        st.markdown(
-            f"""
-            <div style="
-                padding:26px;
-                border-radius:22px;
-                background:linear-gradient(135deg,rgba(16,185,129,0.22),rgba(16,185,129,0.08));
-                border:1px solid rgba(16,185,129,0.35);
-                text-align:center;
-                margin-bottom:18px;
-            ">
-                <div style="font-size:13px;color:#6EE7B7;font-weight:700;letter-spacing:.08em;">
-                    OPORTUNIDAD TRIBUTARIA DETECTADA
-                </div>
-                <div style="font-size:46px;font-weight:900;color:white;margin-top:6px;">
-                    {formato_moneda(beneficio)}
-                </div>
-                <div style="font-size:14px;color:#CBD5E1;margin-top:4px;">
-                    ahorro potencial estimado
-                </div>
+    st.markdown("## Resultados")
+
+    st.markdown(
+        f"""
+        <div style="
+            padding:26px;
+            border-radius:22px;
+            background:linear-gradient(135deg,rgba(16,185,129,0.22),rgba(16,185,129,0.08));
+            border:1px solid rgba(16,185,129,0.35);
+            text-align:center;
+            margin-bottom:18px;
+        ">
+            <div style="font-size:13px;color:#6EE7B7;font-weight:700;letter-spacing:.08em;">
+                OPORTUNIDAD TRIBUTARIA DETECTADA
             </div>
-            """,
-            unsafe_allow_html=True
+            <div style="font-size:46px;font-weight:900;color:white;margin-top:6px;">
+                {formato_moneda(beneficio)}
+            </div>
+            <div style="font-size:14px;color:#CBD5E1;margin-top:4px;">
+                ahorro potencial estimado
+            </div>
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
+
+    c1, c2, c3 = st.columns(3)
+
+    with c1:
+        result_card(
+            title="Impuesto actual",
+            value=formato_moneda(impuesto_original),
+            subtitle="Escenario sin optimización tributaria.",
+            tone="warning",
+            eyebrow="Escenario base"
         )
 
-        c1, c2, c3 = st.columns(3)
-
-        with c1:
-            result_card(
-                title="Impuesto actual",
-                value=formato_moneda(impuesto_original),
-                subtitle="Escenario sin optimización tributaria.",
-                tone="warning",
-                eyebrow="Escenario base"
-            )
-
-        with c2:
-            result_card(
-                title="Impuesto optimizado",
-                value=formato_moneda(impuesto_optimizado),
-                subtitle="Escenario con beneficios tributarios aplicados.",
-                tone="primary",
-                eyebrow="Escenario optimizado"
-            )
-
-        with c3:
-            result_card(
-                title="Ahorro estimado",
-                value=formato_moneda(beneficio),
-                subtitle=f"Reducción aproximada del {porcentaje_ahorro:.1%} sobre el impuesto.",
-                tone="success",
-                eyebrow="Impacto"
-            )
-
-        st.markdown("### Comparación visual")
-
-        max_valor = max(impuesto_original, impuesto_optimizado)
-        porcentaje_actual = impuesto_original / max_valor if max_valor > 0 else 0
-        porcentaje_opt = impuesto_optimizado / max_valor if max_valor > 0 else 0
-
-        st.markdown("**Escenario actual**")
-        st.progress(porcentaje_actual)
-        st.caption(formato_moneda(impuesto_original))
-
-        st.markdown("**Escenario optimizado**")
-        st.progress(porcentaje_opt)
-        st.caption(formato_moneda(impuesto_optimizado))
-
-        st.markdown("### Impacto de la optimización tributaria")
-        st.progress(min(max(porcentaje_ahorro, 0), 1))
-
-        st.markdown(
-            f"""
-            <div style="
-                margin-top:10px;
-                padding:16px 18px;
-                border-radius:16px;
-                background:rgba(16,185,129,0.08);
-                border:1px solid rgba(16,185,129,0.18);
-            ">
-                <div style="font-size:14px; color:#34D399; font-weight:700;">
-                    💰 Ahorro potencial identificado
-                </div>
-                <div style="font-size:13px; color:#CBD5E1; margin-top:6px;">
-                    El cliente podría reducir su carga tributaria en <b>{formato_moneda(beneficio)}</b>,
-                    equivalente a una mejora aproximada del <b>{porcentaje_ahorro:.1%}</b>.
-                </div>
-            </div>
-            """,
-            unsafe_allow_html=True
+    with c2:
+        result_card(
+            title="Impuesto optimizado",
+            value=formato_moneda(impuesto_optimizado),
+            subtitle="Escenario con beneficios tributarios aplicados.",
+            tone="primary",
+            eyebrow="Escenario optimizado"
         )
 
-        if porcentaje_ahorro >= 0.20:
-            st.success("🚀 Excelente oportunidad de optimización tributaria.")
-        elif porcentaje_ahorro >= 0.10:
-            st.info("📊 Hay una oportunidad tributaria relevante para el cliente.")
-        else:
-            st.warning("💡 El beneficio existe, pero el impacto es más moderado.")
+    with c3:
+        result_card(
+            title="Ahorro estimado",
+            value=formato_moneda(beneficio),
+            subtitle=f"Reducción aproximada del {porcentaje_ahorro:.1%} sobre el impuesto.",
+            tone="success",
+            eyebrow="Impacto"
+        )
 
-        st.divider()
-        st.markdown("## Simulación interactiva de optimización")
+    st.markdown("### Comparación visual")
 
-        topup_max = int(resultado.get("topup_full", 0))
+    max_valor = max(impuesto_original, impuesto_optimizado)
+    porcentaje_actual = impuesto_original / max_valor if max_valor > 0 else 0
+    porcentaje_opt = impuesto_optimizado / max_valor if max_valor > 0 else 0
 
-        if topup_max > 0:
-            topup_usuario = st.slider(
-                "Simula cuánto más podría aportar el cliente en pensión voluntaria / AFC",
-                min_value=0,
-                max_value=topup_max,
-                value=0,
-                step=500000,
-                help="Mueve el control para ver cómo cambia el impuesto."
-            )
+    st.markdown("**Escenario actual**")
+    st.progress(porcentaje_actual)
+    st.caption(formato_moneda(impuesto_original))
 
-            nueva_base = resultado["base_gravable"] - topup_usuario
-            if nueva_base < 0:
-                nueva_base = 0
+    st.markdown("**Escenario optimizado**")
+    st.progress(porcentaje_opt)
+    st.caption(formato_moneda(impuesto_optimizado))
 
-            base_uvt_temp = nueva_base / resultado["uvt"]
+    st.markdown("### Impacto de la optimización tributaria")
+    st.progress(min(max(porcentaje_ahorro, 0), 1))
 
-            impuesto_topup = calcular_impuesto_renta(
+    st.markdown(
+        f"""
+        <div style="
+            margin-top:10px;
+            padding:16px 18px;
+            border-radius:16px;
+            background:rgba(16,185,129,0.08);
+            border:1px solid rgba(16,185,129,0.18);
+        ">
+            <div style="font-size:14px; color:#34D399; font-weight:700;">
+                💰 Ahorro potencial identificado
+            </div>
+            <div style="font-size:13px; color:#CBD5E1; margin-top:6px;">
+                El cliente podría reducir su carga tributaria en <b>{formato_moneda(beneficio)}</b>,
+                equivalente a una mejora aproximada del <b>{porcentaje_ahorro:.1%}</b>.
+            </div>
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
+
+    if porcentaje_ahorro >= 0.20:
+        st.success("🚀 Excelente oportunidad de optimización tributaria.")
+    elif porcentaje_ahorro >= 0.10:
+        st.info("📊 Hay una oportunidad tributaria relevante para el cliente.")
+    else:
+        st.warning("💡 El beneficio existe, pero el impacto es más moderado.")
+
+    st.divider()
+    st.markdown("## Simulación interactiva de optimización")
+
+    topup_max = int(resultado.get("topup_full", 0))
+
+    if topup_max > 0:
+        topup_usuario = st.slider(
+            "Simula cuánto más podría aportar el cliente en pensión voluntaria / AFC",
+            min_value=0,
+            max_value=topup_max,
+            value=0,
+            step=500000,
+            help="Mueve el control para ver cómo cambia el impuesto.",
+            key="slider_topup"
+        )
+
+        nueva_base = resultado["base_gravable"] - topup_usuario
+        if nueva_base < 0:
+            nueva_base = 0
+
+        base_uvt_temp = nueva_base / resultado["uvt"]
+
+        impuesto_topup = calcular_impuesto_renta(
+            base_uvt_temp,
+            resultado["uvt"]
+        )
+
+        ahorro_topup = resultado["impuesto_sin_optimizacion"] - impuesto_topup
+
+        tc1, tc2, tc3 = st.columns(3)
+
+        with tc1:
+            st.metric("Aporte adicional", formato_moneda(topup_usuario))
+
+        with tc2:
+            st.metric("Nuevo impuesto estimado", formato_moneda(impuesto_topup))
+
+        with tc3:
+            st.metric("Ahorro tributario", formato_moneda(ahorro_topup))
+
+        st.markdown("### Curva de optimización tributaria")
+
+        aportes = []
+        ahorros = []
+
+        step = topup_max / 10 if topup_max > 0 else 1
+
+        for i in range(11):
+            aporte = step * i
+            base = resultado["base_gravable"] - aporte
+
+            if base < 0:
+                base = 0
+
+            base_uvt_temp = base / resultado["uvt"]
+
+            impuesto_temp = calcular_impuesto_renta(
                 base_uvt_temp,
                 resultado["uvt"]
             )
 
-            ahorro_topup = resultado["impuesto_sin_optimizacion"] - impuesto_topup
+            ahorro_temp = resultado["impuesto_sin_optimizacion"] - impuesto_temp
 
-            tc1, tc2, tc3 = st.columns(3)
+            aportes.append(aporte)
+            ahorros.append(ahorro_temp)
 
-            with tc1:
-                st.metric("Aporte adicional", formato_moneda(topup_usuario))
+        fig, ax = plt.subplots()
+        ax.plot(aportes, ahorros)
+        ax.set_xlabel("Aporte adicional")
+        ax.set_ylabel("Ahorro tributario")
+        st.pyplot(fig)
 
-            with tc2:
-                st.metric("Nuevo impuesto estimado", formato_moneda(impuesto_topup))
+    else:
+        st.info("El cliente ya se encuentra en el máximo beneficio tributario permitido.")
 
-            with tc3:
-                st.metric("Ahorro tributario", formato_moneda(ahorro_topup))
+    st.divider()
 
-            st.markdown("### Curva de optimización tributaria")
+    left, right = st.columns([1.35, 1])
 
-            aportes = []
-            ahorros = []
+    with left:
+        st.markdown("### Desglose del cálculo")
 
-            step = topup_max / 10 if topup_max > 0 else 1
+        df_detalle = pd.DataFrame(
+            [
+                {"Concepto": "Salario anual", "Valor": formato_moneda(resultado["salario_anual"])},
+                {"Concepto": "Ingreso variable anual", "Valor": formato_moneda(resultado["ingreso_variable"])},
+                {"Concepto": "Auxilios anuales", "Valor": formato_moneda(resultado["auxilios_anuales"])},
+                {"Concepto": "Bonificación anual", "Valor": formato_moneda(resultado["bonificacion_anual"])},
+                {"Concepto": "Total ingresos", "Valor": formato_moneda(resultado["total_ingresos"])},
+                {"Concepto": "Aporte EPS", "Valor": formato_moneda(resultado["aporte_eps"])},
+                {"Concepto": "Aporte pensión", "Valor": formato_moneda(resultado["aporte_pension"])},
+                {"Concepto": "Fondo solidaridad", "Valor": formato_moneda(resultado["fondo_solidaridad"])},
+                {"Concepto": "Ingresos no constitutivos", "Valor": formato_moneda(resultado["ingresos_no_constitutivos"])},
+                {"Concepto": "Renta líquida", "Valor": formato_moneda(resultado["renta_liquida"])},
+                {"Concepto": "Renta líquida PAC", "Valor": formato_moneda(resultado["renta_liquida_pac"])},
+                {"Concepto": "Dependientes", "Valor": formato_moneda(resultado["dependientes"])},
+                {"Concepto": "Intereses vivienda", "Valor": formato_moneda(resultado["intereses_vivienda"])},
+                {"Concepto": "Pagos salud", "Valor": formato_moneda(resultado["pagos_salud"])},
+                {"Concepto": "Cesantías", "Valor": formato_moneda(resultado["cesantias"])},
+                {"Concepto": "Aportes pensión/AFC", "Valor": formato_moneda(resultado["aportes_pension_afc"])},
+                {"Concepto": "Renta exenta laboral", "Valor": formato_moneda(resultado["renta_exenta_laboral"])},
+                {"Concepto": "Total deducciones", "Valor": formato_moneda(resultado["total_deducciones"])},
+                {"Concepto": "Deducciones admisibles", "Valor": formato_moneda(resultado["deducciones_admisibles"])},
+                {"Concepto": "Base gravable", "Valor": formato_moneda(resultado["base_gravable"])},
+                {"Concepto": "Base gravable con PAC", "Valor": formato_moneda(resultado["base_gravable_pac"])},
+                {"Concepto": "Base gravable UVT", "Valor": formato_numero(resultado["base_uvt"], 6)},
+                {"Concepto": "Base gravable UVT con PAC", "Valor": formato_numero(resultado["base_uvt_pac"], 6)},
+            ]
+        )
 
-            for i in range(11):
-                aporte = step * i
-                base = resultado["base_gravable"] - aporte
+        st.dataframe(df_detalle, use_container_width=True, hide_index=True)
 
-                if base < 0:
-                    base = 0
+    with right:
+        st.markdown("### Interpretación")
+        st.markdown(
+            f"""
+            <div class="soft-card">
+                <div style="font-size:13px; color:#93C5FD; font-weight:700; letter-spacing:.06em; text-transform:uppercase; margin-bottom:8px;">
+                    Lectura ejecutiva
+                </div>
+                <div style="font-size:16px; color:white; font-weight:700; margin-bottom:10px;">
+                    Beneficio tributario estimado
+                </div>
+                <div style="font-size:28px; color:#34D399; font-weight:800; margin-bottom:12px;">
+                    {formato_moneda(resultado["beneficio"])}
+                </div>
+                <div style="font-size:14px; color:#CBD5E1; line-height:1.55;">
+                    Con base en la información registrada, el cliente podría reducir su carga tributaria
+                    aprovechando beneficios permitidos en el modelo actual.
+                </div>
+            </div>
+            """,
+            unsafe_allow_html=True
+        )
 
-                base_uvt_temp = base / resultado["uvt"]
+        st.markdown("<div style='height:14px'></div>", unsafe_allow_html=True)
 
-                impuesto_temp = calcular_impuesto_renta(
-                    base_uvt_temp,
-                    resultado["uvt"]
-                )
+        st.markdown(
+            f"""
+            <div class="soft-card">
+                <div style="font-size:14px; color:#CBD5E1; margin-bottom:8px;">Comparativo rápido</div>
+                <div style="font-size:14px; color:#94A3B8;">Antes</div>
+                <div style="font-size:22px; color:white; font-weight:800; margin-bottom:10px;">
+                    {formato_moneda(impuesto_original)}
+                </div>
+                <div style="font-size:14px; color:#94A3B8;">Después</div>
+                <div style="font-size:22px; color:white; font-weight:800;">
+                    {formato_moneda(impuesto_optimizado)}
+                </div>
+            </div>
+            """,
+            unsafe_allow_html=True
+        )
 
-                ahorro_temp = resultado["impuesto_sin_optimizacion"] - impuesto_temp
-
-                aportes.append(aporte)
-                ahorros.append(ahorro_temp)
-
-            fig, ax = plt.subplots()
-            ax.plot(aportes, ahorros)
-            ax.set_xlabel("Aporte adicional")
-            ax.set_ylabel("Ahorro tributario")
-            st.pyplot(fig)
-
-        else:
-            st.info("El cliente ya se encuentra en el máximo beneficio tributario permitido.")
-
+    if mostrar_debug:
         st.divider()
+        st.markdown("## Debug técnico")
 
-        left, right = st.columns([1.35, 1])
+        debug_df = pd.DataFrame(
+            [
+                {"Variable": "salario_anual", "Valor app": resultado["salario_anual"]},
+                {"Variable": "ingreso_variable", "Valor app": resultado["ingreso_variable"]},
+                {"Variable": "auxilios_anuales", "Valor app": resultado["auxilios_anuales"]},
+                {"Variable": "bonificacion_anual", "Valor app": resultado["bonificacion_anual"]},
+                {"Variable": "total_ingresos", "Valor app": resultado["total_ingresos"]},
+                {"Variable": "aporte_eps", "Valor app": resultado["aporte_eps"]},
+                {"Variable": "aporte_pension", "Valor app": resultado["aporte_pension"]},
+                {"Variable": "fondo_solidaridad", "Valor app": resultado["fondo_solidaridad"]},
+                {"Variable": "ingresos_no_constitutivos", "Valor app": resultado["ingresos_no_constitutivos"]},
+                {"Variable": "renta_liquida", "Valor app": resultado["renta_liquida"]},
+                {"Variable": "renta_liquida_pac", "Valor app": resultado["renta_liquida_pac"]},
+                {"Variable": "dependientes", "Valor app": resultado["dependientes"]},
+                {"Variable": "intereses_vivienda", "Valor app": resultado["intereses_vivienda"]},
+                {"Variable": "pagos_salud", "Valor app": resultado["pagos_salud"]},
+                {"Variable": "cesantias", "Valor app": resultado["cesantias"]},
+                {"Variable": "aportes_pension_afc", "Valor app": resultado["aportes_pension_afc"]},
+                {"Variable": "renta_exenta_laboral", "Valor app": resultado["renta_exenta_laboral"]},
+                {"Variable": "total_deducciones", "Valor app": resultado["total_deducciones"]},
+                {"Variable": "deducciones_admisibles", "Valor app": resultado["deducciones_admisibles"]},
+                {"Variable": "base_gravable", "Valor app": resultado["base_gravable"]},
+                {"Variable": "base_gravable_pac", "Valor app": resultado["base_gravable_pac"]},
+                {"Variable": "base_uvt", "Valor app": resultado["base_uvt"]},
+                {"Variable": "base_uvt_pac", "Valor app": resultado["base_uvt_pac"]},
+                {"Variable": "impuesto_sin_optimizacion", "Valor app": resultado["impuesto_sin_optimizacion"]},
+                {"Variable": "impuesto_optimizado", "Valor app": resultado["impuesto_optimizado"]},
+                {"Variable": "beneficio", "Valor app": resultado["beneficio"]},
+                {"Variable": "topup_full", "Valor app": resultado.get("topup_full", 0)},
+                {"Variable": "impuesto_topup_full", "Valor app": resultado.get("impuesto_topup_full", 0)},
+            ]
+        )
 
-        with left:
-            st.markdown("### Desglose del cálculo")
-
-            df_detalle = pd.DataFrame(
-                [
-                    {"Concepto": "Salario anual", "Valor": formato_moneda(resultado["salario_anual"])},
-                    {"Concepto": "Ingreso variable anual", "Valor": formato_moneda(resultado["ingreso_variable"])},
-                    {"Concepto": "Auxilios anuales", "Valor": formato_moneda(resultado["auxilios_anuales"])},
-                    {"Concepto": "Bonificación anual", "Valor": formato_moneda(resultado["bonificacion_anual"])},
-                    {"Concepto": "Total ingresos", "Valor": formato_moneda(resultado["total_ingresos"])},
-                    {"Concepto": "Aporte EPS", "Valor": formato_moneda(resultado["aporte_eps"])},
-                    {"Concepto": "Aporte pensión", "Valor": formato_moneda(resultado["aporte_pension"])},
-                    {"Concepto": "Fondo solidaridad", "Valor": formato_moneda(resultado["fondo_solidaridad"])},
-                    {"Concepto": "Ingresos no constitutivos", "Valor": formato_moneda(resultado["ingresos_no_constitutivos"])},
-                    {"Concepto": "Renta líquida", "Valor": formato_moneda(resultado["renta_liquida"])},
-                    {"Concepto": "Renta líquida PAC", "Valor": formato_moneda(resultado["renta_liquida_pac"])},
-                    {"Concepto": "Dependientes", "Valor": formato_moneda(resultado["dependientes"])},
-                    {"Concepto": "Intereses vivienda", "Valor": formato_moneda(resultado["intereses_vivienda"])},
-                    {"Concepto": "Pagos salud", "Valor": formato_moneda(resultado["pagos_salud"])},
-                    {"Concepto": "Cesantías", "Valor": formato_moneda(resultado["cesantias"])},
-                    {"Concepto": "Aportes pensión/AFC", "Valor": formato_moneda(resultado["aportes_pension_afc"])},
-                    {"Concepto": "Renta exenta laboral", "Valor": formato_moneda(resultado["renta_exenta_laboral"])},
-                    {"Concepto": "Total deducciones", "Valor": formato_moneda(resultado["total_deducciones"])},
-                    {"Concepto": "Deducciones admisibles", "Valor": formato_moneda(resultado["deducciones_admisibles"])},
-                    {"Concepto": "Base gravable", "Valor": formato_moneda(resultado["base_gravable"])},
-                    {"Concepto": "Base gravable con PAC", "Valor": formato_moneda(resultado["base_gravable_pac"])},
-                    {"Concepto": "Base gravable UVT", "Valor": formato_numero(resultado["base_uvt"], 6)},
-                    {"Concepto": "Base gravable UVT con PAC", "Valor": formato_numero(resultado["base_uvt_pac"], 6)},
-                ]
-            )
-
-            st.dataframe(df_detalle, use_container_width=True, hide_index=True)
-
-        with right:
-            st.markdown("### Interpretación")
-            st.markdown(
-                f"""
-                <div class="soft-card">
-                    <div style="font-size:13px; color:#93C5FD; font-weight:700; letter-spacing:.06em; text-transform:uppercase; margin-bottom:8px;">
-                        Lectura ejecutiva
-                    </div>
-                    <div style="font-size:16px; color:white; font-weight:700; margin-bottom:10px;">
-                        Beneficio tributario estimado
-                    </div>
-                    <div style="font-size:28px; color:#34D399; font-weight:800; margin-bottom:12px;">
-                        {formato_moneda(resultado["beneficio"])}
-                    </div>
-                    <div style="font-size:14px; color:#CBD5E1; line-height:1.55;">
-                        Con base en la información registrada, el cliente podría reducir su carga tributaria
-                        aprovechando beneficios permitidos en el modelo actual.
-                    </div>
-                </div>
-                """,
-                unsafe_allow_html=True
-            )
-
-            st.markdown("<div style='height:14px'></div>", unsafe_allow_html=True)
-
-            st.markdown(
-                f"""
-                <div class="soft-card">
-                    <div style="font-size:14px; color:#CBD5E1; margin-bottom:8px;">Comparativo rápido</div>
-                    <div style="font-size:14px; color:#94A3B8;">Antes</div>
-                    <div style="font-size:22px; color:white; font-weight:800; margin-bottom:10px;">
-                        {formato_moneda(impuesto_original)}
-                    </div>
-                    <div style="font-size:14px; color:#94A3B8;">Después</div>
-                    <div style="font-size:22px; color:white; font-weight:800;">
-                        {formato_moneda(impuesto_optimizado)}
-                    </div>
-                </div>
-                """,
-                unsafe_allow_html=True
-            )
-
-        if mostrar_debug:
-            st.divider()
-            st.markdown("## Debug técnico")
-
-            debug_df = pd.DataFrame(
-                [
-                    {"Variable": "salario_anual", "Valor app": resultado["salario_anual"]},
-                    {"Variable": "ingreso_variable", "Valor app": resultado["ingreso_variable"]},
-                    {"Variable": "auxilios_anuales", "Valor app": resultado["auxilios_anuales"]},
-                    {"Variable": "bonificacion_anual", "Valor app": resultado["bonificacion_anual"]},
-                    {"Variable": "total_ingresos", "Valor app": resultado["total_ingresos"]},
-                    {"Variable": "aporte_eps", "Valor app": resultado["aporte_eps"]},
-                    {"Variable": "aporte_pension", "Valor app": resultado["aporte_pension"]},
-                    {"Variable": "fondo_solidaridad", "Valor app": resultado["fondo_solidaridad"]},
-                    {"Variable": "ingresos_no_constitutivos", "Valor app": resultado["ingresos_no_constitutivos"]},
-                    {"Variable": "renta_liquida", "Valor app": resultado["renta_liquida"]},
-                    {"Variable": "renta_liquida_pac", "Valor app": resultado["renta_liquida_pac"]},
-                    {"Variable": "dependientes", "Valor app": resultado["dependientes"]},
-                    {"Variable": "intereses_vivienda", "Valor app": resultado["intereses_vivienda"]},
-                    {"Variable": "pagos_salud", "Valor app": resultado["pagos_salud"]},
-                    {"Variable": "cesantias", "Valor app": resultado["cesantias"]},
-                    {"Variable": "aportes_pension_afc", "Valor app": resultado["aportes_pension_afc"]},
-                    {"Variable": "renta_exenta_laboral", "Valor app": resultado["renta_exenta_laboral"]},
-                    {"Variable": "total_deducciones", "Valor app": resultado["total_deducciones"]},
-                    {"Variable": "deducciones_admisibles", "Valor app": resultado["deducciones_admisibles"]},
-                    {"Variable": "base_gravable", "Valor app": resultado["base_gravable"]},
-                    {"Variable": "base_gravable_pac", "Valor app": resultado["base_gravable_pac"]},
-                    {"Variable": "base_uvt", "Valor app": resultado["base_uvt"]},
-                    {"Variable": "base_uvt_pac", "Valor app": resultado["base_uvt_pac"]},
-                    {"Variable": "impuesto_sin_optimizacion", "Valor app": resultado["impuesto_sin_optimizacion"]},
-                    {"Variable": "impuesto_optimizado", "Valor app": resultado["impuesto_optimizado"]},
-                    {"Variable": "beneficio", "Valor app": resultado["beneficio"]},
-                ]
-            )
-
-            st.dataframe(debug_df, use_container_width=True, hide_index=True)
+        st.dataframe(debug_df, use_container_width=True, hide_index=True)
 
 else:
     st.info("Completa los datos y pulsa **Calcular simulación**.")
