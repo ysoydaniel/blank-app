@@ -201,17 +201,13 @@ div[data-testid="stToggle"] {
         border: none;
         padding: 0.95rem 1.2rem;
         font-weight: 700;
-        box-shadow:
-            0 12px 30px rgba(0,199,61,0.30),
-            0 0 24px rgba(124,224,0,0.14);
+        box-shadow: none
         transition: all 0.25s ease;
     }
 
     .stButton > button:hover {
         transform: translateY(-2px);
-        box-shadow:
-            0 18px 40px rgba(0,199,61,0.36),
-            0 0 28px rgba(124,224,0,0.18);
+        box-shadow: none
     }
 
     .stButton > button:active {
@@ -446,9 +442,10 @@ with col1:
         help="El salario integral ya incluye prestaciones sociales. El ordinario sí genera prestaciones."
     )
 
-    recibe_auxilios_bool = st.toggle(
+    recibe_auxilios_bool = st.radio(
     "¿Recibes auxilios?",
-    value=True,
+    ["Sí", "No"],
+    horizontal=True,
     help="Auxilios no salariales como transporte o conectividad."
     )
     recibe_auxilios = "Sí" if recibe_auxilios_bool else "No"
