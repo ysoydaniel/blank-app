@@ -32,28 +32,33 @@ st.markdown("""
         color: #374151;
     }
 
-   /* Inputs numéricos / texto / select */
-div[data-baseweb="input"] > div,
-div[data-baseweb="select"] > div {
-    background: #ffffff !important;
-    border: 1px solid rgba(0,199,61,0.14) !important;
-    border-radius: 14px !important;
-    min-height: 48px !important;
-    box-shadow: 0 0px 0px rgba(15, 23, 42, 0.04) !important;
+   
+/* =========================
+   INPUTS (text/number) – quitar borde negro/outline
+   ========================= */
+
+/* Contenedor BaseWeb de inputs */
+div[data-baseweb="input"] > div {
+  background: #ffffff !important;
+  border: 1px solid rgba(0,0,0,0.10) !important;  /* <- en vez de negro */
+  border-radius: 14px !important;
+  box-shadow: none !important;
 }
 
-div[data-baseweb="input"] input,
-div[data-baseweb="select"] span {
-    color: #0f172a !important;
-    font-weight: 500 !important;
+/* El input real (clave para quitar outline del navegador) */
+div[data-baseweb="input"] input {
+  color: #0f172a !important;
+  font-weight: 500 !important;
+  outline: none !important;          /* <- quita borde/halo del navegador */
+  box-shadow: none !important;       /* <- quita glow */
 }
 
-/* Estado foco / hover */
-div[data-baseweb="input"] > div:focus-within,
-div[data-baseweb="select"] > div:hover {
-    border: 1px solid rgba(0,199,61,0.35) !important;
-    box-shadow: 0 0 0 2px rgba(0,199,61,0.08) !important;
+/* Focus: define tu propio foco (suave, verde) */
+div[data-baseweb="input"] > div:focus-within {
+  border: 1px solid rgba(0,199,61,0.35) !important;
+  box-shadow: 0 0 0 2px rgba(0,199,61,0.10) !important;
 }
+
 
     /* ===== Select abierto / dropdown ===== */
     div[data-baseweb="popover"] {
