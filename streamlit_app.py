@@ -19,7 +19,7 @@ st.markdown("""
 <style>
     .stApp {
         background: linear-gradient(180deg, #ffffff 0%, #f6f8f7 100%);
-    color: #1f2937;
+        color: #1f2937;
     }
 
     h1, h2, h3 {
@@ -29,90 +29,78 @@ st.markdown("""
     }
 
     p, label, div, span {
-        color: #E5E7EB;
+        color: #374151;
     }
 
+    /* Inputs numéricos / texto / select */
     div[data-baseweb="input"] > div,
-div[data-baseweb="select"] > div{
+    div[data-baseweb="select"] > div {
+        background: #ffffff;
+        border: 1px solid rgba(0,0,0,0.12);
+        border-radius: 14px;
+        min-height: 48px;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+    }
 
-    background:#ffffff;
+    div[data-baseweb="input"] input,
+    div[data-baseweb="select"] span {
+        color: #0f172a !important;
+        font-weight: 500;
+    }
 
-    border:1px solid rgba(0,0,0,0.12);
+    div[data-baseweb="input"] > div:focus-within,
+    div[data-baseweb="select"] > div:hover {
+        border: 1px solid rgba(0,199,61,0.45);
+        box-shadow: 0 0 0 2px rgba(0,199,61,0.10);
+    }
 
-    border-radius:14px;
-
-    min-height:48px;
-
-    box-shadow:0 4px 10px rgba(0,0,0,0.05);
-}
-
-div[data-baseweb="input"] input,
-div[data-baseweb="select"] span{
-    color:#0f172a !important;
-}
-
-/* Hover inputs */
-
-div[data-baseweb="input"] > div:focus-within,
-div[data-baseweb="select"] > div:hover{
-
-    border:1px solid rgba(0,199,61,0.45);
-
-    box-shadow:
-        0 0 0 2px rgba(0,199,61,0.10);
-}
     /* Radio buttons */
     div[role="radiogroup"] label {
-        background: rgba(255,255,255,0.05);
+        background: #ffffff;
         padding: 8px 14px;
         border-radius: 12px;
-        border: 1px solid rgba(255,255,255,0.08);
+        border: 1px solid rgba(0,0,0,0.10);
         margin-right: 8px;
     }
 
     /* Botón principal */
     .stButton > button {
-         width: 100%;
-    max-width: 340px;
-    margin: 0 auto;
-    display: block;
-
-    background: linear-gradient(135deg, #00c73d 0%, #7ce000 100%);
-
-    color: white;
-
-    border-radius: 14px;
-    border: none;
-
-    padding: 0.9rem 1.2rem;
-
-    font-weight: 700;
-
-    box-shadow:
-        0 10px 25px rgba(0,199,61,0.25);
-
-    transition: all 0.25s ease;
+        width: 100%;
+        max-width: 340px;
+        margin: 0 auto;
+        display: block;
+        background: linear-gradient(135deg, #00c73d 0%, #7ce000 100%);
+        color: white;
+        border-radius: 14px;
+        border: none;
+        padding: 0.9rem 1.2rem;
+        font-weight: 700;
+        box-shadow: 0 10px 25px rgba(0,199,61,0.25);
+        transition: all 0.25s ease;
     }
 
     .stButton > button:hover {
         transform: translateY(-2px);
+        box-shadow: 0 18px 40px rgba(0,199,61,0.35);
+    }
 
-    box-shadow:
-        0 18px 40px rgba(0,199,61,0.35);
+    .stButton > button:active {
+        transform: translateY(1px);
+        box-shadow: 0 6px 15px rgba(0,199,61,0.25);
     }
 
     /* Sidebar */
     section[data-testid="stSidebar"] {
-        background: rgba(10, 15, 30, 0.95);
-        border-right: 1px solid rgba(255,255,255,0.06);
+        background: #f9fafb;
+        border-right: 1px solid rgba(0,0,0,0.06);
     }
 
     /* Dataframe contenedor */
     div[data-testid="stDataFrame"] {
-        background: rgba(255,255,255,0.04);
+        background: #ffffff;
         border-radius: 18px;
         padding: 8px;
-        border: 1px solid rgba(255,255,255,0.06);
+        border: 1px solid rgba(0,0,0,0.08);
     }
 
     /* Inputs de texto monetarios: prefijo $ visual */
@@ -125,7 +113,7 @@ div[data-baseweb="select"] > div:hover{
         position: absolute;
         left: 12px;
         top: 35px;
-        color: #9CA3AF;
+        color: #6b7280;
         font-weight: 700;
         font-size: 15px;
         z-index: 1;
@@ -133,24 +121,24 @@ div[data-baseweb="select"] > div:hover{
 
     div[data-testid="stTextInput"] input {
         padding-left: 26px !important;
-        background: rgba(255, 255, 255, 0.06) !important;
+        background: #ffffff !important;
         border-radius: 14px !important;
-        color: #F9FAFB !important;
+        color: #0f172a !important;
     }
 
     /* Result cards */
     .result-card {
         border-radius: 22px;
         padding: 22px 24px;
-        background: linear-gradient(180deg, rgba(255,255,255,0.07), rgba(255,255,255,0.04));
-        border: 1px solid rgba(255,255,255,0.08);
-        box-shadow: 0 14px 40px rgba(0,0,0,0.18);
+        background: #ffffff;
+        border: 1px solid rgba(0,0,0,0.08);
+        box-shadow: 0 14px 40px rgba(0,0,0,0.10);
         min-height: 150px;
     }
 
     .result-label {
         font-size: 14px;
-        color: #CBD5E1;
+        color: #475569;
         font-weight: 600;
         margin-bottom: 10px;
     }
@@ -158,7 +146,7 @@ div[data-baseweb="select"] > div:hover{
     .result-value {
         font-size: 40px;
         line-height: 1.05;
-        color: white;
+        color: #0f172a;
         font-weight: 800;
         letter-spacing: -0.03em;
         margin-bottom: 10px;
@@ -166,28 +154,28 @@ div[data-baseweb="select"] > div:hover{
 
     .result-subtext {
         font-size: 13px;
-        color: #94A3B8;
+        color: #64748b;
         line-height: 1.4;
     }
 
     .result-card.primary {
-        background: linear-gradient(135deg, rgba(37,99,235,0.22), rgba(29,78,216,0.08));
-        border: 1px solid rgba(96,165,250,0.22);
+        background: linear-gradient(135deg, rgba(0,199,61,0.10), rgba(124,224,0,0.05));
+        border: 1px solid rgba(0,199,61,0.18);
     }
 
     .result-card.success {
-        background: linear-gradient(135deg, rgba(16,185,129,0.20), rgba(16,185,129,0.06));
-        border: 1px solid rgba(52,211,153,0.20);
+        background: linear-gradient(135deg, rgba(16,185,129,0.12), rgba(16,185,129,0.04));
+        border: 1px solid rgba(16,185,129,0.18);
     }
 
     .result-card.warning {
-        background: linear-gradient(135deg, rgba(245,158,11,0.18), rgba(245,158,11,0.05));
-        border: 1px solid rgba(251,191,36,0.16);
+        background: linear-gradient(135deg, rgba(245,158,11,0.12), rgba(245,158,11,0.04));
+        border: 1px solid rgba(245,158,11,0.18);
     }
 
     .result-mini {
         font-size: 12px;
-        color: #93C5FD;
+        color: #16a34a;
         font-weight: 700;
         letter-spacing: .06em;
         text-transform: uppercase;
@@ -196,20 +184,16 @@ div[data-baseweb="select"] > div:hover{
 
     .soft-card {
         padding: 20px;
-    border-radius: 18px;
-
-    background: #ffffff;
-
-    border: 1px solid rgba(0,0,0,0.06);
-
-    box-shadow:
-        0 10px 30px rgba(0,0,0,0.08);
+        border-radius: 18px;
+        background: #ffffff;
+        border: 1px solid rgba(0,0,0,0.06);
+        box-shadow: 0 10px 30px rgba(0,0,0,0.08);
     }
 
     .section-divider {
         margin: 10px 0 18px 0;
         height: 1px;
-        background: linear-gradient(90deg, rgba(255,255,255,0.03), rgba(96,165,250,0.35), rgba(255,255,255,0.03));
+        background: linear-gradient(90deg, transparent, rgba(0,199,61,0.25), transparent);
     }
 
     .vertical-divider {
@@ -218,9 +202,9 @@ div[data-baseweb="select"] > div:hover{
         margin: auto;
         background: linear-gradient(
             to bottom,
-            rgba(255,255,255,0.05),
-            rgba(96,165,250,0.45),
-            rgba(255,255,255,0.05)
+            rgba(0,0,0,0.03),
+            rgba(0,199,61,0.30),
+            rgba(0,0,0,0.03)
         );
     }
 
@@ -308,18 +292,11 @@ if "simulacion_calculada" not in st.session_state:
 # HEADER
 # =========================
 st.markdown("""
-<div style="
-    padding: 22px 24px;
-    border-radius: 22px;
-    background: rgba(255,255,255,0.05);
-    border: 1px solid rgba(255,255,255,0.08);
-    box-shadow: 0 12px 40px rgba(0,0,0,0.22);
-    margin-bottom: 18px;
-">
-    <div style="font-size: 34px; color: white; font-weight: 800; margin-top: 6px;">
+<div class="soft-card" style="margin-bottom:18px;">
+    <div style="font-size: 34px; color: #0f172a; font-weight: 800; margin-top: 6px;">
         🧮 Simulador Tributario 2026
     </div>
-    <div style="font-size: 16px; color: #CBD5E1; margin-top: 8px;">
+    <div style="font-size: 16px; color: #475569; margin-top: 8px;">
         Convierte un modelo en Excel en una experiencia web guiada, clara y lista para escalar.
     </div>
 </div>
@@ -329,17 +306,17 @@ st.markdown("""
 # FORMULARIO
 # =========================
 st.markdown("""
-
-    <div style="font-size: 13px; color: #93C5FD; font-weight: 700; letter-spacing: .08em;">
+<div class="soft-card">
+    <div style="font-size: 13px; color: #16a34a; font-weight: 700; letter-spacing: .08em;">
         FORMULARIO
     </div>
-    <div style="font-size: 26px; color: white; font-weight: 800; margin-top: 6px;">
+    <div style="font-size: 26px; color: #0f172a; font-weight: 800; margin-top: 6px;">
         Información del cliente
     </div>
-    <div style="font-size: 15px; color: #CBD5E1; margin-top: 8px;">
+    <div style="font-size: 15px; color: #475569; margin-top: 8px;">
         Completa los datos de ingresos y beneficios tributarios para estimar el impuesto y el ahorro potencial.
     </div>
-
+</div>
 """, unsafe_allow_html=True)
 
 st.markdown('<div class="section-divider"></div>', unsafe_allow_html=True)
@@ -535,18 +512,18 @@ if st.session_state.simulacion_calculada and st.session_state.resultado_simulaci
         <div style="
             padding:26px;
             border-radius:22px;
-            background:linear-gradient(135deg,rgba(16,185,129,0.22),rgba(16,185,129,0.08));
-            border:1px solid rgba(16,185,129,0.35);
+            background:linear-gradient(135deg,rgba(16,185,129,0.16),rgba(16,185,129,0.05));
+            border:1px solid rgba(16,185,129,0.22);
             text-align:center;
             margin-bottom:18px;
         ">
-            <div style="font-size:13px;color:#6EE7B7;font-weight:700;letter-spacing:.08em;">
+            <div style="font-size:13px;color:#16a34a;font-weight:700;letter-spacing:.08em;">
                 OPORTUNIDAD TRIBUTARIA DETECTADA
             </div>
-            <div style="font-size:46px;font-weight:900;color:white;margin-top:6px;">
+            <div style="font-size:46px;font-weight:900;color:#0f172a;margin-top:6px;">
                 {formato_moneda(beneficio)}
             </div>
-            <div style="font-size:14px;color:#CBD5E1;margin-top:4px;">
+            <div style="font-size:14px;color:#475569;margin-top:4px;">
                 ahorro potencial estimado
             </div>
         </div>
@@ -609,10 +586,10 @@ if st.session_state.simulacion_calculada and st.session_state.resultado_simulaci
             background:rgba(16,185,129,0.08);
             border:1px solid rgba(16,185,129,0.18);
         ">
-            <div style="font-size:14px; color:#34D399; font-weight:700;">
+            <div style="font-size:14px; color:#16a34a; font-weight:700;">
                 💰 Ahorro potencial identificado
             </div>
-            <div style="font-size:13px; color:#CBD5E1; margin-top:6px;">
+            <div style="font-size:13px; color:#475569; margin-top:6px;">
                 El cliente podría reducir su carga tributaria en <b>{formato_moneda(beneficio)}</b>,
                 equivalente a una mejora aproximada del <b>{porcentaje_ahorro:.1%}</b>.
             </div>
@@ -668,6 +645,38 @@ if st.session_state.simulacion_calculada and st.session_state.resultado_simulaci
         with tc3:
             st.metric("Ahorro tributario", formato_moneda(ahorro_topup))
 
+        st.markdown("### Curva de optimización tributaria")
+
+        aportes = []
+        ahorros = []
+
+        step = topup_max / 10 if topup_max > 0 else 1
+
+        for i in range(11):
+            aporte = step * i
+            base = resultado["base_gravable"] - aporte
+
+            if base < 0:
+                base = 0
+
+            base_uvt_temp = base / resultado["uvt"]
+
+            impuesto_temp = calcular_impuesto_renta(
+                base_uvt_temp,
+                resultado["uvt"]
+            )
+
+            ahorro_temp = resultado["impuesto_sin_optimizacion"] - impuesto_temp
+
+            aportes.append(aporte)
+            ahorros.append(ahorro_temp)
+
+        fig, ax = plt.subplots()
+        ax.plot(aportes, ahorros)
+        ax.set_xlabel("Aporte adicional")
+        ax.set_ylabel("Ahorro tributario")
+        st.pyplot(fig)
+
     else:
         st.info("El cliente ya se encuentra en el máximo beneficio tributario permitido.")
 
@@ -713,16 +722,16 @@ if st.session_state.simulacion_calculada and st.session_state.resultado_simulaci
         st.markdown(
             f"""
             <div class="soft-card">
-                <div style="font-size:13px; color:#93C5FD; font-weight:700; letter-spacing:.06em; text-transform:uppercase; margin-bottom:8px;">
+                <div style="font-size:13px; color:#16a34a; font-weight:700; letter-spacing:.06em; text-transform:uppercase; margin-bottom:8px;">
                     Lectura ejecutiva
                 </div>
-                <div style="font-size:16px; color:white; font-weight:700; margin-bottom:10px;">
+                <div style="font-size:16px; color:#0f172a; font-weight:700; margin-bottom:10px;">
                     Beneficio tributario estimado
                 </div>
-                <div style="font-size:28px; color:#34D399; font-weight:800; margin-bottom:12px;">
+                <div style="font-size:28px; color:#16a34a; font-weight:800; margin-bottom:12px;">
                     {formato_moneda(resultado["beneficio"])}
                 </div>
-                <div style="font-size:14px; color:#CBD5E1; line-height:1.55;">
+                <div style="font-size:14px; color:#475569; line-height:1.55;">
                     Con base en la información registrada, el cliente podría reducir su carga tributaria
                     aprovechando beneficios permitidos en el modelo actual.
                 </div>
@@ -736,13 +745,13 @@ if st.session_state.simulacion_calculada and st.session_state.resultado_simulaci
         st.markdown(
             f"""
             <div class="soft-card">
-                <div style="font-size:14px; color:#CBD5E1; margin-bottom:8px;">Comparativo rápido</div>
-                <div style="font-size:14px; color:#94A3B8;">Antes</div>
-                <div style="font-size:22px; color:white; font-weight:800; margin-bottom:10px;">
+                <div style="font-size:14px; color:#475569; margin-bottom:8px;">Comparativo rápido</div>
+                <div style="font-size:14px; color:#64748b;">Antes</div>
+                <div style="font-size:22px; color:#0f172a; font-weight:800; margin-bottom:10px;">
                     {formato_moneda(impuesto_original)}
                 </div>
-                <div style="font-size:14px; color:#94A3B8;">Después</div>
-                <div style="font-size:22px; color:white; font-weight:800;">
+                <div style="font-size:14px; color:#64748b;">Después</div>
+                <div style="font-size:22px; color:#0f172a; font-weight:800;">
                     {formato_moneda(impuesto_optimizado)}
                 </div>
             </div>
@@ -790,4 +799,4 @@ if st.session_state.simulacion_calculada and st.session_state.resultado_simulaci
         st.dataframe(debug_df, use_container_width=True, hide_index=True)
 
 else:
-    st.info("Completa los datos y pulsa **Calcular simulación**.")      
+    st.info("Completa los datos y pulsa **Calcular simulación**.")
