@@ -32,28 +32,35 @@ st.markdown("""
         color: #E5E7EB;
     }
 
-    /* Inputs numéricos / texto / select */
     div[data-baseweb="input"] > div,
-    div[data-baseweb="select"] > div {
-        background: rgba(255, 255, 255, 0.06);
-        border: 1px solid rgba(96, 165, 250, 0.35);
-        border-radius: 14px;
-        min-height: 48px;
-        box-shadow: 0 8px 24px rgba(0,0,0,0.18);
-    }
+div[data-baseweb="select"] > div{
 
-    div[data-baseweb="input"] input,
-    div[data-baseweb="select"] span {
-        color: #F9FAFB !important;
-        font-weight: 500;
-    }
+    background:#ffffff;
 
-    div[data-baseweb="input"] > div:focus-within,
-    div[data-baseweb="select"] > div:hover {
-        border: 1px solid rgba(96, 165, 250, 0.85);
-        box-shadow: 0 0 0 1px rgba(96, 165, 250, 0.25);
-    }
+    border:1px solid rgba(0,0,0,0.12);
 
+    border-radius:14px;
+
+    min-height:48px;
+
+    box-shadow:0 4px 10px rgba(0,0,0,0.05);
+}
+
+div[data-baseweb="input"] input,
+div[data-baseweb="select"] span{
+    color:#0f172a !important;
+}
+
+/* Hover inputs */
+
+div[data-baseweb="input"] > div:focus-within,
+div[data-baseweb="select"] > div:hover{
+
+    border:1px solid rgba(0,199,61,0.45);
+
+    box-shadow:
+        0 0 0 2px rgba(0,199,61,0.10);
+}
     /* Radio buttons */
     div[role="radiogroup"] label {
         background: rgba(255,255,255,0.05);
@@ -65,27 +72,33 @@ st.markdown("""
 
     /* Botón principal */
     .stButton > button {
-        width: 100%;
-        max-width: 320px;
-        margin: 0 auto;
-        display: block;
-        background: linear-gradient(135deg, #00c73d 0%, #7CE000 100%);
-        color: white;
-        border: none;
-        border-radius: 14px;
-        padding: 0.8rem 1rem;
-        font-weight: 700;
-        font-size: 1rem;
-        letter-spacing: 0.02em;
-        cursor: pointer;
-        transition: all 0.25s ease;
-        box-shadow: 0 10 30px rgba(0,0,0,0.35), 0 0 0px rgba (143,224,0,0);
+         width: 100%;
+    max-width: 340px;
+    margin: 0 auto;
+    display: block;
+
+    background: linear-gradient(135deg, #00c73d 0%, #7ce000 100%);
+
+    color: white;
+
+    border-radius: 14px;
+    border: none;
+
+    padding: 0.9rem 1.2rem;
+
+    font-weight: 700;
+
+    box-shadow:
+        0 10px 25px rgba(0,199,61,0.25);
+
+    transition: all 0.25s ease;
     }
 
     .stButton > button:hover {
-        background: linear-gradient(135deg, #00D645 0%, #A7FF1F 100%);
-        box-shadow: 0 18px 40px rgba(0,0,0,0.45), 0 0 18px rgba (143,224,0,0.55);
         transform: translateY(-2px);
+
+    box-shadow:
+        0 18px 40px rgba(0,199,61,0.35);
     }
 
     /* Sidebar */
