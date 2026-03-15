@@ -305,7 +305,7 @@ st.markdown("""
 # FORMULARIO
 # =========================
 st.markdown("""
-<div class="soft-card">
+
     <div style="font-size: 13px; color: #93C5FD; font-weight: 700; letter-spacing: .08em;">
         FORMULARIO
     </div>
@@ -315,7 +315,7 @@ st.markdown("""
     <div style="font-size: 15px; color: #CBD5E1; margin-top: 8px;">
         Completa los datos de ingresos y beneficios tributarios para estimar el impuesto y el ahorro potencial.
     </div>
-</div>
+
 """, unsafe_allow_html=True)
 
 st.markdown('<div class="section-divider"></div>', unsafe_allow_html=True)
