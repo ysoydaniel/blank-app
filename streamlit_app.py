@@ -712,6 +712,10 @@ if st.session_state.simulacion_calculada and st.session_state.resultado_simulaci
         unsafe_allow_html=True
     )
 
+    
+    # Separación
+    st.markdown("<div style='height:24px'></div>", unsafe_allow_html=True)
+
     if porcentaje_ahorro >= 0.20:
         st.success("🚀 Excelente oportunidad de optimización tributaria.")
     elif porcentaje_ahorro >= 0.10:
