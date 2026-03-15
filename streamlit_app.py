@@ -32,27 +32,28 @@ st.markdown("""
         color: #374151;
     }
 
-    /* Inputs numéricos / texto / select */
-    div[data-baseweb="input"] > div,
-    div[data-baseweb="select"] > div {
-        background: #ffffff;
-        border: 1px solid rgba(0,0,0,0.12);
-        border-radius: 14px;
-        min-height: 48px;
-        box-shadow: 0 4px 10px rgba(0,0,0,0.05);
-    }
+   /* Inputs numéricos / texto / select */
+div[data-baseweb="input"] > div,
+div[data-baseweb="select"] > div {
+    background: #ffffff !important;
+    border: 1px solid rgba(0,199,61,0.14) !important;
+    border-radius: 14px !important;
+    min-height: 48px !important;
+    box-shadow: 0 4px 12px rgba(15, 23, 42, 0.04) !important;
+}
 
-    div[data-baseweb="input"] input,
-    div[data-baseweb="select"] span {
-        color: #0f172a !important;
-        font-weight: 500;
-    }
+div[data-baseweb="input"] input,
+div[data-baseweb="select"] span {
+    color: #0f172a !important;
+    font-weight: 500 !important;
+}
 
-    div[data-baseweb="input"] > div:focus-within,
-    div[data-baseweb="select"] > div:hover {
-        border: 1px solid rgba(0,199,61,0.45);
-        box-shadow: 0 0 0 2px rgba(0,199,61,0.10);
-    }
+/* Estado foco / hover */
+div[data-baseweb="input"] > div:focus-within,
+div[data-baseweb="select"] > div:hover {
+    border: 1px solid rgba(0,199,61,0.35) !important;
+    box-shadow: 0 0 0 2px rgba(0,199,61,0.08) !important;
+}
 
     /* ===== Select abierto / dropdown ===== */
     div[data-baseweb="popover"] {
