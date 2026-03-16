@@ -1011,48 +1011,7 @@ if st.session_state.simulacion_calculada and st.session_state.resultado_simulaci
 
         st.dataframe(df_detalle, use_container_width=True, hide_index=True)
 
-    """with right:
-        st.markdown("### Interpretación")
-
-        st.markdown(
-            f"""
-            <div class="soft-card">
-                <div style="font-size:13px; color:#86efac; font-weight:700; letter-spacing:.06em; text-transform:uppercase; margin-bottom:8px;">
-                    Lectura ejecutiva
-                </div>
-                <div style="font-size:16px; color:#ffffff; font-weight:700; margin-bottom:10px;">
-                    Beneficio tributario estimado
-                </div>
-                <div style="font-size:28px; color:#86efac; font-weight:800; margin-bottom:12px;">
-                    {formato_moneda(resultado["beneficio"])}
-                </div>
-                <div style="font-size:14px; color:#d1fae5; line-height:1.55;">
-                    Con base en la información registrada, el cliente podría reducir su carga tributaria
-                    aprovechando beneficios permitidos en el modelo actual.
-                </div>
-            </div>
-            """,
-            unsafe_allow_html=True
-        )
-
-        st.markdown("<div style='height:14px'></div>", unsafe_allow_html=True)
-
-        st.markdown(
-            f"""
-            <div class="soft-card">
-                <div style="font-size:14px; color:#d1fae5; margin-bottom:8px;">Comparativo rápido</div>
-                <div style="font-size:14px; color:#cbd5e1;">Antes</div>
-                <div style="font-size:22px; color:#ffffff; font-weight:800; margin-bottom:10px;">
-                    {formato_moneda(impuesto_original)}
-                </div>
-                <div style="font-size:14px; color:#cbd5e1;">Después</div>
-                <div style="font-size:22px; color:#ffffff; font-weight:800;">
-                    {formato_moneda(impuesto_optimizado)}
-                </div>
-            </div>
-            """,
-            unsafe_allow_html=True
-        )"""
+    
 
     # =========================
     # DEBUG TÉCNICO (solo si checkbox)
