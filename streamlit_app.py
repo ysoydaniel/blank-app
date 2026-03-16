@@ -849,36 +849,16 @@ if st.session_state.simulacion_calculada and st.session_state.resultado_simulaci
 
             ahorro_topup = resultado["impuesto_sin_optimizacion"] - impuesto_topup
 
-            st.markdown("<div style='height:8px'></div>", unsafe_allow_html=True)
+        tc1, tc2, tc3 = st.columns(3)
 
-            st.markdown(
-                f"""
-                <div class="soft-card" style="padding:16px 18px;">
-                    <div style="font-size:12px;color:#86efac;font-weight:700;letter-spacing:.06em;">
-                        ESCENARIO ACTUAL
-                    </div>
-                    <div style="font-size:24px;color:#ffffff;font-weight:800;margin-top:6px;">
-                        {formato_moneda(topup_usuario)}
-                    </div>
-                    <div style="font-size:13px;color:#d1fae5;margin-top:4px;">
-                        aporte adicional simulado
-                    </div>
+        with tc1:
+            st.metric("Aporte adicional", formato_moneda(topup_usuario))
 
-                    <div style="height:10px"></div>
+        with tc2:
+            st.metric("Nuevo impuesto estimado", formato_moneda(impuesto_topup))
 
-                    <div style="font-size:12px;color:#86efac;font-weight:700;letter-spacing:.06em;">
-                        AHORRO ESTIMADO
-                    </div>
-                    <div style="font-size:24px;color:#ffffff;font-weight:800;margin-top:6px;">
-                        {formato_moneda(ahorro_topup)}
-                    </div>
-                    <div style="font-size:13px;color:#d1fae5;margin-top:4px;">
-                        reducción proyectada del impuesto
-                    </div>
-                </div>
-                """,
-                unsafe_allow_html=True
-            )
+        with tc3:
+            st.metric("Ahorro tributario", formato_moneda(ahorro_topup))
 
         with sim_right:
             st.markdown("### Trayectoria del ahorro")
