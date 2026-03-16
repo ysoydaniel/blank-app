@@ -990,8 +990,8 @@ if topup_max > 0:
                 unsafe_allow_html=True
             )
 
-    else:
-        st.info("El cliente ya se encuentra en el máximo beneficio tributario permitido.")
+else:
+    st.info("El cliente ya se encuentra en el máximo beneficio tributario permitido.")
 
     st.divider()
 
