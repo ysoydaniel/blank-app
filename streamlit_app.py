@@ -386,7 +386,7 @@ st.markdown("""
         Información del cliente
     </div>
     <div style="font-size:15px; color:#d1fae5; margin-top:8px;">
-        Completa los datos de ingresos y beneficios tributarios para estimar el impuesto y el ahorro potencial.
+        Completa los datos de ingresos y Alivios tributarios para estimar el impuesto y el ahorro potencial.
     </div>
 </div>
 """, unsafe_allow_html=True)
@@ -470,7 +470,7 @@ with sep:
     st.markdown("<div class='vertical-divider'></div>", unsafe_allow_html=True)
 
 with col3:
-    st.markdown("### 🧾 Beneficios")
+    st.markdown("### 🧾 Alivios")
 
     aporte_voluntario_obligatorio_anual = money_input(
         "¿Cuánto aportas voluntariamente a tu fondo obligatorio?",
