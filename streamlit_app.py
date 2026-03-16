@@ -821,88 +821,125 @@ if st.session_state.simulacion_calculada and st.session_state.resultado_simulaci
     topup_max = int(resultado.get("topup_full", 0))
 
     if topup_max > 0:
-        topup_usuario = st.slider(
-            "Simula cuánto más podría aportar el cliente en pensión voluntaria / AFC",
-            min_value=0,
-            max_value=topup_max,
-            value=0,
-            step=500000,
-            help="Mueve el control para ver cómo cambia el impuesto.",
-            key="slider_topup"
-        )
+        sim_left, sim_right = st.columns([0.9, 1.4])
 
-        nueva_base = resultado["base_gravable"] - topup_usuario
-        if nueva_base < 0:
-            nueva_base = 0
+        with sim_left:
+            st.markdown("### Ajuste del aporte")
 
-        base_uvt_temp = nueva_base / resultado["uvt"]
+            topup_usuario = st.slider(
+                "Aporte adicional en pensión voluntaria / AFC",
+                min_value=0,
+                max_value=topup_max,
+                value=0,
+                step=500000,
+                help="Mueve el control para ver cómo cambia el impuesto.",
+                key="slider_topup"
+            )
 
-        impuesto_topup = calcular_impuesto_renta(
-            base_uvt_temp,
-            resultado["uvt"]
-        )
+            nueva_base = resultado["base_gravable"] - topup_usuario
+            if nueva_base < 0:
+                nueva_base = 0
 
-        ahorro_topup = resultado["impuesto_sin_optimizacion"] - impuesto_topup
+            base_uvt_temp = nueva_base / resultado["uvt"]
 
-        tc1, tc2, tc3 = st.columns(3)
+            impuesto_topup = calcular_impuesto_renta(
+                base_uvt_temp,
+                resultado["uvt"]
+            )
 
-        with tc1:
-            st.metric("Aporte adicional", formato_moneda(topup_usuario))
+            ahorro_topup = resultado["impuesto_sin_optimizacion"] - impuesto_topup
 
-        with tc2:
-            st.metric("Nuevo impuesto estimado", formato_moneda(impuesto_topup))
+            st.markdown("<div style='height:8px'></div>", unsafe_allow_html=True)
 
-        with tc3:
-            st.metric("Ahorro tributario", formato_moneda(ahorro_topup))
+            st.markdown(
+                f"""
+                <div class="soft-card" style="padding:16px 18px;">
+                    <div style="font-size:12px;color:#86efac;font-weight:700;letter-spacing:.06em;">
+                        ESCENARIO ACTUAL
+                    </div>
+                    <div style="font-size:24px;color:#ffffff;font-weight:800;margin-top:6px;">
+                        {formato_moneda(topup_usuario)}
+                    </div>
+                    <div style="font-size:13px;color:#d1fae5;margin-top:4px;">
+                        aporte adicional simulado
+                    </div>
 
-        # ========= Sparkline elegante =========
-        st.markdown("### Trayectoria del ahorro")
+                    <div style="height:10px"></div>
 
-        aportes = []
-        ahorros = []
+                    <div style="font-size:12px;color:#86efac;font-weight:700;letter-spacing:.06em;">
+                        AHORRO ESTIMADO
+                    </div>
+                    <div style="font-size:24px;color:#ffffff;font-weight:800;margin-top:6px;">
+                        {formato_moneda(ahorro_topup)}
+                    </div>
+                    <div style="font-size:13px;color:#d1fae5;margin-top:4px;">
+                        reducción proyectada del impuesto
+                    </div>
+                </div>
+                """,
+                unsafe_allow_html=True
+            )
 
-        step = topup_max / 30 if topup_max > 0 else 1
+        with sim_right:
+            st.markdown("### Trayectoria del ahorro")
 
-        for i in range(31):
-            aporte = step * i
-            base = resultado["base_gravable"] - aporte
+            aportes = []
+            ahorros = []
 
-            if base < 0:
-                base = 0
+            step = topup_max / 30 if topup_max > 0 else 1
 
-            base_uvt_temp = base / resultado["uvt"]
-            impuesto_temp = calcular_impuesto_renta(base_uvt_temp, resultado["uvt"])
-            ahorro_temp = resultado["impuesto_sin_optimizacion"] - impuesto_temp
+            for i in range(31):
+                aporte = step * i
+                base = resultado["base_gravable"] - aporte
 
-            aportes.append(aporte)
-            ahorros.append(ahorro_temp)
+                if base < 0:
+                    base = 0
 
-        max_ahorro = max(ahorros)
-        idx_optimo = ahorros.index(max_ahorro)
-        aporte_optimo = aportes[idx_optimo]
-        ahorro_optimo = ahorros[idx_optimo]
+                base_uvt_temp = base / resultado["uvt"]
+                impuesto_temp = calcular_impuesto_renta(base_uvt_temp, resultado["uvt"])
+                ahorro_temp = resultado["impuesto_sin_optimizacion"] - impuesto_temp
 
-        fig, ax = plt.subplots(figsize=(9, 2.8))
-        fig.patch.set_alpha(0)
-        ax.set_facecolor((0, 0, 0, 0))
+                aportes.append(aporte)
+                ahorros.append(ahorro_temp)
 
-        ax.plot(aportes, ahorros, linewidth=3)
-        ax.fill_between(aportes, ahorros, alpha=0.10)
-        ax.scatter([aporte_optimo], [ahorro_optimo], s=90, zorder=5)
+            max_ahorro = max(ahorros)
+            idx_optimo = ahorros.index(max_ahorro)
+            aporte_optimo = aportes[idx_optimo]
+            ahorro_optimo = ahorros[idx_optimo]
 
-        ax.spines["top"].set_visible(False)
-        ax.spines["right"].set_visible(False)
-        ax.spines["left"].set_alpha(0.15)
-        ax.spines["bottom"].set_alpha(0.15)
-        ax.tick_params(axis='both', which='both', length=0)
-        ax.grid(alpha=0.08)
+            # convertir a millones
+            aportes_m = [x / 1_000_000 for x in aportes]
+            ahorros_m = [y / 1_000_000 for y in ahorros]
+            aporte_optimo_m = aporte_optimo / 1_000_000
+            ahorro_optimo_m = ahorro_optimo / 1_000_000
 
-        ax.set_xlabel("Aporte adicional")
-        ax.set_ylabel("Ahorro")
+            fig, ax = plt.subplots(figsize=(6.8, 2.5))
+            fig.patch.set_alpha(0)
+            ax.set_facecolor((0, 0, 0, 0))
 
-        st.pyplot(fig, use_container_width=True)
+            ax.plot(aportes_m, ahorros_m, linewidth=2.4)
+            ax.fill_between(aportes_m, ahorros_m, alpha=0.06)
+            ax.scatter([aporte_optimo_m], [ahorro_optimo_m], s=55, zorder=5)
 
-        # ========= Recomendación automática =========
+            ax.spines["top"].set_visible(False)
+            ax.spines["right"].set_visible(False)
+
+            ax.spines["left"].set_color((1, 1, 1, 0.18))
+            ax.spines["bottom"].set_color((1, 1, 1, 0.18))
+
+            ax.tick_params(axis='both', which='both', length=0, colors='white', labelsize=9)
+            ax.grid(alpha=0.08)
+
+            ax.set_xlabel("Aporte adicional (millones)", color="white", fontsize=9, labelpad=8)
+            ax.set_ylabel("Ahorro (millones)", color="white", fontsize=9, labelpad=8)
+
+            st.pyplot(fig, use_container_width=True)
+
+            st.caption(
+                f"Punto óptimo estimado: {formato_moneda(aporte_optimo)} "
+                f"para un ahorro cercano a {formato_moneda(ahorro_optimo)}."
+            )
+
         st.markdown("### Recomendación sugerida")
 
         rc1, rc2 = st.columns([1.15, 1])
