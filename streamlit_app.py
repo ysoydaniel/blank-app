@@ -656,47 +656,99 @@ if st.session_state.simulacion_calculada and st.session_state.resultado_simulaci
     left_exec, right_exec = st.columns([1.25, 1])
 
     with left_exec:
-        
-st.markdown("### Flujo del dinero")
+        st.markdown("### Flujo del dinero")
 
-f1, f2 = st.columns(2)
-f3, f4 = st.columns(2)
+        f1, f2, f3, f4 = st.columns([1, 0.15, 1, 0.15])
 
-with f1:
-    st.markdown("""
-    <div class="soft-card exec-card">
-        <div class="result-mini">INGRESOS</div>
-        <div>Total ingresos</div>
-        <div class="result-value">$388.000.000</div>
-    </div>
-    """, unsafe_allow_html=True)
+        with f1:
+            st.markdown(
+                f"""
+                <div class="soft-card exec-card" style="text-align:center;">
+                    <div style="font-size:12px;color:#86efac;font-weight:700;letter-spacing:.06em;">INGRESOS</div>
+                    <div style="font-size:16px;color:#d1fae5;margin-top:6px;">Total ingresos</div>
+                    <div style="font-size:28px;color:#ffffff;font-weight:800;margin-top:8px;">
+                        {formato_moneda(total_ingresos)}
+                    </div>
+                </div>
+                """,
+                unsafe_allow_html=True
+            )
 
-with f2:
-    st.markdown("""
-    <div class="soft-card exec-card">
-        <div class="result-mini">DEPURACIÓN</div>
-        <div>Deducciones admisibles</div>
-        <div class="result-value">$54.075.460</div>
-    </div>
-    """, unsafe_allow_html=True)
+        with f2:
+            st.markdown(
+                """
+                <div style="display:flex;align-items:center;justify-content:center;height:100%;">
+                    <div style="font-size:30px;color:#86efac;">→</div>
+                </div>
+                """,
+                unsafe_allow_html=True
+            )
 
-with f3:
-    st.markdown("""
-    <div class="soft-card exec-card">
-        <div class="result-mini">RESULTADO FISCAL</div>
-        <div>Base gravable</div>
-        <div class="result-value">$296.272.540</div>
-    </div>
-    """, unsafe_allow_html=True)
+        with f3:
+            st.markdown(
+                f"""
+                <div class="soft-card exec-card" style="text-align:center;">
+                    <div style="font-size:12px;color:#86efac;font-weight:700;letter-spacing:.06em;">DEPURACIÓN</div>
+                    <div style="font-size:16px;color:#d1fae5;margin-top:6px;">Deducciones admisibles</div>
+                    <div style="font-size:28px;color:#ffffff;font-weight:800;margin-top:8px;">
+                        {formato_moneda(deducciones_admisibles)}
+                    </div>
+                </div>
+                """,
+                unsafe_allow_html=True
+            )
 
-with f4:
-    st.markdown("""
-    <div class="soft-card exec-card">
-        <div class="result-mini">SALIDA</div>
-        <div>Impuesto actual</div>
-        <div class="result-value">$68.178.628</div>
-    </div>
-    """, unsafe_allow_html=True)
+        with f4:
+            st.markdown(
+                """
+                <div style="display:flex;align-items:center;justify-content:center;height:100%;">
+                    <div style="font-size:30px;color:#86efac;">→</div>
+                </div>
+                """,
+                unsafe_allow_html=True
+            )
+
+        st.markdown("<div style='height:14px'></div>", unsafe_allow_html=True)
+
+        f5, f6, f7 = st.columns([1, 0.15, 1])
+
+        with f5:
+            st.markdown(
+                f"""
+                <div class="soft-card exec-card" style="text-align:center;">
+                    <div style="font-size:12px;color:#86efac;font-weight:700;letter-spacing:.06em;">RESULTADO FISCAL</div>
+                    <div style="font-size:16px;color:#d1fae5;margin-top:6px;">Base gravable</div>
+                    <div style="font-size:28px;color:#ffffff;font-weight:800;margin-top:8px;">
+                        {formato_moneda(base_gravable)}
+                    </div>
+                </div>
+                """,
+                unsafe_allow_html=True
+            )
+
+        with f6:
+            st.markdown(
+                """
+                <div style="display:flex;align-items:center;justify-content:center;height:100%;">
+                    <div style="font-size:30px;color:#86efac;">→</div>
+                </div>
+                """,
+                unsafe_allow_html=True
+            )
+
+        with f7:
+            st.markdown(
+                f"""
+                <div class="soft-card exec-card" style="text-align:center;">
+                    <div style="font-size:12px;color:#86efac;font-weight:700;letter-spacing:.06em;">SALIDA</div>
+                    <div style="font-size:16px;color:#d1fae5;margin-top:6px;">Impuesto actual</div>
+                    <div style="font-size:28px;color:#ffffff;font-weight:800;margin-top:8px;">
+                        {formato_moneda(impuesto_original)}
+                    </div>
+                </div>
+                """,
+                unsafe_allow_html=True
+            )
 
     with right_exec:
         st.markdown("### Eficiencia tributaria")
