@@ -571,11 +571,25 @@ if st.session_state.simulacion_calculada and st.session_state.resultado_simulaci
     impuesto_original = resultado["impuesto_sin_optimizacion"]
     impuesto_optimizado = resultado["impuesto_optimizado"]
     beneficio = resultado["beneficio"]
+    total_ingresos = resultado["total_ingresos"]
+    base_gravable = resultado["base_gravable"]
+    deducciones_admisibles = resultado["deducciones_admisibles"]
 
-    porcentaje_ahorro = (beneficio / impuesto_original) if impuesto_original > 0 else 0
+    porcentaje_ahorro = 0
+    if impuesto_original > 0:
+        porcentaje_ahorro = beneficio / impuesto_original
+
+    eficiencia_actual = 0
+    eficiencia_optimizada = 0
+    if total_ingresos > 0:
+        eficiencia_actual = impuesto_original / total_ingresos
+        eficiencia_optimizada = impuesto_optimizado / total_ingresos
 
     st.markdown("## Resultados")
 
+    # =========================
+    # HERO RESULT
+    # =========================
     st.markdown(
         f"""
         <div class="soft-card" style="
@@ -588,7 +602,13 @@ if st.session_state.simulacion_calculada and st.session_state.resultado_simulaci
             <div style="font-size:13px;color:#86efac;font-weight:700;letter-spacing:.08em;">
                 OPORTUNIDAD TRIBUTARIA DETECTADA
             </div>
-            <div style="font-size:46px;font-weight:900;color:#ffffff;margin-top:6px;">
+            <div style="
+                font-size:52px;
+                font-weight:900;
+                color:#ffffff;
+                margin-top:6px;
+                text-shadow:0 0 12px rgba(134,239,172,0.25);
+            ">
                 {formato_moneda(beneficio)}
             </div>
             <div style="font-size:14px;color:#d1fae5;margin-top:4px;">
@@ -599,6 +619,9 @@ if st.session_state.simulacion_calculada and st.session_state.resultado_simulaci
         unsafe_allow_html=True
     )
 
+    # =========================
+    # CARDS PRINCIPALES
+    # =========================
     c1, c2, c3 = st.columns(3)
 
     with c1:
@@ -628,54 +651,172 @@ if st.session_state.simulacion_calculada and st.session_state.resultado_simulaci
             eyebrow="Impacto"
         )
 
-    st.markdown("### Comparación visual")
-
-    max_valor = max(impuesto_original, impuesto_optimizado)
-    porcentaje_actual = impuesto_original / max_valor if max_valor > 0 else 0
-    porcentaje_opt = impuesto_optimizado / max_valor if max_valor > 0 else 0
-
-    st.markdown("**Escenario actual**")
-    st.progress(porcentaje_actual)
-    st.caption(formato_moneda(impuesto_original))
-
-    st.markdown("**Escenario optimizado**")
-    st.progress(porcentaje_opt)
-    st.caption(formato_moneda(impuesto_optimizado))
-
-    st.markdown("### Impacto de la optimización tributaria")
-    st.progress(min(max(porcentaje_ahorro, 0), 1))
-    
-    st.markdown(
-        f"""
-        <div class="soft-card" style="
-            margin-top:10px;
-            padding:16px 18px;
-            background:rgba(16,185,129,0.08);
-            border:1px solid rgba(16,185,129,0.18);
-        ">
-            <div style="font-size:14px; color:#86efac; font-weight:700;">
-                💰 Ahorro potencial identificado
-            </div>
-            <div style="font-size:13px; color:#d1fae5; margin-top:6px;">
-                El cliente podría reducir su carga tributaria en <b>{formato_moneda(beneficio)}</b>,
-                equivalente a una mejora aproximada del <b>{porcentaje_ahorro:.1%}</b>.
-            </div>
-        </div>
-        """,
-        unsafe_allow_html=True
-    )
-
-    st.markdown("<div style='height:24px'></div>", unsafe_allow_html=True)
-    
-    if porcentaje_ahorro >= 0.20:
-        st.success("🚀 Excelente oportunidad de optimización tributaria.")
-    elif porcentaje_ahorro >= 0.10:
-        st.info("📊 Hay una oportunidad tributaria relevante para el cliente.")
-    else:
-        st.warning("💡 El beneficio existe, pero el impacto es más moderado.")
-
+    # =========================
+    # FLUJO DE DINERO + EFICIENCIA
+    # =========================
     st.divider()
-    st.markdown("## Simulación interactiva de optimización")
+    st.markdown("## Vista ejecutiva")
+
+    left_exec, right_exec = st.columns([1.25, 1])
+
+    with left_exec:
+        st.markdown("### Flujo del dinero")
+
+        f1, f2, f3, f4 = st.columns([1, 0.15, 1, 0.15])
+
+        with f1:
+            st.markdown(
+                f"""
+                <div class="soft-card" style="text-align:center;">
+                    <div style="font-size:12px;color:#86efac;font-weight:700;letter-spacing:.06em;">INGRESOS</div>
+                    <div style="font-size:16px;color:#d1fae5;margin-top:6px;">Total ingresos</div>
+                    <div style="font-size:28px;color:#ffffff;font-weight:800;margin-top:8px;">
+                        {formato_moneda(total_ingresos)}
+                    </div>
+                </div>
+                """,
+                unsafe_allow_html=True
+            )
+
+        with f2:
+            st.markdown(
+                """
+                <div style="display:flex;align-items:center;justify-content:center;height:100%;">
+                    <div style="font-size:30px;color:#86efac;">→</div>
+                </div>
+                """,
+                unsafe_allow_html=True
+            )
+
+        with f3:
+            st.markdown(
+                f"""
+                <div class="soft-card" style="text-align:center;">
+                    <div style="font-size:12px;color:#86efac;font-weight:700;letter-spacing:.06em;">DEPURACIÓN</div>
+                    <div style="font-size:16px;color:#d1fae5;margin-top:6px;">Deducciones admisibles</div>
+                    <div style="font-size:28px;color:#ffffff;font-weight:800;margin-top:8px;">
+                        {formato_moneda(deducciones_admisibles)}
+                    </div>
+                </div>
+                """,
+                unsafe_allow_html=True
+            )
+
+        with f4:
+            st.markdown(
+                """
+                <div style="display:flex;align-items:center;justify-content:center;height:100%;">
+                    <div style="font-size:30px;color:#86efac;">→</div>
+                </div>
+                """,
+                unsafe_allow_html=True
+            )
+
+        st.markdown("<div style='height:14px'></div>", unsafe_allow_html=True)
+
+        f5, f6, f7 = st.columns([1, 0.15, 1])
+
+        with f5:
+            st.markdown(
+                f"""
+                <div class="soft-card" style="text-align:center;">
+                    <div style="font-size:12px;color:#86efac;font-weight:700;letter-spacing:.06em;">RESULTADO FISCAL</div>
+                    <div style="font-size:16px;color:#d1fae5;margin-top:6px;">Base gravable</div>
+                    <div style="font-size:28px;color:#ffffff;font-weight:800;margin-top:8px;">
+                        {formato_moneda(base_gravable)}
+                    </div>
+                </div>
+                """,
+                unsafe_allow_html=True
+            )
+
+        with f6:
+            st.markdown(
+                """
+                <div style="display:flex;align-items:center;justify-content:center;height:100%;">
+                    <div style="font-size:30px;color:#86efac;">→</div>
+                </div>
+                """,
+                unsafe_allow_html=True
+            )
+
+        with f7:
+            st.markdown(
+                f"""
+                <div class="soft-card" style="text-align:center;">
+                    <div style="font-size:12px;color:#86efac;font-weight:700;letter-spacing:.06em;">SALIDA</div>
+                    <div style="font-size:16px;color:#d1fae5;margin-top:6px;">Impuesto actual</div>
+                    <div style="font-size:28px;color:#ffffff;font-weight:800;margin-top:8px;">
+                        {formato_moneda(impuesto_original)}
+                    </div>
+                </div>
+                """,
+                unsafe_allow_html=True
+            )
+
+    with right_exec:
+        st.markdown("### Eficiencia tributaria")
+
+        e1, e2 = st.columns(2)
+
+        with e1:
+            st.markdown(
+                f"""
+                <div class="soft-card" style="text-align:center;height:100%;">
+                    <div style="font-size:12px;color:#fbbf24;font-weight:700;letter-spacing:.06em;">ANTES</div>
+                    <div style="font-size:34px;color:#ffffff;font-weight:900;margin-top:10px;">
+                        {eficiencia_actual:.1%}
+                    </div>
+                    <div style="font-size:13px;color:#d1fae5;margin-top:8px;">
+                        carga tributaria sobre ingresos
+                    </div>
+                </div>
+                """,
+                unsafe_allow_html=True
+            )
+
+        with e2:
+            st.markdown(
+                f"""
+                <div class="soft-card" style="text-align:center;height:100%;">
+                    <div style="font-size:12px;color:#86efac;font-weight:700;letter-spacing:.06em;">DESPUÉS</div>
+                    <div style="font-size:34px;color:#ffffff;font-weight:900;margin-top:10px;">
+                        {eficiencia_optimizada:.1%}
+                    </div>
+                    <div style="font-size:13px;color:#d1fae5;margin-top:8px;">
+                        carga tributaria optimizada
+                    </div>
+                </div>
+                """,
+                unsafe_allow_html=True
+            )
+
+        st.markdown("<div style='height:14px'></div>", unsafe_allow_html=True)
+
+        delta_eficiencia = eficiencia_actual - eficiencia_optimizada
+
+        st.markdown(
+            f"""
+            <div class="soft-card">
+                <div style="font-size:13px;color:#86efac;font-weight:700;letter-spacing:.06em;text-transform:uppercase;">
+                    Mejora relativa
+                </div>
+                <div style="font-size:30px;color:#ffffff;font-weight:900;margin-top:8px;">
+                    {delta_eficiencia:.1%}
+                </div>
+                <div style="font-size:13px;color:#d1fae5;margin-top:8px;line-height:1.5;">
+                    reducción estimada en la proporción de impuesto frente al ingreso total.
+                </div>
+            </div>
+            """,
+            unsafe_allow_html=True
+        )
+
+    # =========================
+    # SIMULACIÓN DINÁMICA + RECOMENDACIÓN
+    # =========================
+    st.divider()
+    st.markdown("## Simulación dinámica")
 
     topup_max = int(resultado.get("topup_full", 0))
 
@@ -714,14 +855,123 @@ if st.session_state.simulacion_calculada and st.session_state.resultado_simulaci
         with tc3:
             st.metric("Ahorro tributario", formato_moneda(ahorro_topup))
 
+        # ========= Sparkline elegante =========
+        st.markdown("### Trayectoria del ahorro")
+
+        aportes = []
+        ahorros = []
+
+        step = topup_max / 30 if topup_max > 0 else 1
+
+        for i in range(31):
+            aporte = step * i
+            base = resultado["base_gravable"] - aporte
+
+            if base < 0:
+                base = 0
+
+            base_uvt_temp = base / resultado["uvt"]
+            impuesto_temp = calcular_impuesto_renta(base_uvt_temp, resultado["uvt"])
+            ahorro_temp = resultado["impuesto_sin_optimizacion"] - impuesto_temp
+
+            aportes.append(aporte)
+            ahorros.append(ahorro_temp)
+
+        max_ahorro = max(ahorros)
+        idx_optimo = ahorros.index(max_ahorro)
+        aporte_optimo = aportes[idx_optimo]
+        ahorro_optimo = ahorros[idx_optimo]
+
+        fig, ax = plt.subplots(figsize=(9, 2.8))
+        fig.patch.set_alpha(0)
+        ax.set_facecolor((0, 0, 0, 0))
+
+        ax.plot(aportes, ahorros, linewidth=3)
+        ax.fill_between(aportes, ahorros, alpha=0.10)
+        ax.scatter([aporte_optimo], [ahorro_optimo], s=90, zorder=5)
+
+        ax.spines["top"].set_visible(False)
+        ax.spines["right"].set_visible(False)
+        ax.spines["left"].set_alpha(0.15)
+        ax.spines["bottom"].set_alpha(0.15)
+        ax.tick_params(axis='both', which='both', length=0)
+        ax.grid(alpha=0.08)
+
+        ax.set_xlabel("Aporte adicional")
+        ax.set_ylabel("Ahorro")
+
+        st.pyplot(fig, use_container_width=True)
+
+        # ========= Recomendación automática =========
+        st.markdown("### Recomendación sugerida")
+
+        rc1, rc2 = st.columns([1.15, 1])
+
+        with rc1:
+            st.markdown(
+                f"""
+                <div class="soft-card" style="
+                    padding:22px 24px;
+                    background:linear-gradient(135deg,rgba(0,199,61,0.14),rgba(124,224,0,0.06));
+                    border:1px solid rgba(0,199,61,0.18);
+                ">
+                    <div style="font-size:13px;color:#86efac;font-weight:700;letter-spacing:.08em;">
+                        APORTE ÓPTIMO ESTIMADO
+                    </div>
+                    <div style="font-size:40px;font-weight:900;color:#ffffff;margin-top:6px;">
+                        {formato_moneda(aporte_optimo)}
+                    </div>
+                    <div style="font-size:14px;color:#d1fae5;margin-top:4px;">
+                        aporte adicional recomendado
+                    </div>
+                    <div style="
+                        margin-top:14px;
+                        padding:12px 14px;
+                        border-radius:14px;
+                        background:rgba(255,255,255,0.06);
+                        border:1px solid rgba(255,255,255,0.10);
+                    ">
+                        <div style="font-size:13px;color:#86efac;font-weight:700;">
+                            Ahorro estimado asociado
+                        </div>
+                        <div style="font-size:28px;font-weight:800;color:#ffffff;margin-top:2px;">
+                            {formato_moneda(ahorro_optimo)}
+                        </div>
+                    </div>
+                </div>
+                """,
+                unsafe_allow_html=True
+            )
+
+        with rc2:
+            st.markdown(
+                f"""
+                <div class="soft-card" style="height:100%;">
+                    <div style="font-size:13px;color:#86efac;font-weight:700;letter-spacing:.08em;">
+                        LECTURA EJECUTIVA
+                    </div>
+                    <div style="font-size:15px;color:#ffffff;font-weight:700;margin-top:10px;">
+                        Estrategia sugerida
+                    </div>
+                    <div style="font-size:14px;color:#d1fae5;line-height:1.65;margin-top:10px;">
+                        El comportamiento de la simulación sugiere que un aporte cercano a
+                        <b>{formato_moneda(aporte_optimo)}</b> podría llevar al cliente a un punto de
+                        mayor eficiencia tributaria, generando un ahorro aproximado de
+                        <b>{formato_moneda(ahorro_optimo)}</b>.
+                        <br><br>
+                        Esta recomendación debe validarse dentro del contexto financiero completo del cliente.
+                    </div>
+                </div>
+                """,
+                unsafe_allow_html=True
+            )
+
     else:
         st.info("El cliente ya se encuentra en el máximo beneficio tributario permitido.")
-    
-    # =========================
-    # DESGLOSE vs INTERPRETACIÓN
-    # =========================
+
     st.divider()
-    left, sep2, right = st.columns([1.35, 0.05, 1])
+
+    left, right = st.columns([1.35, 1])
 
     with left:
         st.markdown("### Desglose del cálculo")
@@ -755,9 +1005,6 @@ if st.session_state.simulacion_calculada and st.session_state.resultado_simulaci
         )
 
         st.dataframe(df_detalle, use_container_width=True, hide_index=True)
-
-    with sep2:
-        st.markdown("<div class='vertical-divider'></div>", unsafe_allow_html=True)
 
     with right:
         st.markdown("### Interpretación")
