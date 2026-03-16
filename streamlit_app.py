@@ -159,10 +159,9 @@ st.markdown("""
     }
 
     div[role="radiogroup"] label * { color: #f8fafc !important; }
-
     input[type="radio"] { accent-color: #00c73d !important; }
 
-    /* Botón principal (fix: ; faltantes) */
+    /* Botón principal */
     .stButton > button {
         width: 100%;
         max-width: 340px;
@@ -409,7 +408,6 @@ with col1:
         help="El salario integral ya incluye prestaciones sociales. El ordinario sí genera prestaciones."
     )
 
-    # ✅ FIX: radio devuelve "Sí"/"No" (string). No lo conviertas a bool.
     recibe_auxilios = st.radio(
         "¿Recibes auxilios?",
         ["Sí", "No"],
@@ -571,19 +569,14 @@ if st.session_state.simulacion_calculada and st.session_state.resultado_simulaci
     impuesto_original = resultado["impuesto_sin_optimizacion"]
     impuesto_optimizado = resultado["impuesto_optimizado"]
     beneficio = resultado["beneficio"]
-    total_ingresos = resultado["total_ingresos"]
-    base_gravable = resultado["base_gravable"]
-    deducciones_admisibles = resultado["deducciones_admisibles"]
+    total_ingresos = resultado.get("total_ingresos", 0)
+    base_gravable = resultado.get("base_gravable", 0)
+    deducciones_admisibles = resultado.get("deducciones_admisibles", 0)
 
-    porcentaje_ahorro = 0
-    if impuesto_original > 0:
-        porcentaje_ahorro = beneficio / impuesto_original
+    porcentaje_ahorro = (beneficio / impuesto_original) if impuesto_original > 0 else 0
 
-    eficiencia_actual = 0
-    eficiencia_optimizada = 0
-    if total_ingresos > 0:
-        eficiencia_actual = impuesto_original / total_ingresos
-        eficiencia_optimizada = impuesto_optimizado / total_ingresos
+    eficiencia_actual = (impuesto_original / total_ingresos) if total_ingresos > 0 else 0
+    eficiencia_optimizada = (impuesto_optimizado / total_ingresos) if total_ingresos > 0 else 0
 
     st.markdown("## Resultados")
 
@@ -813,188 +806,176 @@ if st.session_state.simulacion_calculada and st.session_state.resultado_simulaci
         )
 
     # =========================
-# SIMULACIÓN DINÁMICA + RECOMENDACIÓN
-# =========================
-st.divider()
-st.markdown("## Simulación dinámica")
-
-topup_max = int(resultado.get("topup_full", 0))
-
-if topup_max > 0:
-    sim_left, sim_right = st.columns([0.9, 1.4])
-
+    # SIMULACIÓN DINÁMICA + RECOMENDACIÓN  ✅ (YA DENTRO DEL IF PRINCIPAL)
     # =========================
-    # IZQUIERDA: SLIDER + TARJETAS
-    # =========================
-    with sim_left:
-        st.markdown("### Ajuste del aporte")
-
-        topup_usuario = st.slider(
-            "Aporte adicional en pensión voluntaria / AFC",
-            min_value=0,
-            max_value=topup_max,
-            value=0,
-            step=500000,
-            help="Mueve el control para ver cómo cambia el impuesto.",
-            key="slider_topup"
-        )
-
-        nueva_base = resultado["base_gravable"] - topup_usuario
-        if nueva_base < 0:
-            nueva_base = 0
-
-        base_uvt_temp = nueva_base / resultado["uvt"]
-
-        impuesto_topup = calcular_impuesto_renta(
-            base_uvt_temp,
-            resultado["uvt"]
-        )
-
-        ahorro_topup = resultado["impuesto_sin_optimizacion"] - impuesto_topup
-
-        st.markdown("<div style='height:16px'></div>", unsafe_allow_html=True)
-
-        # ✅ TARJETAS DENTRO DE LA COLUMNA IZQUIERDA
-        tc1, tc2, tc3 = st.columns(3)
-
-        with tc1:
-            st.metric("Aporte adicional", formato_moneda(topup_usuario))
-
-        with tc2:
-            st.metric("Nuevo impuesto", formato_moneda(impuesto_topup))
-
-        with tc3:
-            st.metric("Ahorro", formato_moneda(ahorro_topup))
-
-    # =========================
-    # DERECHA: GRÁFICA
-    # =========================
-    with sim_right:
-        st.markdown("### Trayectoria del ahorro")
-
-        aportes = []
-        ahorros = []
-
-        step = topup_max / 30 if topup_max > 0 else 1
-
-        for i in range(31):
-            aporte = step * i
-            base = resultado["base_gravable"] - aporte
-            if base < 0:
-                base = 0
-
-            base_uvt_temp = base / resultado["uvt"]
-            impuesto_temp = calcular_impuesto_renta(base_uvt_temp, resultado["uvt"])
-            ahorro_temp = resultado["impuesto_sin_optimizacion"] - impuesto_temp
-
-            aportes.append(aporte)
-            ahorros.append(ahorro_temp)
-
-        max_ahorro = max(ahorros)
-        idx_optimo = ahorros.index(max_ahorro)
-        aporte_optimo = aportes[idx_optimo]
-        ahorro_optimo = ahorros[idx_optimo]
-
-        # convertir a millones
-        aportes_m = [x / 1_000_000 for x in aportes]
-        ahorros_m = [y / 1_000_000 for y in ahorros]
-        aporte_optimo_m = aporte_optimo / 1_000_000
-        ahorro_optimo_m = ahorro_optimo / 1_000_000
-
-        fig, ax = plt.subplots(figsize=(6.8, 2.5))
-        fig.patch.set_alpha(0)
-        ax.set_facecolor((0, 0, 0, 0))
-
-        ax.plot(aportes_m, ahorros_m, linewidth=2.4)
-        ax.fill_between(aportes_m, ahorros_m, alpha=0.06)
-        ax.scatter([aporte_optimo_m], [ahorro_optimo_m], s=55, zorder=5)
-
-        ax.spines["top"].set_visible(False)
-        ax.spines["right"].set_visible(False)
-        ax.spines["left"].set_color((1, 1, 1, 0.18))
-        ax.spines["bottom"].set_color((1, 1, 1, 0.18))
-
-        ax.tick_params(axis="both", length=0, colors="white", labelsize=9)
-        ax.grid(alpha=0.08)
-
-        ax.set_xlabel("Aporte adicional (millones)", color="white", fontsize=9, labelpad=8)
-        ax.set_ylabel("Ahorro (millones)", color="white", fontsize=9, labelpad=8)
-
-        st.pyplot(fig, use_container_width=True)
-
-        st.caption(
-            f"Punto óptimo estimado: {formato_moneda(aporte_optimo)} "
-            f"para un ahorro cercano a {formato_moneda(ahorro_optimo)}."
-        )
-
-        st.markdown("### Recomendación sugerida")
-
-        rc1, rc2 = st.columns([1.15, 1])
-
-        with rc1:
-            st.markdown(
-                f"""
-                <div class="soft-card" style="
-                    padding:22px 24px;
-                    background:linear-gradient(135deg,rgba(0,199,61,0.14),rgba(124,224,0,0.06));
-                    border:1px solid rgba(0,199,61,0.18);
-                ">
-                    <div style="font-size:13px;color:#86efac;font-weight:700;letter-spacing:.08em;">
-                        APORTE ÓPTIMO ESTIMADO
-                    </div>
-                    <div style="font-size:40px;font-weight:900;color:#ffffff;margin-top:6px;">
-                        {formato_moneda(aporte_optimo)}
-                    </div>
-                    <div style="font-size:14px;color:#d1fae5;margin-top:4px;">
-                        aporte adicional recomendado
-                    </div>
-                    <div style="
-                        margin-top:14px;
-                        padding:12px 14px;
-                        border-radius:14px;
-                        background:rgba(255,255,255,0.06);
-                        border:1px solid rgba(255,255,255,0.10);
-                    ">
-                        <div style="font-size:13px;color:#86efac;font-weight:700;">
-                            Ahorro estimado asociado
-                        </div>
-                        <div style="font-size:28px;font-weight:800;color:#ffffff;margin-top:2px;">
-                            {formato_moneda(ahorro_optimo)}
-                        </div>
-                    </div>
-                </div>
-                """,
-                unsafe_allow_html=True
-            )
-
-        with rc2:
-            st.markdown(
-                f"""
-                <div class="soft-card" style="height:100%;">
-                    <div style="font-size:13px;color:#86efac;font-weight:700;letter-spacing:.08em;">
-                        LECTURA EJECUTIVA
-                    </div>
-                    <div style="font-size:15px;color:#ffffff;font-weight:700;margin-top:10px;">
-                        Estrategia sugerida
-                    </div>
-                    <div style="font-size:14px;color:#d1fae5;line-height:1.65;margin-top:10px;">
-                        El comportamiento de la simulación sugiere que un aporte cercano a
-                        <b>{formato_moneda(aporte_optimo)}</b> podría llevar al cliente a un punto de
-                        mayor eficiencia tributaria, generando un ahorro aproximado de
-                        <b>{formato_moneda(ahorro_optimo)}</b>.
-                        <br><br>
-                        Esta recomendación debe validarse dentro del contexto financiero completo del cliente.
-                    </div>
-                </div>
-                """,
-                unsafe_allow_html=True
-            )
-
-else:
-    st.info("El cliente ya se encuentra en el máximo beneficio tributario permitido.")
-
     st.divider()
+    st.markdown("## Simulación dinámica")
 
+    topup_max = int(resultado.get("topup_full", 0))
+
+    if topup_max > 0:
+        sim_left, sim_right = st.columns([0.9, 1.4])
+
+        # IZQUIERDA: slider + métricas
+        with sim_left:
+            st.markdown("### Ajuste del aporte")
+
+            topup_usuario = st.slider(
+                "Aporte adicional en pensión voluntaria / AFC",
+                min_value=0,
+                max_value=topup_max,
+                value=0,
+                step=500000,
+                help="Mueve el control para ver cómo cambia el impuesto.",
+                key="slider_topup"
+            )
+
+            nueva_base = resultado["base_gravable"] - topup_usuario
+            if nueva_base < 0:
+                nueva_base = 0
+
+            base_uvt_temp = nueva_base / resultado["uvt"]
+            impuesto_topup = calcular_impuesto_renta(base_uvt_temp, resultado["uvt"])
+            ahorro_topup = resultado["impuesto_sin_optimizacion"] - impuesto_topup
+
+            st.markdown("<div style='height:16px'></div>", unsafe_allow_html=True)
+
+            tc1, tc2, tc3 = st.columns(3)
+            with tc1:
+                st.metric("Aporte adicional", formato_moneda(topup_usuario))
+            with tc2:
+                st.metric("Nuevo impuesto", formato_moneda(impuesto_topup))
+            with tc3:
+                st.metric("Ahorro", formato_moneda(ahorro_topup))
+
+        # DERECHA: gráfica + recomendación
+        with sim_right:
+            st.markdown("### Trayectoria del ahorro")
+
+            aportes = []
+            ahorros = []
+
+            step = topup_max / 30 if topup_max > 0 else 1
+
+            for i in range(31):
+                aporte = step * i
+                base = resultado["base_gravable"] - aporte
+                if base < 0:
+                    base = 0
+
+                base_uvt_temp = base / resultado["uvt"]
+                impuesto_temp = calcular_impuesto_renta(base_uvt_temp, resultado["uvt"])
+                ahorro_temp = resultado["impuesto_sin_optimizacion"] - impuesto_temp
+
+                aportes.append(aporte)
+                ahorros.append(ahorro_temp)
+
+            max_ahorro = max(ahorros)
+            idx_optimo = ahorros.index(max_ahorro)
+            aporte_optimo = aportes[idx_optimo]
+            ahorro_optimo = ahorros[idx_optimo]
+
+            # a millones
+            aportes_m = [x / 1_000_000 for x in aportes]
+            ahorros_m = [y / 1_000_000 for y in ahorros]
+            aporte_optimo_m = aporte_optimo / 1_000_000
+            ahorro_optimo_m = ahorro_optimo / 1_000_000
+
+            fig, ax = plt.subplots(figsize=(6.8, 2.5))
+            fig.patch.set_alpha(0)
+            ax.set_facecolor((0, 0, 0, 0))
+
+            ax.plot(aportes_m, ahorros_m, linewidth=2.4)
+            ax.fill_between(aportes_m, ahorros_m, alpha=0.06)
+            ax.scatter([aporte_optimo_m], [ahorro_optimo_m], s=55, zorder=5)
+
+            ax.spines["top"].set_visible(False)
+            ax.spines["right"].set_visible(False)
+            ax.spines["left"].set_color((1, 1, 1, 0.18))
+            ax.spines["bottom"].set_color((1, 1, 1, 0.18))
+
+            ax.tick_params(axis="both", length=0, colors="white", labelsize=9)
+            ax.grid(alpha=0.08)
+
+            ax.set_xlabel("Aporte adicional (millones)", color="white", fontsize=9, labelpad=8)
+            ax.set_ylabel("Ahorro (millones)", color="white", fontsize=9, labelpad=8)
+
+            st.pyplot(fig, use_container_width=True)
+
+            st.caption(
+                f"Punto óptimo estimado: {formato_moneda(aporte_optimo)} "
+                f"para un ahorro cercano a {formato_moneda(ahorro_optimo)}."
+            )
+
+            st.markdown("### Recomendación sugerida")
+
+            rc1, rc2 = st.columns([1.15, 1])
+
+            with rc1:
+                st.markdown(
+                    f"""
+                    <div class="soft-card" style="
+                        padding:22px 24px;
+                        background:linear-gradient(135deg,rgba(0,199,61,0.14),rgba(124,224,0,0.06));
+                        border:1px solid rgba(0,199,61,0.18);
+                    ">
+                        <div style="font-size:13px;color:#86efac;font-weight:700;letter-spacing:.08em;">
+                            APORTE ÓPTIMO ESTIMADO
+                        </div>
+                        <div style="font-size:40px;font-weight:900;color:#ffffff;margin-top:6px;">
+                            {formato_moneda(aporte_optimo)}
+                        </div>
+                        <div style="font-size:14px;color:#d1fae5;margin-top:4px;">
+                            aporte adicional recomendado
+                        </div>
+                        <div style="
+                            margin-top:14px;
+                            padding:12px 14px;
+                            border-radius:14px;
+                            background:rgba(255,255,255,0.06);
+                            border:1px solid rgba(255,255,255,0.10);
+                        ">
+                            <div style="font-size:13px;color:#86efac;font-weight:700;">
+                                Ahorro estimado asociado
+                            </div>
+                            <div style="font-size:28px;font-weight:800;color:#ffffff;margin-top:2px;">
+                                {formato_moneda(ahorro_optimo)}
+                            </div>
+                        </div>
+                    </div>
+                    """,
+                    unsafe_allow_html=True
+                )
+
+            with rc2:
+                st.markdown(
+                    f"""
+                    <div class="soft-card" style="height:100%;">
+                        <div style="font-size:13px;color:#86efac;font-weight:700;letter-spacing:.08em;">
+                            LECTURA EJECUTIVA
+                        </div>
+                        <div style="font-size:15px;color:#ffffff;font-weight:700;margin-top:10px;">
+                            Estrategia sugerida
+                        </div>
+                        <div style="font-size:14px;color:#d1fae5;line-height:1.65;margin-top:10px;">
+                            El comportamiento de la simulación sugiere que un aporte cercano a
+                            <b>{formato_moneda(aporte_optimo)}</b> podría llevar al cliente a un punto de
+                            mayor eficiencia tributaria, generando un ahorro aproximado de
+                            <b>{formato_moneda(ahorro_optimo)}</b>.
+                            <br><br>
+                            Esta recomendación debe validarse dentro del contexto financiero completo del cliente.
+                        </div>
+                    </div>
+                    """,
+                    unsafe_allow_html=True
+                )
+    else:
+        st.info("El cliente ya se encuentra en el máximo beneficio tributario permitido.")
+
+    # =========================
+    # DESGLOSE + INTERPRETACIÓN (SIEMPRE DENTRO DEL IF PRINCIPAL)
+    # =========================
+    st.divider()
     left, right = st.columns([1.35, 1])
 
     with left:
@@ -1032,6 +1013,7 @@ else:
 
     with right:
         st.markdown("### Interpretación")
+
         st.markdown(
             f"""
             <div class="soft-card">
@@ -1073,7 +1055,7 @@ else:
         )
 
     # =========================
-    # DEBUG TÉCNICO (FIX: crear df antes de mostrarlo)
+    # DEBUG TÉCNICO (solo si checkbox)
     # =========================
     if mostrar_debug:
         debug_df = pd.DataFrame(
