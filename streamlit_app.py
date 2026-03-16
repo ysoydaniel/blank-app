@@ -845,7 +845,7 @@ if st.session_state.simulacion_calculada and st.session_state.resultado_simulaci
     # SIMULACIÓN DINÁMICA + RECOMENDACIÓN  ✅ (YA DENTRO DEL IF PRINCIPAL)
     # =========================
     st.divider()
-    st.markdown("## Simulación dinámica")
+    st.markdown("## Simulación Top-Up solo con Aportes a Pensión Voluntaria/AFC")
 
     topup_max = int(resultado.get("topup_full", 0))
 
