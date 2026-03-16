@@ -623,7 +623,7 @@ if st.session_state.simulacion_calculada and st.session_state.resultado_simulaci
 
     with c2:
         result_card(
-            title="Impuesto optimizado",
+            title="Impuesto optimizado con PAC",
             value=formato_moneda(impuesto_optimizado),
             subtitle="Escenario con beneficios tributarios aplicados.",
             tone="primary",
@@ -800,6 +800,47 @@ if st.session_state.simulacion_calculada and st.session_state.resultado_simulaci
             unsafe_allow_html=True
         )
 
+    
+
+    # =========================
+    # DESGLOSE + INTERPRETACIÓN (SIEMPRE DENTRO DEL IF PRINCIPAL)
+    # =========================
+    st.divider()
+    left, right = st.columns([1.35, 1])
+
+    with left:
+        st.markdown("### Desglose del cálculo")
+
+        df_detalle = pd.DataFrame(
+            [
+                {"Concepto": "Salario anual", "Valor": formato_moneda(resultado["salario_anual"])},
+                {"Concepto": "Ingreso variable anual", "Valor": formato_moneda(resultado["ingreso_variable"])},
+                {"Concepto": "Auxilios anuales", "Valor": formato_moneda(resultado["auxilios_anuales"])},
+                {"Concepto": "Bonificación anual", "Valor": formato_moneda(resultado["bonificacion_anual"])},
+                {"Concepto": "Total ingresos", "Valor": formato_moneda(resultado["total_ingresos"])},
+                {"Concepto": "Aporte EPS", "Valor": formato_moneda(resultado["aporte_eps"])},
+                {"Concepto": "Aporte pensión", "Valor": formato_moneda(resultado["aporte_pension"])},
+                {"Concepto": "Fondo solidaridad", "Valor": formato_moneda(resultado["fondo_solidaridad"])},
+                {"Concepto": "Ingresos no constitutivos", "Valor": formato_moneda(resultado["ingresos_no_constitutivos"])},
+                {"Concepto": "Renta líquida", "Valor": formato_moneda(resultado["renta_liquida"])},
+                {"Concepto": "Renta líquida PAC", "Valor": formato_moneda(resultado["renta_liquida_pac"])},
+                {"Concepto": "Dependientes", "Valor": formato_moneda(resultado["dependientes"])},
+                {"Concepto": "Intereses vivienda", "Valor": formato_moneda(resultado["intereses_vivienda"])},
+                {"Concepto": "Pagos salud", "Valor": formato_moneda(resultado["pagos_salud"])},
+                {"Concepto": "Cesantías", "Valor": formato_moneda(resultado["cesantias"])},
+                {"Concepto": "Aportes pensión/AFC", "Valor": formato_moneda(resultado["aportes_pension_afc"])},
+                {"Concepto": "Renta exenta laboral", "Valor": formato_moneda(resultado["renta_exenta_laboral"])},
+                {"Concepto": "Total deducciones", "Valor": formato_moneda(resultado["total_deducciones"])},
+                {"Concepto": "Deducciones admisibles", "Valor": formato_moneda(resultado["deducciones_admisibles"])},
+                {"Concepto": "Base gravable", "Valor": formato_moneda(resultado["base_gravable"])},
+                {"Concepto": "Base gravable con PAC", "Valor": formato_moneda(resultado["base_gravable_pac"])},
+                {"Concepto": "Base gravable UVT", "Valor": formato_numero(resultado["base_uvt"], 6)},
+                {"Concepto": "Base gravable UVT con PAC", "Valor": formato_numero(resultado["base_uvt_pac"], 6)},
+            ]
+        )
+
+        st.dataframe(df_detalle, use_container_width=True, hide_index=True)
+
     # =========================
     # SIMULACIÓN DINÁMICA + RECOMENDACIÓN  ✅ (YA DENTRO DEL IF PRINCIPAL)
     # =========================
@@ -966,47 +1007,6 @@ if st.session_state.simulacion_calculada and st.session_state.resultado_simulaci
                 )
     else:
         st.info("El cliente ya se encuentra en el máximo beneficio tributario permitido.")
-
-    # =========================
-    # DESGLOSE + INTERPRETACIÓN (SIEMPRE DENTRO DEL IF PRINCIPAL)
-    # =========================
-    st.divider()
-    left, right = st.columns([1.35, 1])
-
-    with left:
-        st.markdown("### Desglose del cálculo")
-
-        df_detalle = pd.DataFrame(
-            [
-                {"Concepto": "Salario anual", "Valor": formato_moneda(resultado["salario_anual"])},
-                {"Concepto": "Ingreso variable anual", "Valor": formato_moneda(resultado["ingreso_variable"])},
-                {"Concepto": "Auxilios anuales", "Valor": formato_moneda(resultado["auxilios_anuales"])},
-                {"Concepto": "Bonificación anual", "Valor": formato_moneda(resultado["bonificacion_anual"])},
-                {"Concepto": "Total ingresos", "Valor": formato_moneda(resultado["total_ingresos"])},
-                {"Concepto": "Aporte EPS", "Valor": formato_moneda(resultado["aporte_eps"])},
-                {"Concepto": "Aporte pensión", "Valor": formato_moneda(resultado["aporte_pension"])},
-                {"Concepto": "Fondo solidaridad", "Valor": formato_moneda(resultado["fondo_solidaridad"])},
-                {"Concepto": "Ingresos no constitutivos", "Valor": formato_moneda(resultado["ingresos_no_constitutivos"])},
-                {"Concepto": "Renta líquida", "Valor": formato_moneda(resultado["renta_liquida"])},
-                {"Concepto": "Renta líquida PAC", "Valor": formato_moneda(resultado["renta_liquida_pac"])},
-                {"Concepto": "Dependientes", "Valor": formato_moneda(resultado["dependientes"])},
-                {"Concepto": "Intereses vivienda", "Valor": formato_moneda(resultado["intereses_vivienda"])},
-                {"Concepto": "Pagos salud", "Valor": formato_moneda(resultado["pagos_salud"])},
-                {"Concepto": "Cesantías", "Valor": formato_moneda(resultado["cesantias"])},
-                {"Concepto": "Aportes pensión/AFC", "Valor": formato_moneda(resultado["aportes_pension_afc"])},
-                {"Concepto": "Renta exenta laboral", "Valor": formato_moneda(resultado["renta_exenta_laboral"])},
-                {"Concepto": "Total deducciones", "Valor": formato_moneda(resultado["total_deducciones"])},
-                {"Concepto": "Deducciones admisibles", "Valor": formato_moneda(resultado["deducciones_admisibles"])},
-                {"Concepto": "Base gravable", "Valor": formato_moneda(resultado["base_gravable"])},
-                {"Concepto": "Base gravable con PAC", "Valor": formato_moneda(resultado["base_gravable_pac"])},
-                {"Concepto": "Base gravable UVT", "Valor": formato_numero(resultado["base_uvt"], 6)},
-                {"Concepto": "Base gravable UVT con PAC", "Valor": formato_numero(resultado["base_uvt_pac"], 6)},
-            ]
-        )
-
-        st.dataframe(df_detalle, use_container_width=True, hide_index=True)
-
-    
 
     # =========================
     # DEBUG TÉCNICO (solo si checkbox)
