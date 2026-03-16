@@ -28,7 +28,7 @@ st.markdown("""
     }
 
     p, label, div, span {
-        color: #d1fae5;
+        color: #ffffff;
     }
 
     /* Glass cards base */
