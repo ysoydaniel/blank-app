@@ -1011,7 +1011,7 @@ if st.session_state.simulacion_calculada and st.session_state.resultado_simulaci
 
         st.dataframe(df_detalle, use_container_width=True, hide_index=True)
 
-    with right:
+    """with right:
         st.markdown("### Interpretación")
 
         st.markdown(
@@ -1052,7 +1052,7 @@ if st.session_state.simulacion_calculada and st.session_state.resultado_simulaci
             </div>
             """,
             unsafe_allow_html=True
-        )
+        )"""
 
     # =========================
     # DEBUG TÉCNICO (solo si checkbox)
