@@ -42,6 +42,14 @@ st.markdown("""
         padding: 20px;
     }
 
+
+.exec-card {
+    min-height: 140px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
     .soft-card {
         padding: 20px;
         border-radius: 22px;
@@ -655,7 +663,7 @@ if st.session_state.simulacion_calculada and st.session_state.resultado_simulaci
         with f1:
             st.markdown(
                 f"""
-                <div class="soft-card" style="text-align:center;">
+                <div class="soft-card exec-card" style="text-align:center;">
                     <div style="font-size:12px;color:#86efac;font-weight:700;letter-spacing:.06em;">INGRESOS</div>
                     <div style="font-size:16px;color:#d1fae5;margin-top:6px;">Total ingresos</div>
                     <div style="font-size:28px;color:#ffffff;font-weight:800;margin-top:8px;">
@@ -679,7 +687,7 @@ if st.session_state.simulacion_calculada and st.session_state.resultado_simulaci
         with f3:
             st.markdown(
                 f"""
-                <div class="soft-card" style="text-align:center;">
+                <div class="soft-card exec-card" style="text-align:center;">
                     <div style="font-size:12px;color:#86efac;font-weight:700;letter-spacing:.06em;">DEPURACIÓN</div>
                     <div style="font-size:16px;color:#d1fae5;margin-top:6px;">Deducciones admisibles</div>
                     <div style="font-size:28px;color:#ffffff;font-weight:800;margin-top:8px;">
@@ -707,7 +715,7 @@ if st.session_state.simulacion_calculada and st.session_state.resultado_simulaci
         with f5:
             st.markdown(
                 f"""
-                <div class="soft-card" style="text-align:center;">
+                <div class="soft-card exec-card" style="text-align:center;">
                     <div style="font-size:12px;color:#86efac;font-weight:700;letter-spacing:.06em;">RESULTADO FISCAL</div>
                     <div style="font-size:16px;color:#d1fae5;margin-top:6px;">Base gravable</div>
                     <div style="font-size:28px;color:#ffffff;font-weight:800;margin-top:8px;">
@@ -731,7 +739,7 @@ if st.session_state.simulacion_calculada and st.session_state.resultado_simulaci
         with f7:
             st.markdown(
                 f"""
-                <div class="soft-card" style="text-align:center;">
+                <div class="soft-card exec-card" style="text-align:center;">
                     <div style="font-size:12px;color:#86efac;font-weight:700;letter-spacing:.06em;">SALIDA</div>
                     <div style="font-size:16px;color:#d1fae5;margin-top:6px;">Impuesto actual</div>
                     <div style="font-size:28px;color:#ffffff;font-weight:800;margin-top:8px;">
@@ -750,7 +758,7 @@ if st.session_state.simulacion_calculada and st.session_state.resultado_simulaci
         with e1:
             st.markdown(
                 f"""
-                <div class="soft-card" style="text-align:center;height:100%;">
+                <div class="soft-card exec-card" style="text-align:center;height:100%;">
                     <div style="font-size:12px;color:#fbbf24;font-weight:700;letter-spacing:.06em;">ANTES</div>
                     <div style="font-size:34px;color:#ffffff;font-weight:900;margin-top:10px;">
                         {eficiencia_actual:.1%}
@@ -766,7 +774,7 @@ if st.session_state.simulacion_calculada and st.session_state.resultado_simulaci
         with e2:
             st.markdown(
                 f"""
-                <div class="soft-card" style="text-align:center;height:100%;">
+                <div class="soft-card exec-card" style="text-align:center;height:100%;">
                     <div style="font-size:12px;color:#86efac;font-weight:700;letter-spacing:.06em;">DESPUÉS</div>
                     <div style="font-size:34px;color:#ffffff;font-weight:900;margin-top:10px;">
                         {eficiencia_optimizada:.1%}
@@ -785,7 +793,7 @@ if st.session_state.simulacion_calculada and st.session_state.resultado_simulaci
 
         st.markdown(
             f"""
-            <div class="soft-card">
+            <div class="soft-card exec-card">
                 <div style="font-size:13px;color:#86efac;font-weight:700;letter-spacing:.06em;text-transform:uppercase;">
                     Mejora relativa
                 </div>
